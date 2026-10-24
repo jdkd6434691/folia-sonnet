@@ -1,3 +1,4 @@
+import { useAndroidPlaybackAutoOrientation } from '../../../hooks/useAndroidPlaybackAutoOrientation';
 import { useAppPreferences } from '../../../hooks/useAppPreferences';
 import { useBackgroundRenderPause } from '../../../hooks/useBackgroundRenderPause';
 import { useCapacitorSystemBars } from '../../../hooks/useCapacitorSystemBars';
@@ -338,6 +339,8 @@ export const useAppFoundation = () => {
     useCapacitorSystemBars(isDaylight);
     // Android 返回键：先当 Escape 交给弹层，没人接管才退出（原生侧已把事件转过来）。
     useNativeBackButton();
+    // Android「进入可视化自动横屏」：进播放页锁横屏，离开转回竖屏（开关默认关，组件内部判端）。
+    useAndroidPlaybackAutoOrientation();
     // 退后台就停渲染：把 CPU 让给音频解码，后台播放才不会跟画面抢时间片。
     useBackgroundRenderPause();
     const {
