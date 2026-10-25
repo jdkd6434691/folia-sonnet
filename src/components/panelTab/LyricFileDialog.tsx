@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Sheet from '../shared/Sheet';
 import { Group, Row, type SettingsGroupDef } from '../modal/settings/kit';
 import type { LyricExportFormat } from '../../services/lyricExport/types';
+import { TextField } from '../ui';
 
 // src/components/panelTab/LyricFileDialog.tsx
 // The lyric file dialog behind the panel's import / export button: import a file, export this song
@@ -86,7 +87,7 @@ const LyricFileDialog: React.FC<LyricFileDialogProps> = ({
                 </Group>
 
                 {onImportChange && (
-                    <input
+                    <TextField
                         type="file"
                         accept={LYRIC_IMPORT_ACCEPT}
                         ref={inputRef}

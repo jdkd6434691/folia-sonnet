@@ -3,6 +3,7 @@ import { Check, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { PonderTargetDefinition } from '../../types/ponder';
 import { ponderModifierLabel } from './PonderKeyCap';
+import { Button } from '../ui';
 
 // src/components/ponder/PonderLessonRow.tsx
 // One lesson in the index: its title, its one line under it, a tick when it has been watched, and
@@ -22,8 +23,7 @@ const PonderLessonRow: React.FC<PonderLessonRowProps> = ({ target, seen, onOpen 
     const { t } = useTranslation();
 
     return (
-        <button
-            type="button"
+        <Button
             data-ponder-nav-target={target.id}
             data-ponder-nav-seen={seen || undefined}
             onClick={onOpen}
@@ -42,7 +42,7 @@ const PonderLessonRow: React.FC<PonderLessonRowProps> = ({ target, seen, onOpen 
                 {seen && <Check size={14} aria-label={t('ponder.navigation.seen')} />}
                 <ChevronRight size={14} aria-hidden="true" />
             </span>
-        </button>
+        </Button>
     );
 };
 

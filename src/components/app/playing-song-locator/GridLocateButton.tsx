@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Crosshair } from 'lucide-react';
+import { Button } from '@/components/ui';
 
 // src/components/app/playing-song-locator/GridLocateButton.tsx
 // "Is the song that is playing on this page": the small round button that stands above a grid's
@@ -24,8 +25,7 @@ interface GridLocateButtonProps {
 export const GridLocateButton: React.FC<GridLocateButtonProps> = ({ isDaylight, accentColor, isHere, isSeeking, title, onLocate }) => {
     const [presses, setPresses] = useState(0);
     return (
-        <button
-            type="button"
+        <Button
             data-grid-locate={isHere ? 'here' : 'elsewhere'}
             data-grid-locate-seeking={isSeeking ? 'yes' : 'no'}
             aria-busy={isSeeking}
@@ -42,6 +42,6 @@ export const GridLocateButton: React.FC<GridLocateButtonProps> = ({ isDaylight, 
                 ? <span className="locate-seeking pointer-events-none absolute inset-0 rounded-full border" style={{ borderColor: accentColor }} />
                 : presses > 0 && <span key={`ring-${presses}`} className="locate-ring pointer-events-none absolute inset-0 rounded-full border" style={{ borderColor: accentColor }} />}
             <Crosshair key={presses} size={18} className={presses > 0 ? 'locate-mark' : undefined} style={{ color: isHere ? accentColor : undefined }} />
-        </button>
+        </Button>
     );
 };

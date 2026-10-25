@@ -1,5 +1,6 @@
 import { LibraryBig, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '../../../../components/ui';
 
 // src/library/suites/grid/account/OnlineProviderAccountlessPanel.tsx
 
@@ -23,14 +24,14 @@ const OnlineProviderAccountlessPanel = ({ providerLabel, isDaylight, onSearch }:
                 <h2 className="text-2xl font-bold opacity-90">{t('home.accountlessTitle', { provider: providerLabel })}</h2>
                 <p className="opacity-50 text-sm leading-6 whitespace-pre-line">{t('home.accountlessBody')}</p>
             </div>
-            <button
+            <Button
                 type="button"
                 onClick={onSearch}
                 className="flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm transition-all hover:scale-105 cursor-pointer border bg-white text-black border-white shadow-md"
             >
                 <Search size={16} />
                 <span>{t('home.accountlessSearch')}</span>
-            </button>
+            </Button>
         </div>
     );
 };

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import CommandPaletteQueueList, { type CommandPaletteQueueListProps } from './CommandPaletteQueueList';
 import type { QueueSearchEvaluation, QueueSearchSuggestion } from './queueSearch';
 import type { QueueBatchAction, QueueFacetKind } from './queueQuery';
+import { Button, Checkbox } from '../ui';
 
 // src/components/command-palette/CommandPaletteQueueView.tsx
 // Adds queue syntax suggestions and an explicit batch-action preview above the virtualized results.
@@ -75,8 +76,7 @@ const CommandPaletteQueueView: React.FC<CommandPaletteQueueViewProps> = ({
                     title={t('commandPalette.queueKeepOpenHint')}
                 >
                     <span>{t('commandPalette.queueKeepOpen')}</span>
-                    <input
-                        type="checkbox"
+                    <Checkbox
                         checked={keepOpenOnSongChange}
                         disabled={isExecuting}
                         onChange={event => onKeepOpenOnSongChange(event.target.checked)}
@@ -88,8 +88,7 @@ const CommandPaletteQueueView: React.FC<CommandPaletteQueueViewProps> = ({
             {(parsed.action || parsed.actionDraft !== null || parsed.facetDraft !== null) && (
                 <div className="flex flex-wrap items-center gap-1.5 px-1">
                     {parsed.action && ActionIcon && (
-                        <button
-                            type="button"
+                        <Button
                             onClick={onClearAction}
                             className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] ${chipClass}`}
                             aria-label={t('commandPalette.queueClearAction')}
@@ -97,11 +96,10 @@ const CommandPaletteQueueView: React.FC<CommandPaletteQueueViewProps> = ({
                             <ActionIcon size={12} />
                             {t(actionLabelKey[parsed.action])}
                             <X size={11} className="opacity-50" />
-                        </button>
+                        </Button>
                     )}
                     {parsed.facetDraft !== null && (
-                        <button
-                            type="button"
+                        <Button
                             onClick={onClearFacet}
                             className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] ${chipClass}`}
                             aria-label={t('commandPalette.queueClearFacet')}
@@ -111,7 +109,7 @@ const CommandPaletteQueueView: React.FC<CommandPaletteQueueViewProps> = ({
                                 ? t('commandPalette.queueCurrentFacets')
                                 : `${parsed.facetKind ? t(facetLabelKey[parsed.facetKind]) : t('commandPalette.queueFacet')}: ${parsed.facetValue || parsed.facetDraft}`}
                             <X size={11} className="opacity-50" />
-                        </button>
+                        </Button>
                     )}
                 </div>
             )}
@@ -126,9 +124,8 @@ const CommandPaletteQueueView: React.FC<CommandPaletteQueueViewProps> = ({
                             ? t(actionLabelKey[suggestion.action])
                             : `${suggestion.facetKind ? t(facetLabelKey[suggestion.facetKind]) : t('commandPalette.queueFacet')}: ${suggestion.label}`;
                         return (
-                            <button
+                            <Button
                                 key={suggestion.id}
-                                type="button"
                                 onClick={() => onAcceptSuggestion(suggestion)}
                                 className={`flex items-center gap-2 rounded-xl px-3 py-2 text-left text-xs transition-colors ${
                                     isDaylight ? 'hover:bg-black/[0.06]' : 'hover:bg-white/[0.08]'
@@ -144,7 +141,7 @@ const CommandPaletteQueueView: React.FC<CommandPaletteQueueViewProps> = ({
                                         {t('commandPalette.queueCurrent')}
                                     </span>
                                 )}
-                            </button>
+                            </Button>
                         );
                     })}
                 </div>
@@ -166,8 +163,7 @@ const CommandPaletteQueueView: React.FC<CommandPaletteQueueViewProps> = ({
                             <div className="mt-0.5 opacity-50">{t('commandPalette.queueBatchSkippedCurrent')}</div>
                         )}
                     </div>
-                    <button
-                        type="button"
+                    <Button
                         disabled={!canExecuteBatch}
                         onClick={() => void onExecuteBatch()}
                         className={`flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-35 ${
@@ -176,7 +172,7 @@ const CommandPaletteQueueView: React.FC<CommandPaletteQueueViewProps> = ({
                     >
                         <CornerDownLeft size={13} />
                         {t('commandPalette.queueBatchConfirm')}
-                    </button>
+                    </Button>
                 </div>
             )}
 

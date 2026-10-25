@@ -1,6 +1,7 @@
 import React from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { Check, Download, Loader2, X } from 'lucide-react';
+import { Button } from '../../ui';
 
 // src/components/command-palette/surfaces/LyricExportSurfaceParts.tsx
 // Presentational pieces of the batch lyric export page: section headings, the multi-select option
@@ -41,8 +42,7 @@ export const OptionCard: React.FC<{
     disabled: boolean;
     onClick: () => void;
 }> = ({ tone, icon: Icon, label, description, selected, disabled, onClick }) => (
-    <button
-        type="button"
+    <Button
         disabled={disabled}
         onClick={onClick}
         aria-pressed={selected}
@@ -62,7 +62,7 @@ export const OptionCard: React.FC<{
         >
             {selected && <Check size={11} className="text-white" strokeWidth={3} />}
         </span>
-    </button>
+    </Button>
 );
 
 /** A small checkbox chip for the LRC-only extras. */
@@ -74,12 +74,11 @@ export const ExtraChip: React.FC<{
     disabled: boolean;
     onClick: () => void;
 }> = ({ tone, label, hint, checked, disabled, onClick }) => (
-    <button
-        type="button"
+    <Button
         disabled={disabled}
         onClick={onClick}
         aria-pressed={checked}
-        title={hint}
+        tip={hint}
         className="flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs transition-colors disabled:opacity-60"
         style={checked ? { borderColor: tone.accent, backgroundColor: tone.selectedTint } : { borderColor: tone.idleBorder }}
     >
@@ -90,7 +89,7 @@ export const ExtraChip: React.FC<{
             {checked && <Check size={10} className="text-white" strokeWidth={3} />}
         </span>
         <span style={{ color: 'var(--text-primary)' }}>{label}</span>
-    </button>
+    </Button>
 );
 
 /** One setting row with a title, a line of explanation and a switch, in a settings card. */
@@ -109,8 +108,7 @@ export const ToggleCard: React.FC<{
             <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{label}</div>
             <div className="text-xs opacity-50" style={{ color: 'var(--text-secondary)' }}>{description}</div>
         </div>
-        <button
-            type="button"
+        <Button
             disabled={disabled}
             onClick={onToggle}
             className={`h-6 w-12 shrink-0 rounded-full p-1 transition-colors disabled:opacity-50 ${!active ? toggleOffBackgroundClass : ''}`}
@@ -119,7 +117,7 @@ export const ToggleCard: React.FC<{
             aria-label={label}
         >
             <div className={`h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${active ? 'translate-x-6' : 'translate-x-0'}`} />
-        </button>
+        </Button>
     </div>
 );
 
@@ -140,8 +138,7 @@ export const RunBar: React.FC<{
                 {statusText}
             </div>
             {isRunning ? (
-                <button
-                    type="button"
+                <Button
                     onClick={onCancel}
                     // Picked from the app's own day/night mode: Tailwind's `dark:` follows the OS,
                     // which disagrees with the app whenever the two are set differently.
@@ -152,10 +149,9 @@ export const RunBar: React.FC<{
                     <Loader2 size={14} className="animate-spin" />
                     <X size={14} />
                     {cancelLabel}
-                </button>
+                </Button>
             ) : (
-                <button
-                    type="button"
+                <Button
                     disabled={!canStart}
                     onClick={onStart}
                     className="flex shrink-0 items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-40"
@@ -163,7 +159,7 @@ export const RunBar: React.FC<{
                 >
                     <Download size={14} />
                     {startLabel}
-                </button>
+                </Button>
             )}
         </div>
     </div>

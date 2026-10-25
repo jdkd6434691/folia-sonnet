@@ -3,6 +3,7 @@ import { Search, X } from 'lucide-react';
 import type { BravaisLayer } from './bravaisLayer';
 import { setBravaisSearchOpen } from './bravaisHomeUiStore';
 import BravaisSeamCrumbs from './BravaisSeamCrumbs';
+import { Button, TextField } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisSeamSearch.tsx
 // 首页缝里的全局搜索框（设计稿 §10.5「全局搜索的过渡方案」）：⌕ 或 `/` 把首页窄缝临时展开成完整宽度，输入框拿焦点。
@@ -36,13 +37,13 @@ const BravaisSeamSearch: React.FC<{ layer: BravaisLayer }> = ({ layer }) => {
         <div className="bravais-seam-search" data-bravais-search data-bravais-input-kind="search">
             <div className="bravais-seam-crumbs">
                 <BravaisSeamCrumbs layer={layer} panelLabel={search.title} onClosePanel={close} />
-                <button type="button" className="bravais-seam-level" data-bravais-seam-action="close-search" onClick={close}>
+                <Button className="bravais-seam-level" data-bravais-seam-action="close-search" onClick={close}>
                     {search.closeLabel}
-                </button>
+                </Button>
             </div>
             <form className="bravais-search-form" role="search" onSubmit={submit}>
                 <Search aria-hidden />
-                <input
+                <TextField
                     ref={inputRef}
                     name="bravais-search"
                     type="search"
@@ -52,16 +53,16 @@ const BravaisSeamSearch: React.FC<{ layer: BravaisLayer }> = ({ layer }) => {
                     spellCheck={false}
                     onKeyDown={onKeyDown}
                 />
-                <button type="button" className="bravais-seam-icon" aria-label={search.closeLabel} title={search.closeLabel} onClick={close}>
+                <Button className="bravais-seam-icon" aria-label={search.closeLabel} title={search.closeLabel} onClick={close}>
                     <X aria-hidden />
-                </button>
+                </Button>
             </form>
             <p className="bravais-search-hint">{search.hint}</p>
             <span className="bravais-form-buttons">
-                <button type="button" className="bravais-chrome-button is-primary" data-bravais-seam-action="submit-search"
+                <Button className="bravais-chrome-button is-primary" data-bravais-seam-action="submit-search"
                     onClick={() => inputRef.current?.form?.requestSubmit()}>
                     <Search aria-hidden />{search.submitLabel}
-                </button>
+                </Button>
             </span>
         </div>
     );

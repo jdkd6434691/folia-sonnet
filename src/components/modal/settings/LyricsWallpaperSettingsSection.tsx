@@ -12,18 +12,12 @@ import {
     clearWallpaperBackgroundImage,
     clearWallpaperFont,
     clearWallpaperVideo as removeWallpaperVideo,
-    getWallpaperLockScreenStatus,
-    getWallpaperOverlayEventLog,
     hasWallpaperFont as queryWallpaperFont,
-    hasWallpaperOverlayPermission,
     hasWallpaperVideo as queryWallpaperVideo,
     isLyricsWallpaperActive,
     openLyricsWallpaperPicker,
-    openRomPermissionPage,
-    openWallpaperOverlaySettings,
     pickWallpaperFont,
     pickWallpaperVideo,
-    resetFloatingLyricsWindow,
     setWallpaperFont,
 } from '../../../platform/foliaWallpaper';
 import FontMarketDialog from '../FontMarketDialog';
@@ -31,7 +25,9 @@ import {
     readFontMarketChoice,
     type FontMarketSelection,
 } from '../../../services/fontMarket';
-import type { WallpaperLockScreenStatus } from '../../../platform/foliaWallpaper';
+import { Button as UiButton, TextField } from '@/components/ui';
+import LyricsWallpaperFloatingRows from './LyricsWallpaperFloatingRows';
+import LyricsWallpaperOverlayRows from './LyricsWallpaperOverlayRows';
 
 // src/components/modal/settings/LyricsWallpaperSettingsSection.tsx
 // 歌词动态壁纸那一整节：设为壁纸、样式（跟随 / 精简小窗）、可视化叠层、背景（封面 /
@@ -74,43 +70,7 @@ const LyricsWallpaperSettingsSection: React.FC<LyricsWallpaperSettingsSectionPro
     const onToggleLyricsWallpaperTranslation = useVisualizerSettingsStore(state => state.handleToggleLyricsWallpaperTranslation);
     const lyricsWallpaperStyle = useVisualizerSettingsStore(state => state.lyricsWallpaperStyle);
     const onSetLyricsWallpaperStyle = useVisualizerSettingsStore(state => state.handleSetLyricsWallpaperStyle);
-    const wallpaperOverlayEnabled = useVisualizerSettingsStore(state => state.wallpaperOverlayEnabled);
-    const onToggleWallpaperOverlayEnabled = useVisualizerSettingsStore(state => state.handleToggleWallpaperOverlayEnabled);
-    const wallpaperOverlayLockScreen = useVisualizerSettingsStore(state => state.wallpaperOverlayLockScreen);
-    const onToggleWallpaperOverlayLockScreen = useVisualizerSettingsStore(state => state.handleToggleWallpaperOverlayLockScreen);
-    const wallpaperOverlayLockScreenOnly = useVisualizerSettingsStore(state => state.wallpaperOverlayLockScreenOnly);
-    const onToggleWallpaperOverlayLockScreenOnly = useVisualizerSettingsStore(state => state.handleToggleWallpaperOverlayLockScreenOnly);
-    const wallpaperOverlayOpacity = useVisualizerSettingsStore(state => state.wallpaperOverlayOpacity);
-    const onSetWallpaperOverlayOpacity = useVisualizerSettingsStore(state => state.handleSetWallpaperOverlayOpacity);
-    // 「精简」样式那颗悬浮歌词小窗的底色浓度。单独一根滑条，不复用叠层那根。
-    const wallpaperFloatingOpacity = useVisualizerSettingsStore(state => state.wallpaperFloatingOpacity);
-    const onSetWallpaperFloatingOpacity = useVisualizerSettingsStore(state => state.handleSetWallpaperFloatingOpacity);
-    // 小窗叠在安全区上面 + 叠加模式下的左右位置。
-    const wallpaperFloatingOverSafeArea = useVisualizerSettingsStore(
-        state => state.wallpaperFloatingOverSafeArea);
-    const onToggleWallpaperFloatingOverSafeArea = useVisualizerSettingsStore(
-        state => state.handleToggleWallpaperFloatingOverSafeArea);
-    const wallpaperFloatingOffsetX = useVisualizerSettingsStore(
-        state => state.wallpaperFloatingOffsetX);
-    const onSetWallpaperFloatingOffsetX = useVisualizerSettingsStore(
-        state => state.handleSetWallpaperFloatingOffsetX);
-    const wallpaperFloatingWidth = useVisualizerSettingsStore(
-        state => state.wallpaperFloatingWidth);
-    const onSetWallpaperFloatingWidth = useVisualizerSettingsStore(
-        state => state.handleSetWallpaperFloatingWidth);
-    // 占满整条安全区 + 避开区域（宽度 / 左右位置）。
-    const wallpaperFloatingFillSafeArea = useVisualizerSettingsStore(
-        state => state.wallpaperFloatingFillSafeArea);
-    const onToggleWallpaperFloatingFillSafeArea = useVisualizerSettingsStore(
-        state => state.handleToggleWallpaperFloatingFillSafeArea);
-    const wallpaperFloatingAvoidWidth = useVisualizerSettingsStore(
-        state => state.wallpaperFloatingAvoidWidth);
-    const onSetWallpaperFloatingAvoidWidth = useVisualizerSettingsStore(
-        state => state.handleSetWallpaperFloatingAvoidWidth);
-    const wallpaperFloatingAvoidOffsetX = useVisualizerSettingsStore(
-        state => state.wallpaperFloatingAvoidOffsetX);
-    const onSetWallpaperFloatingAvoidOffsetX = useVisualizerSettingsStore(
-        state => state.handleSetWallpaperFloatingAvoidOffsetX);
+
     // 歌词字体的来路：跟随播放页 / 单独指定。只有「单独」才需要那个选字体的按钮。
     const wallpaperLyricsFontMode = useVisualizerSettingsStore(
         state => state.wallpaperLyricsFontMode);
@@ -119,87 +79,8 @@ const LyricsWallpaperSettingsSection: React.FC<LyricsWallpaperSettingsSectionPro
     // 预览：在 App 里也把那层小窗挂出来（正常逻辑在 App 里不挂，设置页就什么都看不见）。
     const onSetWallpaperFloatingPreview = useVisualizerSettingsStore(
         state => state.handleSetWallpaperFloatingPreview);
-    // 字号：动态（跟着窗口高度算）/ 自定义（自己指定 dp）。
-    const wallpaperFloatingFontSizeMode = useVisualizerSettingsStore(
-        state => state.wallpaperFloatingFontSizeMode);
-    const onSetWallpaperFloatingFontSizeMode = useVisualizerSettingsStore(
-        state => state.handleSetWallpaperFloatingFontSizeMode);
-    const wallpaperFloatingFontSize = useVisualizerSettingsStore(
-        state => state.wallpaperFloatingFontSize);
-    const onSetWallpaperFloatingFontSize = useVisualizerSettingsStore(
-        state => state.handleSetWallpaperFloatingFontSize);
-    const wallpaperOverlayAllApps = useVisualizerSettingsStore(state => state.wallpaperOverlayAllApps);
-    const onToggleWallpaperOverlayAllApps = useVisualizerSettingsStore(state => state.handleToggleWallpaperOverlayAllApps);
-    const wallpaperOverlayHideNativeLyrics = useVisualizerSettingsStore(state => state.wallpaperOverlayHideNativeLyrics);
-    const onToggleWallpaperOverlayHideNativeLyrics = useVisualizerSettingsStore(state => state.handleToggleWallpaperOverlayHideNativeLyrics);
-    const wallpaperOverlayHideNativeProgress = useVisualizerSettingsStore(state => state.wallpaperOverlayHideNativeProgress);
-    const onToggleWallpaperOverlayHideNativeProgress = useVisualizerSettingsStore(state => state.handleToggleWallpaperOverlayHideNativeProgress);
-    const wallpaperOverlaySkipInstrumental = useVisualizerSettingsStore(state => state.wallpaperOverlaySkipInstrumental);
-    const onToggleWallpaperOverlaySkipInstrumental = useVisualizerSettingsStore(state => state.handleToggleWallpaperOverlaySkipInstrumental);
-    const wallpaperOverlayHideWhenPaused = useVisualizerSettingsStore(state => state.wallpaperOverlayHideWhenPaused);
-    const onToggleWallpaperOverlayHideWhenPaused = useVisualizerSettingsStore(state => state.handleToggleWallpaperOverlayHideWhenPaused);
-    const wallpaperOverlayHideAfterLyricsEnd = useVisualizerSettingsStore(state => state.wallpaperOverlayHideAfterLyricsEnd);
-    const onToggleWallpaperOverlayHideAfterLyricsEnd = useVisualizerSettingsStore(state => state.handleToggleWallpaperOverlayHideAfterLyricsEnd);
-    const wallpaperOverlayHideCoverArt = useVisualizerSettingsStore(state => state.wallpaperOverlayHideCoverArt);
-    const onToggleWallpaperOverlayHideCoverArt = useVisualizerSettingsStore(state => state.handleToggleWallpaperOverlayHideCoverArt);
+
     const imageInputRef = React.useRef<HTMLInputElement | null>(null);
-
-    /*
-     * 音乐锁屏的自诊断。
-     *
-     * 「后台启动 Activity 被系统拦」是**静默**的：不抛异常、不返回失败码，
-     * 而真机上的 logcat 基本取不到。没有这一行提示，用户只能对着一个没反应的
-     * 开关猜到底是没到时机（还没熄屏过），还是被系统 / ROM 挡住了。
-     */
-    const [lockScreenStatus, setLockScreenStatus] =
-        React.useState<WallpaperLockScreenStatus | null>(null);
-    // 「仅在锁屏显示」也会把锁屏页带起来，所以诊断对它同样有意义。
-    const lockScreenActive = wallpaperOverlayLockScreen || wallpaperOverlayLockScreenOnly;
-    React.useEffect(() => {
-        if (!lockScreenActive) {
-            setLockScreenStatus(null);
-            return;
-        }
-        let cancelled = false;
-        const load = async () => {
-            const status = await getWallpaperLockScreenStatus();
-            if (!cancelled) setLockScreenStatus(status);
-        };
-        void load();
-        const timer = window.setInterval(() => void load(), 4000);
-        return () => {
-            cancelled = true;
-            window.clearInterval(timer);
-        };
-    }, [lockScreenActive]);
-
-    /*
-     * 叠层最近做了什么（新的在前）。
-     *
-     * 「叠层放着放着突然消失、然后又淡入」在代码里至少有四条完全不同的来路 ——
-     * 窗口淡出、整页重载（设置变了 / 自愈觉得页面坏了）、息屏摘窗口、被系统悄悄摘窗口 ——
-     * 画面上四条一模一样，而真机上的 logcat 基本取不到（很多 ROM 根本不给读）。
-     * 所以让原生把「动作 + 当时为什么」记成一串短行，这里读出来直接摆给用户看，
-     * 不用再靠描述现象猜。只在叠层开着时轮询。
-     */
-    const [overlayEventLog, setOverlayEventLog] = React.useState<string[]>([]);
-    React.useEffect(() => {
-        if (!wallpaperOverlayEnabled || !isCapacitorAndroid()) {
-            setOverlayEventLog([]);
-            return;
-        }
-        let cancelled = false;
-        const load = async () => {
-            const events = await getWallpaperOverlayEventLog();
-            if (!cancelled) setOverlayEventLog(events);
-        };
-        void load();
-        const timer = window.setInterval(() => void load(), 3000);
-        return () => {
-            cancelled = true;
-            window.clearInterval(timer);
-        };
-    }, [wallpaperOverlayEnabled]);
 
     const handleWallpaperImagePick = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -258,38 +139,6 @@ const LyricsWallpaperSettingsSection: React.FC<LyricsWallpaperSettingsSectionPro
         window.setTimeout(() => {
             void isLyricsWallpaperActive().then(setIsWallpaperActive);
         }, 3000);
-    };
-
-    // 可视化叠层要「显示在其他应用上层」权限，没授权时它是静默不启用的。
-    const [hasOverlayPermission, setHasOverlayPermission] = useState(false);
-
-    React.useEffect(() => {
-        if (!isAndroid) return;
-        let cancelled = false;
-        void hasWallpaperOverlayPermission().then((granted) => {
-            if (!cancelled) setHasOverlayPermission(granted);
-        });
-        return () => {
-            cancelled = true;
-        };
-    }, [isAndroid]);
-
-    const handleOpenOverlaySettings = () => {
-        void openWallpaperOverlaySettings();
-        // 授权页是系统界面，用户回来之后才生效，延后复查一次。
-        window.setTimeout(() => {
-            void hasWallpaperOverlayPermission().then(setHasOverlayPermission);
-        }, 3000);
-    };
-
-    // 「重置悬浮窗」按完之后给个回执：小窗此刻多半不在屏幕上（应用在前台它就不挂），
-    // 点了没反应会让人以为按钮坏了。
-    const [floatingResetDone, setFloatingResetDone] = useState(false);
-
-    const handleResetFloatingLyricsWindow = () => {
-        void resetFloatingLyricsWindow();
-        setFloatingResetDone(true);
-        window.setTimeout(() => setFloatingResetDone(false), 2000);
     };
 
     // 字体是原生落在私有目录里的文件，应用这边只缓存一个「有没有」用于按钮文案。
@@ -361,14 +210,6 @@ const LyricsWallpaperSettingsSection: React.FC<LyricsWallpaperSettingsSectionPro
     };
 
     const dividerClass = settingsDividerClassFor(isDaylight);
-    /*
-     * 「次要动作」那颗按钮的底：白底 / 黑底两套。它跟实验室那颗是同一个长相，但那边
-     * 是组件内的局部变量，这边拿不到，所以就地照抄一份 —— 不抽出去共享，是因为那颗
-     * 还带着自己的圆角与内边距，两边尺寸并不一样。
-     */
-    const utilityGhostButtonClass = isDaylight
-        ? 'border-zinc-300 bg-white/50 hover:bg-white/80'
-        : 'border-white/10 bg-white/5 hover:bg-white/10';
 
     /* 非安卓平台整节不渲染 —— 放在 hooks 之后，订阅顺序才稳定。 */
     if (!isAndroid) return null;
@@ -412,402 +253,9 @@ const LyricsWallpaperSettingsSection: React.FC<LyricsWallpaperSettingsSectionPro
                 {/* 精简模式下歌词是那颗可以拖的小窗，拖到角落 / 缩到最小又上了锁之后
                     光靠手势弄不回来，所以这里给一颗「重置」当出口。 */}
                 <Reveal when={lyricsWallpaperStyle === 'minimal'}>
-                    <>
-                        {/* 小窗的底色浓度。单独一根：它是另一层系统窗口，
-                            跟壁纸背景那根、叠层那根都无关。 */}
-                        <SettingsRow
-                            option={WALLPAPER.floatingOpacity}
-                            dividerClass={dividerClass}
-                            control={(
-                                <div className="flex items-center gap-2">
-                                    {/* 下限 0：要的就是「只有字、没有底」，尤其叠在安全区上时。 */}
-                                    <RangeInput
-                                        min={0}
-                                        max={100}
-                                        step={5}
-                                        value={Math.round(wallpaperFloatingOpacity * 100)}
-                                        onChange={value => onSetWallpaperFloatingOpacity(value / 100)}
-                                        className="h-1 w-28 cursor-pointer accent-white"
-                                    />
-                                    <span className="w-9 text-right font-mono text-xs opacity-60" style={{ color: 'var(--text-secondary)' }}>
-                                        {Math.round(wallpaperFloatingOpacity * 100)}%
-                                    </span>
-                                </div>
-                            )}
-                        />
-                        {/* 叠在安全区上面：小窗贴到屏幕最顶上那一条（盖住状态栏），
-                            此时高度方向不再参与摆放，只给左右。 */}
-                        <SettingsRow
-                            option={WALLPAPER.floatingOverSafeArea}
-                            dividerClass={dividerClass}
-                            control={(
-                                <Toggle checked={wallpaperFloatingOverSafeArea} onChange={onToggleWallpaperFloatingOverSafeArea} />
-                            )}
-                        />
-                        {/* 叠加模式下的左右位置。只给初值：原生那边拖过之后以拖出来的为准。
-                            占满整条时没有「左右」可言，那两根一起收起来。 */}
-                        {/*
-                            左右位置 / 宽度 / 避开区域这几行随开关出现和收起：一律走 Reveal，
-                            跟同页其它「依赖上一行」的行一样地展开 / 收起。之前是 `&&` 直接
-                            挂载，开关一拨整段就凭空消失，看着像界面抽了一下。
-                        */}
-                        <Reveal when={wallpaperFloatingOverSafeArea && !wallpaperFloatingFillSafeArea}>
-                            <SettingsRow
-                                option={WALLPAPER.floatingOffsetX}
-                                dividerClass={dividerClass}
-                                control={(
-                                    <div className="flex items-center gap-2">
-                                        <RangeInput
-                                            min={0}
-                                            max={100}
-                                            step={5}
-                                            value={Math.round(wallpaperFloatingOffsetX * 100)}
-                                            onChange={value => onSetWallpaperFloatingOffsetX(value / 100)}
-                                            className="h-1 w-28 cursor-pointer accent-white"
-                                        />
-                                        <span className="w-9 text-right font-mono text-xs opacity-60" style={{ color: 'var(--text-secondary)' }}>
-                                            {Math.round(wallpaperFloatingOffsetX * 100)}%
-                                        </span>
-                                    </div>
-                                )}
-                            />
-                        </Reveal>
-                        {/* 宽度：占屏幕宽度的比例。和左右位置那根一样，
-                            每次拖动都会立刻下发，小窗当场跟着变。占满时不参与。 */}
-                        <Reveal when={wallpaperFloatingOverSafeArea && !wallpaperFloatingFillSafeArea}>
-                            <SettingsRow
-                                option={WALLPAPER.floatingWidth}
-                                dividerClass={dividerClass}
-                                control={(
-                                    <div className="flex items-center gap-2">
-                                        <RangeInput
-                                            min={50}
-                                            max={100}
-                                            step={5}
-                                            value={Math.round(wallpaperFloatingWidth * 100)}
-                                            onChange={value => onSetWallpaperFloatingWidth(value / 100)}
-                                            className="h-1 w-28 cursor-pointer accent-white"
-                                        />
-                                        <span className="w-9 text-right font-mono text-xs opacity-60" style={{ color: 'var(--text-secondary)' }}>
-                                            {Math.round(wallpaperFloatingWidth * 100)}%
-                                        </span>
-                                    </div>
-                                )}
-                            />
-                        </Reveal>
-                        {/* 占满整条安全区：左右不再留空，宽度滑条也让位。
-                            横屏下原生那边不认这一条，自动退回宽度滑条给的宽。 */}
-                        <Reveal when={wallpaperFloatingOverSafeArea}>
-                            <SettingsRow
-                                option={WALLPAPER.floatingFillSafeArea}
-                                dividerClass={dividerClass}
-                                control={(
-                                    <Toggle checked={wallpaperFloatingFillSafeArea} onChange={onToggleWallpaperFloatingFillSafeArea} />
-                                )}
-                            />
-                        </Reveal>
-                        {/* 避开区域：挖孔 / 刘海那一块。字从它两边绕过去，不是被裁掉。 */}
-                        <Reveal when={wallpaperFloatingOverSafeArea && wallpaperFloatingFillSafeArea}>
-                            <>
-                                <SettingsRow
-                                    option={WALLPAPER.floatingAvoidWidth}
-                                    dividerClass={dividerClass}
-                                    control={(
-                                        <div className="flex items-center gap-2">
-                                            <RangeInput
-                                                min={0}
-                                                max={50}
-                                                step={2}
-                                                value={Math.round(wallpaperFloatingAvoidWidth * 100)}
-                                                onChange={value => onSetWallpaperFloatingAvoidWidth(value / 100)}
-                                                className="h-1 w-28 cursor-pointer accent-white"
-                                            />
-                                            <span className="w-9 text-right font-mono text-xs opacity-60" style={{ color: 'var(--text-secondary)' }}>
-                                                {Math.round(wallpaperFloatingAvoidWidth * 100)}%
-                                            </span>
-                                        </div>
-                                    )}
-                                />
-                                <SettingsRow
-                                    option={WALLPAPER.floatingAvoidOffsetX}
-                                    dividerClass={dividerClass}
-                                    control={(
-                                        <div className="flex items-center gap-2">
-                                            <RangeInput
-                                                min={0}
-                                                max={100}
-                                                step={2}
-                                                value={Math.round(wallpaperFloatingAvoidOffsetX * 100)}
-                                                onChange={value => onSetWallpaperFloatingAvoidOffsetX(value / 100)}
-                                                className="h-1 w-28 cursor-pointer accent-white"
-                                            />
-                                            <span className="w-9 text-right font-mono text-xs opacity-60" style={{ color: 'var(--text-secondary)' }}>
-                                                {Math.round(wallpaperFloatingAvoidOffsetX * 100)}%
-                                            </span>
-                                        </div>
-                                    )}
-                                />
-                            </>
-                        </Reveal>
-                        {/* 字号：动态 = 跟着窗口高度算（拖大窗口字就跟着大）；
-                            自定义 = 自己指定。默认动态。 */}
-                        <SettingsRow
-                            option={WALLPAPER.floatingFontSize}
-                            dividerClass={dividerClass}
-                            control={(
-                                <Segmented
-                                    value={wallpaperFloatingFontSizeMode}
-                                    options={[
-                                        { value: 'dynamic', label: t('options.floatingLyricsFontSizeDynamic') },
-                                        { value: 'custom', label: t('options.floatingLyricsFontSizeCustom') },
-                                    ]}
-                                    onChange={onSetWallpaperFloatingFontSizeMode}
-                                />
-                            )}
-                        />
-                <Reveal when={wallpaperFloatingFontSizeMode === 'custom'}>
-                    <SettingsRow
-                        option={WALLPAPER.floatingFontSizeCustom}
-                                dividerClass={dividerClass}
-                                control={(
-                                    <div className="flex items-center gap-2">
-                                        <RangeInput
-                                            min={10}
-                                            max={32}
-                                            step={1}
-                                            value={Math.round(wallpaperFloatingFontSize)}
-                                            onChange={onSetWallpaperFloatingFontSize}
-                                            className="h-1 w-28 cursor-pointer accent-white"
-                                        />
-                                        <span className="w-9 text-right font-mono text-xs opacity-60" style={{ color: 'var(--text-secondary)' }}>
-                                            {Math.round(wallpaperFloatingFontSize)}
-                                        </span>
-                        </div>
-                    )}
-                />
+                    <LyricsWallpaperFloatingRows isDaylight={isDaylight} />
                 </Reveal>
-                {/* 拖到角落 / 缩到最小又上了锁之后光靠手势弄不回来，
-                            所以这里给一颗「重置」当出口。 */}
-                        <SettingsRow
-                            option={WALLPAPER.floatingWindow}
-                            dividerClass={dividerClass}
-                            control={(
-                                <Button onClick={handleResetFloatingLyricsWindow}>
-                                    {floatingResetDone
-                                        ? t('options.floatingLyricsResetDone')
-                                        : t('options.floatingLyricsReset')}
-                                </Button>
-                            )}
-                        />
-                    </>
-                </Reveal>
-                {/* 可视化叠层要 SYSTEM_ALERT_WINDOW；没授权时它静默不工作，
-                    用户只会看到「壁纸跟以前一样」，所以这里必须给明确入口。 */}
-                <SettingsRow
-                    option={WALLPAPER.overlay}
-                    dividerClass={dividerClass}
-                    control={(
-                        <Button onClick={handleOpenOverlaySettings}>
-                            {hasOverlayPermission
-                                ? t('options.lyricsWallpaperOverlayGranted')
-                                : t('options.lyricsWallpaperOverlayGrant')}
-                        </Button>
-                    )}
-                />
-                {/* 叠层总开关：关掉之后一层都不挂，下面几项也就没有意义了。 */}
-                <SettingsRow
-                    option={WALLPAPER.overlayEnabled}
-                    dividerClass={dividerClass}
-                    control={(
-                        <Toggle checked={wallpaperOverlayEnabled} onChange={onToggleWallpaperOverlayEnabled} />
-                    )}
-                />
-                {/* 叠层不透明度：整层从几乎看不见到完全不透明。 */}
-                <SettingsRow
-                    option={WALLPAPER.overlayOpacity}
-                    dividerClass={dividerClass}
-                    control={(
-                        <div className="flex items-center gap-2">
-                            <RangeInput
-                                min={10}
-                                max={100}
-                                step={5}
-                                value={Math.round(wallpaperOverlayOpacity * 100)}
-                                onChange={value => onSetWallpaperOverlayOpacity(value / 100)}
-                                className="h-1 w-28 cursor-pointer accent-white"
-                            />
-                            <span className="w-9 text-right font-mono text-xs opacity-60" style={{ color: 'var(--text-secondary)' }}>
-                                {Math.round(wallpaperOverlayOpacity * 100)}%
-                            </span>
-                        </div>
-                    )}
-                />
-                {/* 叠层是否在所有应用之上显示。 */}
-                <SettingsRow
-                    option={WALLPAPER.overlayAllApps}
-                    dividerClass={dividerClass}
-                    control={(
-                        <Toggle checked={wallpaperOverlayAllApps} onChange={onToggleWallpaperOverlayAllApps} />
-                    )}
-                />
-                {/* 音乐锁屏：锁屏之上也挂同一层。 */}
-                <SettingsRow
-                    option={WALLPAPER.overlayLockScreen}
-                    dividerClass={dividerClass}
-                    control={(
-                        <Toggle checked={wallpaperOverlayLockScreen} onChange={onToggleWallpaperOverlayLockScreen} />
-                    )}
-                />
-                {/* 叠层只在锁屏上出现：桌面 / 所有应用 / App 内都不挂。 */}
-                <SettingsRow
-                    option={WALLPAPER.overlayLockScreenOnly}
-                    dividerClass={dividerClass}
-                    control={(
-                        <Toggle checked={wallpaperOverlayLockScreenOnly} onChange={onToggleWallpaperOverlayLockScreenOnly} />
-                    )}
-                />
-                {lockScreenActive && lockScreenStatus && (
-                    <p
-                        className="px-4 pb-3 text-xs leading-relaxed"
-                        style={{ color: 'var(--text-secondary)' }}
-                    >
-                        {lockScreenStatus.blocked
-                            ? t('options.wallpaperOverlayLockScreenBlocked')
-                            : (lockScreenStatus.hosted || lockScreenStatus.started)
-                                ? t('options.wallpaperOverlayLockScreenReady')
-                                : t('options.wallpaperOverlayLockScreenWaiting')}
-                    </p>
-                )}
-                {lockScreenActive && lockScreenStatus?.lastExit && (
-                    <p
-                        className="px-4 pb-3 text-xs leading-relaxed opacity-70"
-                        style={{ color: 'var(--text-secondary)' }}
-                    >
-                        {t('options.wallpaperOverlayLockScreenLastExit')}{lockScreenStatus.lastExit}
-                    </p>
-                )}
-                {/*
-                 * ROM 引导：锁屏页起不来时，绝大多数是 ROM 那几道开关没开。
-                 *
-                 * 代码绕不过去（没有任何调用能替用户授权），只能把人送到正确的页面 ——
-                 * 所以这里在「被拦了 / 试过但一直没起来」时才出现，平时不占地方。
-                 */}
-                {lockScreenActive && lockScreenStatus && (lockScreenStatus.blocked
-                    || (!lockScreenStatus.hosted && !lockScreenStatus.started
-                        && lockScreenStatus.attempts > 0)) && (
-                    <div className="px-4 pb-3">
-                        <p
-                            className="text-xs leading-relaxed"
-                            style={{ color: 'var(--text-secondary)' }}
-                        >
-                            {lockScreenStatus.rom
-                                ? t('options.wallpaperOverlayLockScreenRomHint', { rom: lockScreenStatus.rom })
-                                : t('options.wallpaperOverlayLockScreenGenericHint')}
-                        </p>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                            <button
-                                type="button"
-                                onClick={handleOpenOverlaySettings}
-                                className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${utilityGhostButtonClass}`}
-                                style={{ color: 'var(--text-primary)' }}
-                            >
-                                {hasOverlayPermission
-                                    ? t('options.lyricsWallpaperOverlayGranted')
-                                    : t('options.lyricsWallpaperOverlayGrant')}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => void openRomPermissionPage('background')}
-                                className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${utilityGhostButtonClass}`}
-                                style={{ color: 'var(--text-primary)' }}
-                            >
-                                {t('options.wallpaperOverlayLockScreenOpenBackground')}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => void openRomPermissionPage('power')}
-                                className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${utilityGhostButtonClass}`}
-                                style={{ color: 'var(--text-primary)' }}
-                            >
-                                {t('options.wallpaperOverlayLockScreenOpenPower')}
-                            </button>
-                        </div>
-                    </div>
-                )}
-                {/* 叠层的动作流水：只给「为什么突然消失」这类问题用，所以折叠起来，
-                    平时不占地方。新的在前，最多 40 条（原生那边是个环形缓冲）。 */}
-                {overlayEventLog.length > 0 && (
-                    <details className="px-4 pb-3">
-                        <summary
-                            className="cursor-pointer text-xs leading-relaxed opacity-70"
-                            style={{ color: 'var(--text-secondary)' }}
-                        >
-                            {t('options.wallpaperOverlayEventLog', { count: overlayEventLog.length })}
-                        </summary>
-                        <pre
-                            className="mt-2 max-h-56 overflow-y-auto whitespace-pre-wrap break-all rounded-lg px-2 py-1.5 font-mono text-[10px] leading-relaxed"
-                            style={{
-                                color: 'var(--text-secondary)',
-                                backgroundColor: 'color-mix(in srgb, var(--text-primary) 6%, transparent)',
-                            }}
-                        >
-                            {overlayEventLog.join('\n')}
-                        </pre>
-                    </details>
-                )}
-                {/* 跟随 + 叠层时，原生那层的歌词/进度条要不要让位。 */}
-                <SettingsRow
-                    option={WALLPAPER.overlayHideNativeLyrics}
-                    dividerClass={dividerClass}
-                    control={(
-                        <Toggle checked={wallpaperOverlayHideNativeLyrics} onChange={onToggleWallpaperOverlayHideNativeLyrics} />
-                    )}
-                />
-                {/* 暂停时是否收起叠层。 */}
-                <SettingsRow
-                    option={WALLPAPER.overlayHideWhenPaused}
-                    dividerClass={dividerClass}
-                    control={(
-                        <Toggle checked={wallpaperOverlayHideWhenPaused} onChange={onToggleWallpaperOverlayHideWhenPaused} />
-                    )}
-                />
-                {/* 歌词唱完之后（长尾奏）是否收起叠层。 */}
-                <SettingsRow
-                    option={WALLPAPER.overlayHideAfterLyricsEnd}
-                    dividerClass={dividerClass}
-                    control={(
-                        <Toggle checked={wallpaperOverlayHideAfterLyricsEnd} onChange={onToggleWallpaperOverlayHideAfterLyricsEnd} />
-                    )}
-                />
-                {/*
-                  叠层里的封面要不要显示。
-
-                  默认隐藏：封面是一整块不透明的方形图，挂在叠层上就把底下的原生壁纸
-                  糊掉一大块，而叠层存在的意义恰恰是透出壁纸。想要莫奈那套完整构图的
-                  再关掉这一项。
-                */}
-                <SettingsRow
-                    option={WALLPAPER.overlayHideCoverArt}
-                    dividerClass={dividerClass}
-                    control={(
-                        <Toggle checked={wallpaperOverlayHideCoverArt} onChange={onToggleWallpaperOverlayHideCoverArt} />
-                    )}
-                />
-                {/* 纯音乐（没有歌词）时是否显示叠层。 */}
-                <SettingsRow
-                    option={WALLPAPER.overlaySkipInstrumental}
-                    dividerClass={dividerClass}
-                    control={(
-                        <Toggle checked={wallpaperOverlaySkipInstrumental} onChange={onToggleWallpaperOverlaySkipInstrumental} />
-                    )}
-                />
-                <SettingsRow
-                    option={WALLPAPER.overlayHideNativeProgress}
-                    dividerClass={dividerClass}
-                    control={(
-                        <Toggle checked={wallpaperOverlayHideNativeProgress} onChange={onToggleWallpaperOverlayHideNativeProgress} />
-                    )}
-                />
+                <LyricsWallpaperOverlayRows isDaylight={isDaylight} />
                 <SettingsRow
                     option={WALLPAPER.background}
                     dividerClass={dividerClass}
@@ -841,8 +289,7 @@ const LyricsWallpaperSettingsSection: React.FC<LyricsWallpaperSettingsSectionPro
                                     {t('options.lyricsWallpaperPickImage')}
                                 </Button>
                                 {lyricsWallpaperImage && (
-                                    <button
-                                        type="button"
+                                    <UiButton
                                         onClick={() => {
                                         onSetLyricsWallpaperImage(null);
                                         void clearWallpaperBackgroundImage();
@@ -851,9 +298,9 @@ const LyricsWallpaperSettingsSection: React.FC<LyricsWallpaperSettingsSectionPro
                                         style={{ color: 'var(--text-secondary)' }}
                                     >
                                         {t('options.lyricsWallpaperClearImage')}
-                                    </button>
+                                    </UiButton>
                                 )}
-                                <input
+                                <TextField
                                     ref={imageInputRef}
                                     type="file"
                                     accept="image/*"
@@ -878,14 +325,13 @@ const LyricsWallpaperSettingsSection: React.FC<LyricsWallpaperSettingsSectionPro
                                         : 'options.lyricsWallpaperPickVideo')}
                                 </Button>
                                 {hasVideo && (
-                                    <button
-                                        type="button"
+                                    <UiButton
                                         onClick={() => void handleClearVideo()}
                                         className="block text-xs opacity-60 hover:opacity-100"
                                         style={{ color: 'var(--text-secondary)' }}
                                     >
                                         {t('options.lyricsWallpaperClearVideo')}
-                                    </button>
+                                    </UiButton>
                                 )}
                                 <p className="text-xs opacity-60" style={{ color: 'var(--text-secondary)' }}>
                                     {t('options.lyricsWallpaperVideoDesc')}
@@ -972,14 +418,13 @@ const LyricsWallpaperSettingsSection: React.FC<LyricsWallpaperSettingsSectionPro
                                         : ''}
                             </span>
                             {hasWallpaperFont && (
-                                <button
-                                    type="button"
+                                <UiButton
                                     onClick={handleClearWallpaperFont}
                                     className="text-xs opacity-60 hover:opacity-100"
                                     style={{ color: 'var(--text-secondary)' }}
                                 >
                                     {t('options.lyricsWallpaperClearFont')}
-                                </button>
+                                </UiButton>
                             )}
                         </div>
                     </SettingsRow>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { type Theme } from '../../../types';
 import { colorWithAlpha } from '../../../utils/visualizer/colorMix';
+import { Button } from '../../ui';
 
 // src/components/visualizer/window/VisPlaygroundPreviewHotspots.tsx
 // Transparent click targets that map preview regions to the right-side settings panel.
@@ -64,9 +65,8 @@ const VisPlaygroundPreviewHotspots: React.FC<VisPlaygroundPreviewHotspotsProps> 
                     : colorWithAlpha(theme.backgroundColor, 0.72);
 
                 return (
-                    <button
+                    <Button
                         key={hotspot.section}
-                        type="button"
                         aria-pressed={isActive}
                         onClick={(event) => {
                             event.stopPropagation();
@@ -97,7 +97,7 @@ const VisPlaygroundPreviewHotspots: React.FC<VisPlaygroundPreviewHotspotsProps> 
                         >
                             {hotspot.label}
                         </span>
-                    </button>
+                    </Button>
                 );
             })}
         </div>

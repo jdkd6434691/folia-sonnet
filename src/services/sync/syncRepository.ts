@@ -5,6 +5,7 @@ import { getSyncConfig, isSyncConfigured, setSyncStatus } from './syncConfig';
 import {
     getRemoteState,
     getRemoteSettings,
+    getRemoteSettingsConfirmation,
     getRemoteThemes,
     getRemoteThemeManifest,
     getRemoteThemesByBuckets,
@@ -176,15 +177,16 @@ export const fetchRemoteSettingsIfNewer = async (
     return remoteSettings;
 };
 
-export const pushRemoteSettings = async (record: SyncedSettingsRecord) => {
+export const fetchRemoteSettingsConfirmation = async () => {
     const config = getConfiguredSync();
-    if (!config) {
-        return false;
-    }
+    if (!config) throw new Error('Sync is not configured');
+    return getRemoteSettingsConfirmation(config);
+};
 
-    await putRemoteSettings(config, record);
-    setSyncStatus({ state: 'success', lastSyncAt: new Date().toISOString(), lastError: null });
-    return true;
+export const pushRemoteSettings = async (record: SyncedSettingsRecord, expectedRevision: string | null) => {
+    const config = getConfiguredSync();
+    if (!config) throw new Error('Sync is not configured');
+    return putRemoteSettings(config, record, expectedRevision);
 };
 
 const saveRemoteThemeToLocalCache = async (
@@ -504,7 +506,8 @@ export const pushSyncLibraryBundleToRemote = async (bundle: SyncLibraryExportBun
     }
 
     if (bundle.settings) {
-        await putRemoteSettings(config, bundle.settings);
+        const observed = await getRemoteSettingsConfirmation(config);
+        await putRemoteSettings(config, bundle.settings, observed.revision);
     }
     for (let index = 0; index < bundle.themes.length; index += THEME_BATCH_SIZE) {
         await putRemoteThemes(config, bundle.themes.slice(index, index + THEME_BATCH_SIZE));

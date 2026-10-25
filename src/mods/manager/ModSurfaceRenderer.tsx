@@ -11,6 +11,7 @@ import { commandsRegistry, runFoliumCommand, useFoliumCommandState, type StoredF
 import { useFoliumStatusStore } from '../runtime/status';
 import { FoliumSettingsSections, settingsSectionsRegistry } from '../folium/registries/settingsSections';
 import type { Theme } from '@/types';
+import { Button } from '../../components/ui';
 
 // src/mods/manager/ModSurfaceRenderer.tsx
 // A mod's surface inside the mods panel: the runtime problems its client ran
@@ -77,13 +78,12 @@ const ModCommandCard: React.FC<{
     const isWaiting = showProgress && exportedProgress?.phase === 'waiting';
     const isRunning = Boolean(runState?.running) || isRendering || isWaiting;
     const cancelButton = (
-        <button
-            type="button"
+        <Button
             onClick={cancelActiveExport}
             className={`shrink-0 ${isDaylight ? 'text-red-600 hover:text-red-700' : 'text-red-300 hover:text-red-200'}`}
         >
             {t('mods.cancelExport')}
-        </button>
+        </Button>
     );
 
     const updateParam = (param: FoliumSetting, value: unknown) => {
@@ -104,8 +104,7 @@ const ModCommandCard: React.FC<{
                         <div className="text-[11px] opacity-55 mt-0.5 leading-snug">{description}</div>
                     ) : null}
                 </div>
-                <button
-                    type="button"
+                <Button
                     onClick={() => void runFoliumCommand(entry, values)}
                     disabled={isRunning}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium shrink-0 transition-colors ${
@@ -116,7 +115,7 @@ const ModCommandCard: React.FC<{
                 >
                     {isRunning ? <Loader2 size={13} className="animate-spin" /> : <Play size={13} />}
                     {isRunning ? t('mods.running') : t('mods.runCommand')}
-                </button>
+                </Button>
             </div>
 
             {params.length > 0 ? (

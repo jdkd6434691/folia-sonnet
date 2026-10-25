@@ -6,6 +6,7 @@ import type {
     TemperaLayerImageAlign,
     TemperaLayerImageVerticalAlign,
 } from '../../../types';
+import { Button } from '../../ui';
 import { hashTemperaSeed } from './temperaRandom';
 import { resolveTemperaImagePlacement } from './temperaImageLayer';
 import { TemperaRangeControl } from './TemperaSettingsControls';
@@ -46,8 +47,7 @@ interface ModeButtonProps {
 }
 
 const ModeButton: React.FC<ModeButtonProps> = ({ active, label, tokens, onClick }) => (
-    <button
-        type="button"
+    <Button
         onClick={onClick}
         aria-pressed={active}
         className="rounded-full border px-3 py-1.5 text-xs transition-colors"
@@ -58,7 +58,7 @@ const ModeButton: React.FC<ModeButtonProps> = ({ active, label, tokens, onClick 
         }}
     >
         {label}
-    </button>
+    </Button>
 );
 
 const TemperaImagePlacementEditor: React.FC<TemperaImagePlacementEditorProps> = ({
@@ -122,9 +122,8 @@ const TemperaImagePlacementEditor: React.FC<TemperaImagePlacementEditorProps> = 
                             horizontal: horizontalLabels[align],
                         });
                         return (
-                            <button
+                            <Button
                                 key={`${verticalAlign}-${align}`}
-                                type="button"
                                 onClick={() => onPatch(image.id, { align, verticalAlign })}
                                 aria-label={label}
                                 aria-pressed={active}
@@ -140,20 +139,19 @@ const TemperaImagePlacementEditor: React.FC<TemperaImagePlacementEditorProps> = 
                                         boxShadow: active ? tokens.markerHalo : undefined,
                                     }}
                                 />
-                            </button>
+                            </Button>
                         );
                     }))}
                 </div>
 
-                <button
-                    type="button"
+                <Button
                     onClick={() => onRemove(image.id)}
                     className={`absolute right-2 top-2 z-20 rounded-full border p-1.5 backdrop-blur-sm transition-colors ${tokens.overlayButtonClass}`}
                     aria-label={t('options.temperaRemoveLayerImage')}
                     style={{ color: tokens.textPrimary, borderColor: tokens.line }}
                 >
                     <Trash2 size={13} />
-                </button>
+                </Button>
             </div>
 
             <div className="space-y-2">

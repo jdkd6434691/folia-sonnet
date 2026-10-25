@@ -5,6 +5,7 @@ import { useLucideIcons } from '../../../hooks/useLucideIcons';
 import { hasLucideIcon, resolveLucideIcon } from '../../../services/lucideIconResolver';
 import { Button, ColorField, FIELD_CLASS, Group, Row, type SettingsGroupDef } from '../settings/kit';
 import { LYRICS_ICON_LIMIT, WORD_COLOR_LIMIT, type WordColorEntry } from './themeParkDraft';
+import { Button as UiButton, TextField } from '@/components/ui';
 
 // src/components/modal/theme-park/ThemeParkContentPanel.tsx
 // Content tab: the emotion word colors and the lucide lyric icons an AI theme carries. Both
@@ -99,7 +100,7 @@ const ThemeParkContentPanel: React.FC<ThemeParkContentPanelProps> = ({
                             swatches={recommendedColors}
                             swatchesLabel={t('options.aiThemeQuickEditRecommendedColors')}
                         />
-                        <input
+                        <TextField
                             type="text"
                             value={entry.word}
                             onChange={(event) => updateWordColor(index, { word: event.target.value })}
@@ -145,14 +146,13 @@ const ThemeParkContentPanel: React.FC<ThemeParkContentPanelProps> = ({
                                 >
                                     {Icon ? <Icon size={13} /> : null}
                                     <span>{iconName}</span>
-                                    <button
-                                        type="button"
+                                    <UiButton
                                         onClick={() => onLyricsIconsChange(lyricsIcons.filter(name => name !== iconName))}
                                         className="st-t-fast grid h-5 w-5 place-items-center rounded-md text-[color:var(--st-t3)] transition-colors hover:bg-[var(--st-fill2)] hover:text-[color:var(--st-t1)]"
                                         aria-label={`${t('theme.removeEntry')} ${iconName}`}
                                     >
                                         <X size={11} />
-                                    </button>
+                                    </UiButton>
                                 </span>
                             );
                         })}
@@ -160,7 +160,7 @@ const ThemeParkContentPanel: React.FC<ThemeParkContentPanelProps> = ({
                 )}
 
                 <div className="flex min-h-14 items-center gap-2 px-4 py-2.5">
-                    <input
+                    <TextField
                         type="text"
                         value={iconDraft}
                         onChange={(event) => {

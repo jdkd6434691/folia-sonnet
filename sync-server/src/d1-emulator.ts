@@ -13,6 +13,7 @@ const MAX_CACHED_STATEMENTS = 512;
 export class D1Emulator implements D1Database {
   private db: Database.Database;
   private statements = new Map<string, Database.Statement>();
+  private runners = new WeakMap<D1PreparedStatement, () => unknown>();
 
   constructor(filename: string) {
     this.db = new Database(filename);
@@ -48,40 +49,42 @@ export class D1Emulator implements D1Database {
   }
 
   prepare(query: string): D1PreparedStatement {
-    const createBoundStatement = (boundValues: unknown[]): D1PreparedStatement => ({
-      bind: (...values: unknown[]) => createBoundStatement(values),
-      first: async <T = Record<string, unknown>>() => {
-        const stmt = this.statement(query);
-        const result = stmt.get(...boundValues) as T | undefined;
-        return result ?? null;
-      },
-      all: async <T = Record<string, unknown>>() => {
-        const stmt = this.statement(query);
-        const results = stmt.all(...boundValues) as T[];
-        return { results };
-      },
-      run: async () => {
-        const stmt = this.statement(query);
-        stmt.run(...boundValues);
+    const createBoundStatement = (boundValues: unknown[]): D1PreparedStatement => {
+      const run = () => {
+        this.statement(query).run(...boundValues);
         return {};
-      }
-    });
+      };
+      const statement: D1PreparedStatement = {
+        bind: (...values: unknown[]) => createBoundStatement(values),
+        first: async <T = Record<string, unknown>>() => {
+          const result = this.statement(query).get(...boundValues) as T | undefined;
+          return result ?? null;
+        },
+        all: async <T = Record<string, unknown>>() => {
+          const results = this.statement(query).all(...boundValues) as T[];
+          return { results };
+        },
+        run: async () => run(),
+      };
+      this.runners.set(statement, () => {
+        const stmt = this.statement(query);
+        // D1 batch also returns rows for SELECT / PRAGMA / RETURNING statements.
+        if (stmt.reader) return { results: stmt.all(...boundValues) };
+        return run();
+      });
+      return statement;
+    };
     return createBoundStatement([]);
   }
 
   async batch(statements: D1PreparedStatement[]): Promise<unknown[]> {
-    const results: unknown[] = [];
-    const transaction = this.db.transaction(() => {
-      for (const stmt of statements) {
-        // We know 'stmt' has a 'run' method that executes it. Wait, the actual statements in batch might be run, first, all?
-        // D1 batch executes them. We can just call run(). Wait, run is async in our emulator.
-        // Let's implement a hack to expose the sync version for batch transaction.
-        // For our usage, batch only uses `run` conceptually.
-        stmt.run();
-        results.push({});
-      }
+    // Validate ownership before any statement runs, including statements with external side effects.
+    const runners = statements.map((statement) => {
+      const run = this.runners.get(statement);
+      if (!run) throw new Error('D1 batch statement belongs to another database');
+      return run;
     });
-    transaction();
-    return results;
+    // Native SQLite transactions must observe synchronous throws, not rejected run() promises.
+    return this.db.transaction(() => runners.map((run) => run()))();
   }
 }

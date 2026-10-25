@@ -2,6 +2,7 @@ import React, { useId, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
 import { kitTransition, useKitReducedMotion } from '../../kit';
+import { Button } from '@/components/ui';
 
 // src/components/modal/settings/pages/desktop/DisplayMap.tsx
 // A choice among the connected displays, drawn as a small map of how they are arranged: each
@@ -162,8 +163,7 @@ export const DisplayMap: React.FC<DisplayMapProps> = ({ displays, value, activeI
             }}
             className="flex max-w-full flex-wrap items-start justify-end gap-3 py-1"
         >
-            <button
-                type="button"
+            <Button
                 role="radio"
                 aria-checked={autoChosen}
                 data-option={AUTO}
@@ -198,7 +198,7 @@ export const DisplayMap: React.FC<DisplayMapProps> = ({ displays, value, activeI
                 <span className={`st-t-fast max-w-full text-center text-xs leading-4 transition-colors ${autoChosen ? 'text-[color:var(--st-t1)]' : 'text-[color:var(--st-t2)] group-hover:text-[color:var(--st-t1)]'}`}>
                     {autoLabel}
                 </span>
-            </button>
+            </Button>
 
             {/* Places and sizes are shares of the map, so a row narrower than the map shrinks it whole. */}
             <div className="relative max-w-full" style={{ width: map.width, aspectRatio: `${map.width} / ${map.height}`, margin: -GAP }}>
@@ -212,9 +212,8 @@ export const DisplayMap: React.FC<DisplayMapProps> = ({ displays, value, activeI
                     const fit = fitText(width, height);
                     const name = [index + 1, `${resolution.width} × ${resolution.height}`, display.primary ? primaryLabel : '', display.label].filter(Boolean).join(', ');
                     return (
-                        <button
+                        <Button
                             key={display.id}
-                            type="button"
                             role="radio"
                             aria-checked={isChosen}
                             aria-label={name}
@@ -250,7 +249,7 @@ export const DisplayMap: React.FC<DisplayMapProps> = ({ displays, value, activeI
                                 )}
                             </span>
                             {isChosen && mark}
-                        </button>
+                        </Button>
                     );
                 })}
             </div>

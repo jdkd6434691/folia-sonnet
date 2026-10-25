@@ -12,6 +12,7 @@ import { kitMotionTokens, useKitReducedMotion } from '../modal/settings/kit/moti
 import { openLoginWindow, useLoginWindowStore } from './loginWindowStore';
 import { AccountPicture, PlatformMark } from './PlatformMark';
 import { pillProvider, pillSeenNext, rowStatus, type PillSeen } from './platformRows';
+import { Button } from '../ui';
 
 // src/components/login/SwitcherPill.tsx
 // 主页右下角的切换器：正在用的账号的头像，角上是平台的记号（没有人登录时只有记号；登录失效时记号上
@@ -115,8 +116,7 @@ const SwitcherPill: React.FC<SwitcherPillProps> = ({ account, onBackToPlayer }) 
         >
             <div className="flex items-center rounded-[26px] bg-[var(--st-menu)] p-0.5 text-[color:var(--st-t1)] shadow-lg md:p-1.5">
                 <Tooltip text={t('home.switchOnlineProvider')} className="inline-flex">
-                    <button
-                        type="button"
+                    <Button
                         onClick={event => openLoginWindow(provider.providerId, event.currentTarget.querySelector('[data-login-pill]'))}
                         aria-label={t('home.switchOnlineProvider')}
                         className="st-t-fast flex h-10 min-w-10 items-center rounded-full transition-colors hover:bg-[var(--st-fill)]"
@@ -130,18 +130,17 @@ const SwitcherPill: React.FC<SwitcherPillProps> = ({ account, onBackToPlayer }) 
                         <span className={`st-t-move overflow-hidden whitespace-nowrap text-xs font-semibold transition-[max-width,opacity,padding] ${showLabel ? 'max-w-[180px] pl-2.5 pr-3 opacity-100' : 'max-w-0 opacity-0'}`}>
                             {provider.shortName || provider.displayName}
                         </span>
-                    </button>
+                    </Button>
                 </Tooltip>
                 <span className="mx-1.5 hidden h-6 w-px bg-[var(--st-line2)] md:block" aria-hidden="true" />
                 <Tooltip text={t('home.backToPlayer')} className="hidden md:inline-flex">
-                    <button
-                        type="button"
+                    <Button
                         onClick={onBackToPlayer}
                         aria-label={t('home.backToPlayer')}
                         className="st-t-fast flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-[var(--st-fill)]"
                     >
                         <ChevronRight size={21} />
-                    </button>
+                    </Button>
                 </Tooltip>
             </div>
         </div>

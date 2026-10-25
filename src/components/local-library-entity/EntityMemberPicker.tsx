@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { List as VirtualList, type RowComponentProps } from 'react-window';
 import type { LocalSong } from '../../types';
 import { filterEntityMemberSongs } from './entityEditorModel';
+import { Button, TextField } from '../ui';
 
 // src/components/local-library-entity/EntityMemberPicker.tsx
 // Provides the searchable member selection shown only while splitting an entity.
@@ -25,8 +26,7 @@ const SongRow = ({ index, style, ariaAttributes, songs, selectedSongIds, onToggl
 
     return (
         <div {...ariaAttributes} style={style} className="px-1 py-0.5">
-            <button
-                type="button"
+            <Button
                 onClick={() => onToggle(song.id)}
                 className={`flex h-full w-full items-center gap-4 rounded-xl border px-4 text-left transition-all duration-200 ${selected
                     ? isDaylight ? 'bg-blue-50 border-blue-200 shadow-sm' : 'bg-blue-500/15 border-blue-500/40 shadow-sm'
@@ -47,7 +47,7 @@ const SongRow = ({ index, style, ariaAttributes, songs, selectedSongIds, onToggl
                         {song.importedMetadata.artistNames.join(', ') || song.importedMetadata.albumName || song.fileName}
                     </span>
                 </span>
-            </button>
+            </Button>
         </div>
     );
 };
@@ -70,7 +70,7 @@ export const EntityMemberPicker = ({ memberSongs, selectedSongIds, onToggle, isD
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
             <div className={`flex items-center gap-3 rounded-2xl border px-4 py-3 transition-all duration-200 ${inputTheme}`}>
                 <Search size={16} className="text-blue-500 opacity-80" />
-                <input
+                <TextField
                     value={query}
                     onChange={event => setQuery(event.target.value)}
                     placeholder={t('localMusic.searchEntitySongs')}

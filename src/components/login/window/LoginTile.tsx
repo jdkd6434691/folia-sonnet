@@ -4,6 +4,7 @@ import type { LoginCaseKind } from '../../../types/loginFailure';
 import type { OnlineProviderId, ProviderUser } from '../../../types/onlineMusic';
 import { AccountPicture, PlatformMark } from '../PlatformMark';
 import type { LoginScene } from './loginView';
+import { Button } from '../../ui';
 
 // src/components/login/window/LoginTile.tsx
 // 登录发生的地方：200 像素见方的一块，每一种样子一幅画。二维码；过期的二维码淡淡地留在原地，
@@ -92,13 +93,13 @@ export const LoginTile: React.FC<LoginTileProps> = ({
         picture = <PlatformMark providerId={providerId} label={label} size={56} />;
     } else if (expiredCode) {
         picture = (
-            <button type="button" onClick={onRefreshCode} aria-label={refreshLabel} className="relative grid h-full w-full place-items-center">
+            <Button onClick={onRefreshCode} aria-label={refreshLabel} className="relative grid h-full w-full place-items-center">
                 <img src={codeImage} alt="" draggable={false} className="h-[176px] w-[176px] opacity-10" />
                 {/* 二维码底下的那一块在两种主题里都是白的（码要在白底上才扫得出来），所以它上面的圆钮在两种主题里都是深色的，不跟主题的变量。 */}
                 <span className="st-t-fast absolute grid h-14 w-14 place-items-center rounded-full bg-[#17171a] text-white transition-transform active:scale-95">
                     <RefreshCw size={22} />
                 </span>
-            </button>
+            </Button>
         );
     } else if (scene === 'failed' && failedKind) {
         const { icon: Glyph, tone } = KIND_GLYPH[failedKind];

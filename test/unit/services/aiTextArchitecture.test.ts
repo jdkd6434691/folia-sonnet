@@ -30,9 +30,11 @@ const ALLOWED: Record<string, Kind[]> = {
     'src/vite-env.d.ts': ['bridge'],
     // Reads which service the web deployment chose (the build's VITE_AI_PROVIDER).
     'src/services/runtimeConfig.ts': ['setting'],
-    // The settings form: it shows and stores the AI settings under their stored names, and shows
-    // an example address as a placeholder.
+    // The settings form and the panel state it is split into: they show and store the AI settings
+    // under their stored names, and show an example address as a placeholder. The form still names
+    // the two stored keys when it hands them to the desktop page.
     'src/components/modal/SettingsModal.tsx': ['setting'],
+    'src/components/modal/settings/useElectronSettingsPanel.ts': ['setting'],
     // The type of the form's state, which the dialog hands to the page that draws the form.
     'src/components/modal/settings/pages/settingsPageContext.ts': ['setting'],
     'src/components/modal/settings/pages/ai/AiProviderSettings.tsx': ['setting'],

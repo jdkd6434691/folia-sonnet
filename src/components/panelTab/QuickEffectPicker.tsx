@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import { PictureGrid, Popover, type PictureState } from '../modal/settings/kit';
+import { Button } from '../ui';
 
 // src/components/panelTab/QuickEffectPicker.tsx
 // The picker a row of the player panel opens: the options as pictures, three across and as wide as
@@ -26,8 +27,7 @@ type QuickEffectPickerProps<Value extends string> = {
 
 /** The way on to the full settings at the bottom of a panel picker; it closes the picker first. */
 export const PickerMoreButton: React.FC<{ label: string; onClose: () => void; onOpenMore: () => void }> = ({ label, onClose, onOpenMore }) => (
-    <button
-        type="button"
+    <Button
         onClick={() => {
             onClose();
             onOpenMore();
@@ -36,7 +36,7 @@ export const PickerMoreButton: React.FC<{ label: string; onClose: () => void; on
     >
         <span>{label}</span>
         <ChevronRight size={14} />
-    </button>
+    </Button>
 );
 
 const QuickEffectPicker = <Value extends string>({

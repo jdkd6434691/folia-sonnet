@@ -19,6 +19,12 @@ type RegisterRemoteAudioResponse = {
 };
 
 type NativePlugin = {
+    unregisterRemoteAudio?: (options: { url: string }) => Promise<unknown>;
+    registerScopedRemoteAudio?: (options: {
+        url: string;
+        headers: Record<string, string>;
+        credentialOrigin: string;
+    }) => Promise<RegisterRemoteAudioResponse>;
     registerRemoteAudio?: (options: {
         url: string;
         /** 转发时要附带的请求头（飞牛的 music-token 就走这里）；老版本插件没有这个参数。 */
@@ -38,7 +44,38 @@ const getPlugin = (): NativePlugin | null => (
 );
 
 /** 已经是本机回环地址了，不用再套一层。 */
-const isLoopbackAudio = (url: string): boolean => url.includes('127.0.0.1') || url.includes('localhost');
+const isLoopbackAudio = (value: string): boolean => {
+    try {
+        const url = new URL(value);
+        return /^https?:$/.test(url.protocol) && ['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname);
+    } catch {
+        return false;
+    }
+};
+
+/** 旧插件没有安全注册入口时不降级到任意主机注册。 */
+export const proxyNativeScopedResourceUrl = async (
+    url: string,
+    options: { headers: Record<string, string>; credentialOrigin: string },
+): Promise<string> => {
+    try {
+        const parsed = new URL(url);
+        if (!/^https?:$/.test(parsed.protocol) || parsed.origin !== options.credentialOrigin
+            || parsed.username || parsed.password) return url;
+        const plugin = getPlugin();
+        if (!plugin?.registerScopedRemoteAudio || !plugin.unregisterRemoteAudio) return url;
+        const result = await plugin.registerScopedRemoteAudio({ url, ...options });
+        return result?.proxied === true && result.url ? result.url : url;
+    } catch {
+        return url;
+    }
+};
+
+export const unregisterNativeRemoteAudioUrl = async (url: string): Promise<void> => {
+    try {
+        await getPlugin()?.unregisterRemoteAudio?.({ url });
+    } catch { /* 撤销失败不能把旧地址重新写回歌曲。 */ }
+};
 
 export const proxyNativeRemoteAudioUrl = async (
     url: string | null | undefined,

@@ -6,6 +6,7 @@ import { MotionValue } from 'framer-motion';
 import ProgressBar from './ProgressBar';
 import { PlayerState, LyricData, Theme } from '../types';
 import LyricsTimelineModal from './modal/LyricsTimelineModal';
+import { Button } from './ui';
 import TrackTitleNavigator from './floating-player/TrackTitleNavigator';
 import PlayerControlSlotButton from './floating-player/PlayerControlSlotButton';
 import PlayerBottomBarPositioner from './floating-player/PlayerBottomBarPositioner';
@@ -679,7 +680,7 @@ const ExpandedView: React.FC<ExpandedViewProps> = ({
             </div>
 
             {/* Row 3: Loop Button, Play Button, Lyrics Button */}
-            <button
+            <Button
                 data-folia-player-bar-play="true"
                 onClick={(e) => {
                     e.stopPropagation();
@@ -694,7 +695,7 @@ const ExpandedView: React.FC<ExpandedViewProps> = ({
                 ) : (
                     <Play size={20} fill="currentColor" className="ml-1" />
                 )}
-            </button>
+            </Button>
 
             {/* 两个可自定义槽位。默认仍是循环模式 + 歌词时间轴，和改动前一致。 */}
             <div

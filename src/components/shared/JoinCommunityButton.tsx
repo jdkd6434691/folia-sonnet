@@ -4,6 +4,7 @@ import { Check, ChevronDown, Copy, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { QQ_COMMUNITY_GROUP_NUMBER } from './qqCommunity';
 import { copyText } from '../../utils/system/clipboard';
+import { Button } from '../ui';
 
 // src/components/shared/JoinCommunityButton.tsx
 // 帮助页的「加入社区」：一颗胶囊，点开向上弹出去处——目前只有 QQ 自助交流群（复制群号）。
@@ -58,8 +59,7 @@ export const JoinCommunityButton: React.FC = () => {
     return (
         <div ref={containerRef} className="relative">
             {/* 与旁边「遇到问题？」同一颗胶囊：入口撤掉后不再有品牌色可言，靠同一排的视觉重量被看见。 */}
-            <button
-                type="button"
+            <Button
                 onClick={() => setIsOpen(current => !current)}
                 aria-haspopup="menu"
                 aria-expanded={isOpen}
@@ -69,7 +69,7 @@ export const JoinCommunityButton: React.FC = () => {
                 <Users size={16} aria-hidden />
                 {t('help.joinCommunity')}
                 <ChevronDown size={14} aria-hidden className={`opacity-60 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-            </button>
+            </Button>
 
             <AnimatePresence>
                 {isOpen && (
@@ -107,8 +107,7 @@ const CommunityMenuItem: React.FC<{
     trailing: React.ReactNode;
     onClick: () => void;
 }> = ({ icon, label, hint, trailing, onClick }) => (
-    <button
-        type="button"
+    <Button
         role="menuitem"
         onClick={onClick}
         className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition-colors hover:bg-black/5 dark:hover:bg-white/10"
@@ -119,5 +118,5 @@ const CommunityMenuItem: React.FC<{
             <span className="block text-xs opacity-60">{hint}</span>
         </span>
         {trailing}
-    </button>
+    </Button>
 );

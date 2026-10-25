@@ -10,6 +10,7 @@ import type { BravaisPanelActions } from './BravaisListPanel';
 import BravaisSeamContent from './BravaisSeamContent';
 import { BravaisSeamNavigation } from './BravaisSeamCrumbs';
 import type { LibraryNavigationContext } from '../../core/suite/suite.contract';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisSeam.tsx
 // 缝与它的边缘标签。缝的屏幕位置、宽度、内容透明度、标签显隐都由 stage 每帧直接写（bravaisFrame），这里只在
@@ -104,9 +105,8 @@ const BravaisSeam: React.FC<BravaisSeamProps> = ({
                     </motion.div>
                 </div>
             </div>
-            <button
+            <Button
                 ref={tabRef}
-                type="button"
                 className="bravais-seam-tab"
                 data-bravais-seam-tab={level === 'hidden' ? 'hidden' : 'collapsed'}
                 style={{ display: 'none' }}
@@ -114,7 +114,7 @@ const BravaisSeam: React.FC<BravaisSeamProps> = ({
                 title={level === 'hidden' ? t('libraryBravais.seamRestore') : t('libraryBravais.seamReopenHere')}
             >
                 {tabLabel}
-            </button>
+            </Button>
         </>
     );
 };

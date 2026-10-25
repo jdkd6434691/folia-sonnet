@@ -6,6 +6,7 @@ import { getPersonalFmSelectionLabel, DEFAULT_PERSONAL_FM_CATALOG, type Personal
 import { readPersonalFmOption } from '../commands/fmModeOptions';
 import { buildPersonalFmSections } from './fmModeSurface';
 import type { CommandPaletteMatch } from '../types';
+import { Button } from '../../ui';
 
 // src/components/command-palette/surfaces/FmModeSurfaceView.tsx
 // Personal FM mode picker, laid out like the volume control: one header stating the current value,
@@ -95,10 +96,9 @@ const FmModeSurfaceView: React.FC<FmModeSurfaceViewProps> = ({
                                     const isSelected = isSelectedOption(match.command.id, selection);
                                     const isActive = index === activeIndex;
                                     return (
-                                        <button
+                                        <Button
                                             key={match.command.id}
                                             ref={isActive ? activePillRef : undefined}
-                                            type="button"
                                             data-fm-option={match.command.id}
                                             data-fm-selected={isSelected ? 'true' : 'false'}
                                             data-fm-active={isActive ? 'true' : 'false'}
@@ -122,7 +122,7 @@ const FmModeSurfaceView: React.FC<FmModeSurfaceViewProps> = ({
                                                 : undefined}
                                         >
                                             {match.command.title}
-                                        </button>
+                                        </Button>
                                     );
                                 })}
                             </div>

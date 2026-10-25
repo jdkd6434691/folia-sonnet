@@ -2,6 +2,7 @@ import React, { useId } from 'react';
 import { motion } from 'framer-motion';
 import { useReducedMotionFor } from '../../../../hooks/useReducedMotionFor';
 import { pillChromeClassesFor as gridChromeClassesFor } from '../../../../components/shared/pillChrome';
+import { Button } from '../../../../components/ui';
 
 // src/library/suites/grid/home/GridViewTabs.tsx
 // The second level of the home header's view capsule: centred right under it, a smaller capsule
@@ -46,7 +47,7 @@ export const GridViewTabs: React.FC<GridViewTabsProps> = ({ tabs, isDaylight, on
     return (
         <div data-folia-grid-tabs="true" className={`pointer-events-auto flex h-7 items-center rounded-full p-0.5 backdrop-blur-md ${chrome.pill}`}>
             {onOpenMap && (
-                <button
+                <Button
                     type="button"
                     onClick={(event) => {
                         event.currentTarget.blur();
@@ -56,7 +57,7 @@ export const GridViewTabs: React.FC<GridViewTabsProps> = ({ tabs, isDaylight, on
                 >
                     {mapIcon}
                     <span className="whitespace-nowrap">{mapLabel}</span>
-                </button>
+                </Button>
             )}
             {onOpenMap && tabs.length > 0 && <span aria-hidden="true" className={`mx-1 h-3.5 w-px ${chrome.divider}`} />}
             {tabs.length > 0 && (

@@ -30,6 +30,7 @@ import BravaisSeamFilterField from './BravaisSeamFilterField';
 import { useBravaisUiStore } from './bravaisUiStore';
 import { openBravaisFilter } from './useBravaisSeamFilter';
 import './bravaisHome.css';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisSeamHome.tsx
 // 首页窄缝 / 首页书脊（设计稿 §5「开合」、§10.5）：折叠、竖排「书库」、页签（五个一级页签，竖排并列成一排书脊）、
@@ -190,9 +191,8 @@ export const HomeSeamShortcuts: React.FC<{
                 {shortcuts.map(shortcut => (measure ? (
                     <span key={shortcut.special} className="bravais-seam-shortcut"><span className="is-label">{name(shortcut)}</span></span>
                 ) : (
-                    <button
+                    <Button
                         key={shortcut.special}
-                        type="button"
                         className="bravais-seam-shortcut"
                         data-bravais-seam-action={`shortcut-${shortcut.special}`}
                         data-bravais-shortcut={shortcut.special}
@@ -201,7 +201,7 @@ export const HomeSeamShortcuts: React.FC<{
                         onClick={() => (onOpen ? onOpen(shortcut) : shortcut.open())}
                     >
                         <span className="is-label" aria-hidden>{name(shortcut)}</span>
-                    </button>
+                    </Button>
                 )))}
             </div>
         </div>
@@ -238,9 +238,8 @@ const HomeSeamHead: React.FC<{
                 ) : (
                     <div className={`bravais-seam-tabs${shorts ? ' is-short' : ''}`} role="tablist" aria-label={title} aria-orientation="vertical">
                         {tabs.map((tab, index) => (
-                            <button
+                            <Button
                                 key={tab.key}
-                                type="button"
                                 role="tab"
                                 aria-selected={tab.active}
                                 aria-label={shorts ? tab.label : undefined}
@@ -252,7 +251,7 @@ const HomeSeamHead: React.FC<{
                                 onClick={() => onSelectTab?.(tab.key)}
                             >
                                 {shorts ? shorts[index] : tab.label}
-                            </button>
+                            </Button>
                         ))}
                     </div>
                 ))}
@@ -307,17 +306,17 @@ const BravaisSeamHome: React.FC<{
     // 与「折叠」并排在页签列上方那一行；书脊上的「展开」与它互为反操作（spine ↔ full）。
     const collapseToSpine = () => setLevel('spine');
     const shrinkButton = (
-        <button type="button" className="bravais-seam-icon" data-bravais-seam-action="shrink"
+        <Button className="bravais-seam-icon" data-bravais-seam-action="shrink"
             onClick={collapseToSpine}
             aria-label={t('libraryBravais.seamSpine')} title={t('libraryBravais.seamSpine')}>
             <Minimize2 aria-hidden />
-        </button>
+        </Button>
     );
     const foldButton = (
-        <button type="button" className="bravais-seam-icon" data-bravais-seam-action="hide" onClick={() => setLevel('hidden')}
+        <Button className="bravais-seam-icon" data-bravais-seam-action="hide" onClick={() => setLevel('hidden')}
             aria-label={t('libraryBravais.seamFold')} title={t('libraryBravais.seamFold')}>
             <FoldHorizontal aria-hidden />
-        </button>
+        </Button>
     );
     // 书脊档已经在最窄了：缩回按钮只在首页窄缝里有，测量副本也按这个形状量。
     const lead = <div className="bravais-seam-home-lead">{!compact && shrinkButton}{foldButton}</div>;
@@ -349,11 +348,11 @@ const BravaisSeamHome: React.FC<{
                                 {home?.manage && (
                                     <motion.div key="manage" className="bravais-seam-manage" data-bravais-manage={home.manage.mode} {...reveal}>
                                         <span>{home.manage.title}</span>
-                                        <button type="button" aria-pressed={home.manage.mode === 'manage-hidden-only'} data-bravais-seam-action="hidden-only"
+                                        <Button aria-pressed={home.manage.mode === 'manage-hidden-only'} data-bravais-seam-action="hidden-only"
                                             className={home.manage.mode === 'manage-hidden-only' ? 'is-active' : undefined} onClick={home.manage.onToggleHiddenOnly}>
                                             {home.manage.mode === 'manage-hidden-only' && <Check aria-hidden />}{home.manage.hiddenOnlyLabel}
-                                        </button>
-                                        <button type="button" data-bravais-seam-action="manage-done" onClick={home.manage.onDone}>{home.manage.doneLabel}</button>
+                                        </Button>
+                                        <Button data-bravais-seam-action="manage-done" onClick={home.manage.onDone}>{home.manage.doneLabel}</Button>
                                     </motion.div>
                                 )}
                             </AnimatePresence>
@@ -397,10 +396,10 @@ const BravaisSeamHome: React.FC<{
                 )}
             </AnimatePresence>
             {seam.filter?.query && compact && (
-                <button type="button" className="bravais-seam-icon is-filtering" data-bravais-seam-action="filter" onClick={openBravaisFilter}
+                <Button className="bravais-seam-icon is-filtering" data-bravais-seam-action="filter" onClick={openBravaisFilter}
                     aria-label={seam.filter.placeholder} title={`${seam.filter.placeholder} · ${seam.filter.query}`}>
                     <ListFilter aria-hidden />
-                </button>
+                </Button>
             )}
             {/* fb4：账户入口贴在工具格正上方（不在中段），平台列表从它往上弹出、盖在导航区上。 */}
             {home?.account && <BravaisSeamAccountSlot account={home.account} compact={compact} />}
@@ -409,10 +408,10 @@ const BravaisSeamHome: React.FC<{
                     menuShortcuts={shortcuts && !shortcutsInColumn ? shortcuts : null} onOpenShortcut={openShortcut} />
             )}
             {compact && (
-                <button type="button" className="bravais-seam-icon" data-bravais-seam-action="expand" onClick={expand}
+                <Button className="bravais-seam-icon" data-bravais-seam-action="expand" onClick={expand}
                     aria-label={t('libraryBravais.seamExpand')} title={t('libraryBravais.seamExpand')}>
                     <Maximize2 aria-hidden />
-                </button>
+                </Button>
             )}
         </div>
     );

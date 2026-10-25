@@ -6,6 +6,7 @@ import { openAddToPlaylist, useAddToPlaylistStore } from '../../../stores/useAdd
 import { Tooltip } from '../../modal/settings/kit/Tooltip';
 import { LikeButton, type SongLike } from './LikeButton';
 import { PanelIconButton } from './PanelIconButton';
+import { Button } from '../../ui';
 
 // src/components/panelTab/shell/SongActions.tsx
 // The row under the song's title on the cover tab, always in view: like, add to a playlist, the
@@ -44,8 +45,7 @@ const SongActions: React.FC<SongActionsProps> = ({ like, onLocatePlayingSong, on
             {/* 这首歌所在的歌单或专辑，点一下回到那一页并找到它的卡片。队列不再是那张歌单的歌时不出现。 */}
             {playingFrom && (
                 <Tooltip text={playingFromLabel} className="flex min-w-0">
-                    <button
-                        type="button"
+                    <Button
                         data-panel-locate
                         onClick={onLocatePlayingSong}
                         aria-label={playingFromLabel}
@@ -53,7 +53,7 @@ const SongActions: React.FC<SongActionsProps> = ({ like, onLocatePlayingSong, on
                     >
                         <Crosshair size={14} className="shrink-0" />
                         <span className="truncate">{playingFrom.name}</span>
-                    </button>
+                    </Button>
                 </Tooltip>
             )}
             <span className="min-w-1.5 flex-1" />

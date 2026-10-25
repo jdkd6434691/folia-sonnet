@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowDownAZ, ArrowUpAZ, CalendarClock, Check, ListOrdered, Type } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { LocalSongFolderSortDirection, LocalSongFolderSortField } from '../../utils/localSongSorting';
+import { Button } from '../ui';
 
 // src/components/shared/LocalTrackSortMenu.tsx
 // Compact sort controls used by the local folder track list.
@@ -49,20 +50,19 @@ export const LocalTrackSortMenu: React.FC<LocalTrackSortMenuProps> = ({ field, o
                 buttonRef.current?.focus();
             }}
         >
-            <button
+            <Button
                 ref={buttonRef}
-                type="button"
                 onClick={() => setIsOpen(current => !current)}
                 aria-label={t('localMusic.sortSongs')}
                 aria-haspopup="menu"
                 aria-expanded={isOpen}
-                title={t('localMusic.sortSongs')}
+                tip={t('localMusic.sortSongs')}
                 className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
                     isOpen ? 'bg-black/10 dark:bg-white/15' : 'hover:bg-black/10 dark:hover:bg-white/10'
                 }`}
             >
                 <StrategyIcon size={16} />
-            </button>
+            </Button>
 
             <AnimatePresence>
                 {isOpen && (
@@ -108,15 +108,14 @@ export const LocalTrackSortDirectionButton: React.FC<{
     const nextDirection = direction === 'asc' ? 'desc' : 'asc';
 
     return (
-        <button
-            type="button"
+        <Button
             onClick={() => onDirectionChange(nextDirection)}
             aria-label={t('localMusic.sortDirection')}
-            title={t(direction === 'asc' ? 'localMusic.sortAscending' : 'localMusic.sortDescending')}
+            tip={t(direction === 'asc' ? 'localMusic.sortAscending' : 'localMusic.sortDescending')}
             className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-black/10 dark:hover:bg-white/10"
         >
             <DirectionIcon size={16} />
-        </button>
+        </Button>
     );
 };
 
@@ -126,8 +125,7 @@ const SortFieldButton: React.FC<{
     label: string;
     onClick: () => void;
 }> = ({ active, icon, label, onClick }) => (
-    <button
-        type="button"
+    <Button
         role="menuitemradio"
         aria-checked={active}
         onClick={onClick}
@@ -139,5 +137,5 @@ const SortFieldButton: React.FC<{
         <span className="opacity-65">{icon}</span>
         <span className="min-w-0 flex-1 truncate">{label}</span>
         {active && <Check size={14} className="opacity-80" />}
-    </button>
+    </Button>
 );

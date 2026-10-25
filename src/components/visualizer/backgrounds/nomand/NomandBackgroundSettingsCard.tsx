@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Trash2, Upload } from 'lucide-react';
 import { DEFAULT_NOMAND_BACKGROUND_TUNING, type MonetBackgroundImage, type NomandBackgroundSource, type NomandBackgroundTuning } from '../../../../types';
 import { Button, Group, Reveal, Row, Segmented, type SettingsGroupDef } from '../../../modal/settings/kit';
+import { TextField } from '../../../ui';
 import { percent, SliderRow, ToggleRow } from '../../panelRows';
 import NomandBackgroundEffectSettings from './NomandBackgroundEffectSettings';
 
@@ -83,7 +84,7 @@ const NomandBackgroundSettingsCard: React.FC<NomandBackgroundSettingsCardProps> 
                     >
                         {t('options.monetClearBackground')}
                     </Button>
-                    <input
+                    <TextField
                         ref={inputRef}
                         type="file"
                         accept="image/png,image/jpeg,image/webp,image/gif"

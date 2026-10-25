@@ -4,6 +4,7 @@ import type { LibraryNavigationContext } from '../../core/suite/suite.contract';
 import { buildBravaisCrumbs, type BravaisCrumb } from './bravaisCrumbs';
 import type { BravaisLayer } from './bravaisLayer';
 import './bravaisCrumbs.css';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisSeamCrumbs.tsx
 // 缝里可点的面包屑（B11，规则在 bravaisCrumbs）：根与中间层点了经层描述的 onPopTo 跳层（宿主走浏览器历史退回，
@@ -63,27 +64,27 @@ const BravaisSeamCrumbs: React.FC<BravaisSeamCrumbsProps> = ({ layer, panelLabel
             case 'root':
             case 'layer':
                 return onPopTo ? (
-                    <button type="button" className={className} style={reveal} data-bravais-crumb={crumb.kind} data-bravais-crumb-depth={crumb.depth}
+                    <Button className={className} style={reveal} data-bravais-crumb={crumb.kind} data-bravais-crumb-depth={crumb.depth}
                         title={crumb.label} onClick={() => onPopTo(crumb.depth)}>
                         {crumb.label}
-                    </button>
+                    </Button>
                 ) : <span className={className} style={reveal} data-bravais-crumb={crumb.kind}>{crumb.label}</span>;
             case 'more':
                 return crumb.hidden.length > 0 ? (
-                    <button type="button" className="bravais-seam-crumb is-more" data-bravais-crumb="more"
+                    <Button className="bravais-seam-crumb is-more" data-bravais-crumb="more"
                         aria-label={t('libraryBravais.crumbMore')} title={crumb.hidden.map(target => target.label).join(' › ')}
                         onClick={event => {
                             focusRevealedRef.current = event.currentTarget === document.activeElement;
                             setExpandedFor(layer.key);
                         }}>
                         …
-                    </button>
+                    </Button>
                 ) : <span className="bravais-seam-crumb is-more" data-bravais-crumb="more">…</span>;
             case 'current':
                 return crumb.closesPanel && onClosePanel ? (
-                    <button type="button" className="bravais-seam-crumb is-current" data-bravais-crumb="current" title={crumb.label} onClick={onClosePanel}>
+                    <Button className="bravais-seam-crumb is-current" data-bravais-crumb="current" title={crumb.label} onClick={onClosePanel}>
                         {crumb.label}
-                    </button>
+                    </Button>
                 ) : <span className="bravais-seam-crumb is-current" data-bravais-crumb="current">{crumb.label}</span>;
             case 'panel':
                 return <span className="bravais-seam-crumb is-panel" data-bravais-crumb="panel">{crumb.label}</span>;

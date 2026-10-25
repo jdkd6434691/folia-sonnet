@@ -20,12 +20,13 @@ import {
 import { useTranslation } from 'react-i18next';
 import type { SongSortDirection, SongSortField } from '../../utils/songSorting';
 import { findSongSortPreset, type SongSortPreset } from '../../library/core/collection/songSortOptions';
+import { Button } from '../ui';
 
 // src/components/shared/TrackSortMenu.tsx
 // 曲目列表的排序菜单。选项不在这里写死：renderer 把「这个列表排得了哪些项」传进来，
 // 菜单照着渲染——网格侧栏和 bravais 列表面板因此永远给出同一份列表、同一个控件。
 //
-// 菜单是网页自己画的：之前 bravais 面板用原生 <select>，点下去弹的是浏览器 / 系统那套
+// 菜单是网页自己画的：之前 bravais 面板用原生 select，点下去弹的是浏览器 / 系统那套
 // spinner 弹窗，跟周围的界面完全不是一个东西（撕裂感就出在这）。原生弹层还吃不到主题变量。
 //
 // 弹层 portal 到 body（与 CustomSelect 同一条纪律）：就地挂的浮层会被任何祖先的
@@ -204,14 +205,13 @@ export const TrackSortMenu: React.FC<TrackSortMenuProps> = ({
             className={variant === 'label' ? 'relative min-w-0 flex-1' : 'relative shrink-0'}
         >
             {variant === 'label' ? (
-                <button
+                <Button
                     ref={triggerRef}
-                    type="button"
                     onClick={() => setIsOpen(current => !current)}
                     aria-label={t('localMusic.sortSongs')}
                     aria-haspopup="menu"
                     aria-expanded={isOpen}
-                    title={activeLabel}
+                    tip={activeLabel}
                     data-track-sort-trigger=""
                     className="flex w-full min-w-0 items-center gap-1.5 rounded-xl border px-2.5 py-1.5 text-xs transition-colors"
                     style={{
@@ -226,23 +226,22 @@ export const TrackSortMenu: React.FC<TrackSortMenuProps> = ({
                         size={14}
                         className={`shrink-0 opacity-70 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
                     />
-                </button>
+                </Button>
             ) : (
-                <button
+                <Button
                     ref={triggerRef}
-                    type="button"
                     onClick={() => setIsOpen(current => !current)}
                     aria-label={t('localMusic.sortSongs')}
                     aria-haspopup="menu"
                     aria-expanded={isOpen}
-                    title={t('localMusic.sortSongs')}
+                    tip={t('localMusic.sortSongs')}
                     data-track-sort-trigger=""
                     className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
                         isOpen ? 'bg-black/10 dark:bg-white/15' : 'hover:bg-black/10 dark:hover:bg-white/10'
                     }`}
                 >
                     <StrategyIcon size={16} />
-                </button>
+                </Button>
             )}
 
             {typeof document !== 'undefined' && createPortal(menu, document.body)}
@@ -272,17 +271,16 @@ export const TrackSortDirectionButton: React.FC<{
     const nextDirection = direction === 'asc' ? 'desc' : 'asc';
 
     return (
-        <button
-            type="button"
+        <Button
             {...rest}
             disabled={disabled}
             onClick={() => onDirectionChange(nextDirection)}
             aria-label={rest['aria-label'] ?? t('localMusic.sortDirection')}
-            title={rest.title ?? t(direction === 'asc' ? 'localMusic.sortAscending' : 'localMusic.sortDescending')}
+            tip={rest.title ?? t(direction === 'asc' ? 'localMusic.sortAscending' : 'localMusic.sortDescending')}
             className={className ? `${className} disabled:opacity-40` : `${DIRECTION_BUTTON_CLASS} disabled:opacity-40 disabled:hover:bg-transparent`}
         >
             <DirectionIcon size={16} />
-        </button>
+        </Button>
     );
 };
 
@@ -292,8 +290,7 @@ const SortFieldButton: React.FC<{
     label: string;
     onClick: () => void;
 }> = ({ active, icon, label, onClick }) => (
-    <button
-        type="button"
+    <Button
         role="menuitemradio"
         aria-checked={active}
         onClick={onClick}
@@ -306,5 +303,5 @@ const SortFieldButton: React.FC<{
         <span className="opacity-65">{icon}</span>
         <span className="min-w-0 flex-1 truncate">{label}</span>
         {active && <Check size={14} className="opacity-80" />}
-    </button>
+    </Button>
 );

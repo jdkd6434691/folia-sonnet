@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Copy, Maximize, Minimize, Minus, Radio, Square, X } from 'lucide-react';
 import { usePlayerChromeSettingsStore } from '../stores/usePlayerChromeSettingsStore';
+import { Button } from './ui';
 
 export default function WindowControls({
     revealed,
@@ -83,36 +84,36 @@ export default function WindowControls({
                 pointerEvents: 'none',
             } as React.CSSProperties}
         >
-            <button
+            <Button
                 className={remoteBtnClass}
-                title={t('ui.remoteControl')}
+                tip={t('ui.remoteControl')}
                 tabIndex={remoteControlVisible ? 0 : -1}
                 onClick={() => void electron.openRemoteControl?.()}
             >
                 <Radio size={15} />
-            </button>
+            </Button>
             {!hideFullscreenButton && (
-                <button
+                <Button
                     className={btnClass}
                     tabIndex={standardControlsVisible ? 0 : -1}
-                    title={t(isFullscreen ? 'ui.exitFullscreen' : 'ui.enterFullscreen')}
+                    tip={t(isFullscreen ? 'ui.exitFullscreen' : 'ui.enterFullscreen')}
                     aria-label={t(isFullscreen ? 'ui.exitFullscreen' : 'ui.enterFullscreen')}
                     onClick={() => void electron.toggleFullscreenWindow()}
                 >
                     {isFullscreen ? <Minimize size={13} /> : <Maximize size={13} />}
-                </button>
+                </Button>
             )}
-            <button
+            <Button
                 className={btnClass}
                 tabIndex={standardControlsVisible ? 0 : -1}
                 onClick={() => electron.minimizeWindow()}
             >
                 <Minus size={16} />
-            </button>
-            <button
+            </Button>
+            <Button
                 className={btnClass}
                 tabIndex={standardControlsVisible ? 0 : -1}
-                title={t(usesNativeFullscreen
+                tip={t(usesNativeFullscreen
                     ? isExpanded ? 'ui.exitFullscreen' : 'ui.enterFullscreen'
                     : isExpanded ? 'ui.restoreWindow' : 'ui.maximizeWindow')}
                 aria-label={t(usesNativeFullscreen
@@ -130,14 +131,14 @@ export default function WindowControls({
                 {usesNativeFullscreen
                     ? isExpanded ? <Minimize size={13} /> : <Maximize size={13} />
                     : isExpanded ? <Copy size={13} /> : <Square size={13} />}
-            </button>
-            <button
+            </Button>
+            <Button
                 className={closeBtnClass}
                 tabIndex={standardControlsVisible ? 0 : -1}
                 onClick={() => electron.closeWindow()}
             >
                 <X size={16} />
-            </button>
+            </Button>
         </div>
     );
 }

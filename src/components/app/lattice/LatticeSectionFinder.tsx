@@ -3,6 +3,7 @@ import { ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { summaryOfSection } from './exploreWall';
 import type { WallSection } from './wallLayout';
+import { Button } from '@/components/ui';
 import './LatticeSections.css';
 
 // src/components/app/lattice/LatticeSectionFinder.tsx
@@ -53,19 +54,19 @@ export default function LatticeSectionFinder({ sections, current, onChoose }: La
 
     return (
         <>
-            <button ref={pillRef} type="button" className="lattice-back lattice-sections-pill"
+            <Button ref={pillRef} className="lattice-back lattice-sections-pill"
                 aria-haspopup="menu" aria-expanded={isOpen}
-                aria-label={`${t('home.latticeSections')}: ${name}`} title={t('home.latticeSections')}
+                aria-label={`${t('home.latticeSections')}: ${name}`} tip={t('home.latticeSections')}
                 onMouseDown={event => event.preventDefault()}
                 onClick={() => setIsOpen(open => !open)}
                 onKeyDown={closeOnEscape}>
                 <span className="lattice-sections-name">{name}</span>
                 <ChevronDown size={16} />
-            </button>
+            </Button>
             {isOpen && (
                 <div ref={listRef} className="lattice-sections-list" role="menu" aria-label={t('home.latticeSections')} onKeyDown={closeOnEscape}>
                     {sections.map((entry, index) => (
-                        <button key={`${index}:${entry.key}`} type="button" role="menuitem"
+                        <Button key={`${index}:${entry.key}`} role="menuitem"
                             className={index === current ? 'is-current' : ''}
                             onMouseDown={event => event.preventDefault()}
                             onClick={() => {
@@ -75,7 +76,7 @@ export default function LatticeSectionFinder({ sections, current, onChoose }: La
                             <span>{String(index + 1).padStart(2, '0')}</span>
                             {/* A section without a heading is told by what it holds. */}
                             <span>{entry.heading || summaryOfSection(entry, t)}</span>
-                        </button>
+                        </Button>
                     ))}
                 </div>
             )}

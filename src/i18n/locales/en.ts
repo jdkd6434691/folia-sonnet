@@ -1046,7 +1046,8 @@ export default {
       "syncAppliedRemote": "Pulled and applied remote settings",
       "syncPushedLocal": "Pushed latest local settings to remote",
       "syncSettingsComplete": "Visual settings synced. {{details}}",
-      "syncSettingsNoChange": "Visual settings are in sync, nothing to do."
+      "syncSettingsNoChange": "Visual settings are in sync, nothing to do.",
+      "syncSettingsConflictPending": "The settings differ or changed during sync. Nothing was overwritten. Choose which to keep."
     },
     "unsupportedFontFormat": "Only woff2, woff, ttf, otf font files are supported.",
     "cloudDrive": "Cloud Drive",
@@ -2272,6 +2273,10 @@ export default {
     "r2SyncTesting": "Testing...",
     "r2SyncNow": "Sync AI Themes",
     "syncVisualSettings": "Sync visual settings",
+    "syncSettingsConflictTitle": "Visual settings conflict",
+    "syncSettingsConflictDesc": "The settings differ and there is no confirmed common baseline, or they changed during sync. Choose which to keep: Keep local replaces the server settings; Use server replaces this device. A concurrent server edit will require another choice.",
+    "syncSettingsKeepLocal": "Keep local",
+    "syncSettingsKeepRemote": "Use server",
     "r2SyncSyncing": "Syncing...",
     "r2SyncExportLibrary": "Export zip",
     "r2SyncExporting": "Exporting...",

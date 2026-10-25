@@ -2,9 +2,10 @@ name: Android Release
 
 # Android 出包：Web 产物 → Capacitor 同步 → 签名 → APK / AAB。
 #
-# 触发方式两种：
-#   1. 打 v* 标签（正式发布，默认发 GitHub Release）
-#   2. 手动 workflow_dispatch：可以顺手涨版本号 + 打标签（见 bump 输入），
+# 触发方式三种：
+#   1. 推 release/x.y.z 分支（正式发版，分支名必须等于 package.json 的版本）
+#   2. 打 v* 标签（兼容旧流程，标签必须等于 package.json 的版本）
+#   3. 手动 workflow_dispatch：可以顺手涨版本号 + 打标签（见 bump 输入），
 #      等于「一键发版」—— 涨版本、CI 校验、出包、建 Release 全在这一个 job 里跑完。
 #
 # 为什么手动这条不靠「推标签去触发另一个 workflow」：用 GITHUB_TOKEN 推的提交/标签
@@ -19,6 +20,8 @@ on:
   push:
     tags:
       - 'v*'
+    branches:
+      - 'release/**'
   workflow_dispatch:
     inputs:
       bump:
@@ -103,18 +106,23 @@ jobs:
           VERSION="$(node -e "process.stdout.write(require('./package.json').version)")"
           echo "本次出包版本：v${VERSION}（versionCode 由它推出，见 android/app/build.gradle）"
 
-      - name: Verify tag matches package.json
-        # 标签触发时 versionName / versionCode 全从 package.json 读：两者对不上，发出去的包
-        # 版本就是错的。直接 fail，别让它安静地打完。
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Verify release ref matches package.json
+        # 标签或 release/ 分支都代表一次发版；versionName / versionCode 全从 package.json 读，
+        # 两边对不上，发出去的包版本就是错的。直接 fail，别让它安静地打完。
+        if: startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release/')
         run: |
           set -euo pipefail
           VERSION="$(node -e "process.stdout.write(require('./package.json').version)")"
-          if [[ "v${VERSION}" != "${GITHUB_REF_NAME}" ]]; then
-            echo "::error::标签 ${GITHUB_REF_NAME} 与 package.json 的 v${VERSION} 不一致"
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            EXPECTED="v${VERSION}"
+          else
+            EXPECTED="release/${VERSION}"
+          fi
+          if [[ "${GITHUB_REF_NAME}" != "${EXPECTED}" ]]; then
+            echo "::error::${GITHUB_REF_NAME} 与 package.json 的版本对不上，应为 ${EXPECTED}"
             exit 1
           fi
-          echo "标签与 package.json 一致：v${VERSION}"
+          echo "发版 ref 与 package.json 一致：${GITHUB_REF_NAME}"
 
       - name: Check version policy
         # 平台依赖钉死、Docker 部署同版本、Node 版本一致、锁文件与 package.json 同步。
@@ -155,9 +163,11 @@ jobs:
         run: npm run cap:sync:android
 
       - name: Restore signing keystore
+        id: keystore
         # build.gradle 里的签名是**可选**的：没有 keystore.properties 就打未签名包。
-        # 所以这里缺 secrets 不 fail，只是打个警告 —— 未签名的包装不上真机，
-        # 但至少能验证整条构建链路是通的。
+        # 所以缺 secrets 不 fail，只警告并标记 signed=false —— 未签名的包装不上真机。
+        # secrets 配了就当场验一遍：base64 解不开、口令或 alias 不对，都在这里失败，
+        # 不要等到十几分钟后才发现打出来的是另一个签名的包。
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -167,9 +177,11 @@ jobs:
           set -euo pipefail
           if [[ -z "${KEYSTORE_BASE64}" ]]; then
             echo "::warning::ANDROID_KEYSTORE_BASE64 未配置 —— 本次产出的是**未签名**的 release 包"
+            echo "signed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           echo "${KEYSTORE_BASE64}" | base64 --decode > android/folia-release.jks
+          test -s android/folia-release.jks || { echo "::error::keystore 解出来是空的（base64 不对？）"; exit 1; }
           # storeFile 相对 **app 模块** 目录解析（app/build.gradle 里的 file()），
           # 所以是 ../folia-release.jks 而不是 folia-release.jks。
           cat > android/keystore.properties <<EOF
@@ -178,7 +190,10 @@ jobs:
           keyAlias=${KEY_ALIAS}
           keyPassword=${KEY_PASSWORD}
           EOF
-          echo "签名配置已写入（keystore 已恢复）"
+          keytool -list -keystore android/folia-release.jks -storepass "${KEYSTORE_PASSWORD}" -alias "${KEY_ALIAS}" >/dev/null \
+            || { echo "::error::keystore 口令或 alias 与 secrets 不符"; exit 1; }
+          echo "signed=true" >> "$GITHUB_OUTPUT"
+          echo "签名配置已写入（keystore 已恢复并校验）"
 
       - name: Build release APK
         working-directory: ./android
@@ -202,6 +217,31 @@ jobs:
             || { echo "Web 产物没进包 —— 大概率是 cap sync 那一步没跑"; exit 1; }
           unzip -p "$APK" "assets/public/assets/wallpaper-*.js" | grep -c "wallpaper-stage" \
             || { echo "壁纸页代码没进包"; exit 1; }
+
+      - name: Verify APK signature
+        # keystore 配错 = 打出来是另一个签名的包：装不上旧版，应用内更新也会被系统拒。
+        # 直接对产物验签并比对证书指纹，比等用户装失败强。
+        if: steps.keystore.outputs.signed == 'true'
+        env:
+          # folia-release.jks 里 folia 证书的 SHA-256（keytool -list -v 能看到）。
+          # 换 keystore 时这里和 secrets 一起改；指纹是公开信息，不需要保密。
+          EXPECTED_CERT_SHA256: 'BC:10:0C:6E:08:EA:C6:12:44:3D:9C:96:FC:72:9A:F4:48:FD:EC:8F:E0:D3:4A:AC:B8:04:1F:57:18:ED:50:DA'
+        run: |
+          set -euo pipefail
+          APK="android/app/build/outputs/apk/release/app-release.apk"
+          APKSIGNER="$(find "${ANDROID_HOME}/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          [[ -n "${APKSIGNER}" ]] || { echo "::error::找不到 apksigner（ANDROID_HOME 未设置？）"; exit 1; }
+          # apksigner 输出的是不带冒号的 BC100C…，keytool 输出的是带冒号的 BC:10:…：两边都去掉冒号再比。
+          ACTUAL="$("${APKSIGNER}" verify --print-certs "$APK" | grep -i 'certificate SHA-256 digest' | head -1 | sed -E 's/.*digest: *//' | tr -d ':' | tr '[:lower:]' '[:upper:]')"
+          EXPECTED="${EXPECTED_CERT_SHA256//:/}"
+          echo "APK 签名证书 SHA-256：${ACTUAL}"
+          [[ "${ACTUAL}" == "${EXPECTED}" ]] \
+            || { echo "::error::APK 的签名证书与预期不一致（keystore 换过？secrets 配错？）"; exit 1; }
+
+      - name: Remove signing material from the workspace
+        # runner 是一次性的，但别把 keystore 留在工作区里给后面的步骤碰。
+        if: always()
+        run: rm -f android/folia-release.jks android/keystore.properties
 
       - name: Name artifacts by version
         id: name

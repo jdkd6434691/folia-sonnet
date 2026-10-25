@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextField } from '../../ui';
 
 // src/components/visualizer/tempera/TemperaSettingsControls.tsx
 // Provides the compact slider primitive of the Tempera image dialog.
@@ -40,7 +41,7 @@ export const TemperaRangeControl: React.FC<TemperaRangeControlProps> = ({
                 {formatValue(value)}
             </span>
         </div>
-        <input
+        <TextField
             type="range"
             min={min}
             max={max}

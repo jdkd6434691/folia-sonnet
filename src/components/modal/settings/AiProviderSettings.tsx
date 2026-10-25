@@ -31,6 +31,7 @@ import {
     testConfiguredAiConnection,
     type AiConnectionTestResult,
 } from '../../../services/aiThemeClient';
+import { Button, TextField } from '@/components/ui';
 
 // src/components/modal/settings/AiProviderSettings.tsx
 // 安卓/网页版没有 Electron 主进程，AI 凭据由用户自己填并保存在本机 —— 这是「AI 主题」在
@@ -236,7 +237,7 @@ const AiProviderSettings: React.FC<AiProviderSettingsProps> = ({ settingsCardCla
                 )}
                 {provider === 'custom' && renderRow(
                     t('options.openaiApiUrl'),
-                    <input
+                    <TextField
                         type="text"
                         autoComplete="off"
                         spellCheck={false}
@@ -249,7 +250,7 @@ const AiProviderSettings: React.FC<AiProviderSettingsProps> = ({ settingsCardCla
                 )}
                 {provider === 'gemini' && renderRow(
                     t('options.geminiApiUrl'),
-                    <input
+                    <TextField
                         type="text"
                         autoComplete="off"
                         spellCheck={false}
@@ -268,7 +269,7 @@ const AiProviderSettings: React.FC<AiProviderSettingsProps> = ({ settingsCardCla
                             {t('options.aiApiKey')}
                             {provider !== 'custom' && preset?.label ? ` · ${preset.label}` : ''}
                         </span>
-                        <input
+                        <TextField
                             type="password"
                             autoComplete="off"
                             spellCheck={false}
@@ -297,7 +298,7 @@ const AiProviderSettings: React.FC<AiProviderSettingsProps> = ({ settingsCardCla
 
                 {protocol !== 'gemini' && renderRow(
                     t('options.aiModel'),
-                    <input
+                    <TextField
                         type="text"
                         autoComplete="off"
                         spellCheck={false}
@@ -311,7 +312,7 @@ const AiProviderSettings: React.FC<AiProviderSettingsProps> = ({ settingsCardCla
                 )}
                 {protocol === 'openai' && preset?.temperature && renderRow(
                     t('options.openaiApiTemperature'),
-                    <input
+                    <TextField
                         type="number"
                         min={preset.temperature.min}
                         max={preset.temperature.max}
@@ -342,8 +343,7 @@ const AiProviderSettings: React.FC<AiProviderSettingsProps> = ({ settingsCardCla
                 )}
 
                 <div className="flex flex-wrap items-center gap-3 text-left">
-                    <button
-                        type="button"
+                    <Button
                         onClick={() => void runTest()}
                         disabled={testState === 'running'}
                         className={ghostButtonClass}
@@ -353,7 +353,7 @@ const AiProviderSettings: React.FC<AiProviderSettingsProps> = ({ settingsCardCla
                             ? <Loader2 size={13} className="animate-spin" />
                             : <Sparkles size={13} />}
                         {testState === 'running' ? t('options.aiTestRunning') : t('options.aiTestConnection')}
-                    </button>
+                    </Button>
                     {testState === 'done' && testResult && (
                         <span className="inline-flex items-center gap-1.5 text-[11px]" style={{ color: 'var(--text-secondary)' }}>
                             {testResult.ok
@@ -402,9 +402,8 @@ const AiProviderSettings: React.FC<AiProviderSettingsProps> = ({ settingsCardCla
                         {listDirectorModes((key) => t(key)).map((mode) => {
                             const blocked = directorSettings.blockedModes.includes(mode.id);
                             return (
-                                <button
+                                <Button
                                     key={mode.id}
-                                    type="button"
                                     aria-pressed={blocked}
                                     onClick={() => toggleBlockedMode(mode.id)}
                                     title={mode.hint}
@@ -412,7 +411,7 @@ const AiProviderSettings: React.FC<AiProviderSettingsProps> = ({ settingsCardCla
                                     style={{ color: 'var(--text-primary)' }}
                                 >
                                     {mode.label}
-                                </button>
+                                </Button>
                             );
                         })}
                     </div>
@@ -446,7 +445,7 @@ const AiProviderSettings: React.FC<AiProviderSettingsProps> = ({ settingsCardCla
                         <span className="text-xs opacity-60" style={{ color: 'var(--text-secondary)' }}>
                             {t('options.cloudCacheBaseUrl')}
                         </span>
-                        <input
+                        <TextField
                             type="text"
                             autoComplete="off"
                             spellCheck={false}
@@ -462,8 +461,7 @@ const AiProviderSettings: React.FC<AiProviderSettingsProps> = ({ settingsCardCla
                     </label>
 
                     <div className="flex flex-wrap items-center gap-3 text-left">
-                        <button
-                            type="button"
+                        <Button
                             onClick={() => void runCacheProbe()}
                             disabled={cacheProbe.state === 'running'}
                             className={ghostButtonClass}
@@ -475,7 +473,7 @@ const AiProviderSettings: React.FC<AiProviderSettingsProps> = ({ settingsCardCla
                             {cacheProbe.state === 'running'
                                 ? t('options.aiTestRunning')
                                 : t('options.cloudCacheProbe')}
-                        </button>
+                        </Button>
                         {cacheProbe.state === 'done' && (
                             <span className="inline-flex items-center gap-1.5 text-[11px]" style={{ color: 'var(--text-secondary)' }}>
                                 {cacheProbe.ok

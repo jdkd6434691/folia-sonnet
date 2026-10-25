@@ -3,6 +3,7 @@ import { motion, AnimatePresence, MotionValue, useMotionValueEvent } from 'frame
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LyricData, Theme } from '../../types';
+import { Button } from '@/components/ui';
 
 interface LyricsTimelineModalProps {
     isOpen: boolean;
@@ -241,12 +242,13 @@ const LyricsTimelineModal: React.FC<LyricsTimelineModalProps> = ({
                         {/* Header */}
                         <div className="flex justify-between items-center mb-8 flex-shrink-0">
                             <h2 className={`text-2xl font-bold ${headerText}`}>{t('timeline.title')}</h2>
-                            <button
+                            <Button
                                 onClick={onClose}
+                                tip={t('ui.close')}
                                 className={`p-2 ${closeBtnHover} rounded-full transition-colors`}
                             >
                                 <X size={24} className={closeIconColor} />
-                            </button>
+                            </Button>
                         </div>
 
                         {/* Scrollable Timeline Container */}

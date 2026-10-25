@@ -17,6 +17,7 @@ import { runsOnWindows } from '../../../../utils/platform';
 import { Button, Chips, Group, Reveal, Row, Segmented, Slider, Status, Toggle, option, type SettingsGroupDef, type SettingsOptionDef } from '../kit';
 import AudioOutputDeviceRow from './AudioOutputDeviceRow';
 import { useSettingsPage } from './settingsPageContext';
+import { TextField } from '@/components/ui';
 
 // src/components/modal/settings/pages/PlaybackPage.tsx
 // The 播放控制 page: how one song hands over to the next (Folia transitions), where the sound goes
@@ -150,7 +151,7 @@ const AnalysisModelRow: React.FC<{ def: SettingsOptionDef; name: DownloadableMod
             )}
             {/* Not a file picker of our own make: the system's, so it can reach wherever the listener
                 put the file. Hidden, and pressed by the button above. */}
-            <input ref={fileInput} type="file" accept="*/*" className="hidden" onChange={event => void takeFile(event)} />
+            <TextField ref={fileInput} type="file" accept="*/*" className="hidden" onChange={event => void takeFile(event)} />
         </Row>
     );
 };

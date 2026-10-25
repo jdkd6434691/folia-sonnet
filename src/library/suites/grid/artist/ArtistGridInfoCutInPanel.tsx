@@ -3,6 +3,7 @@ import { Disc, Pencil, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getSizedCoverUrl } from '../../../../utils/coverUrl';
 import { useSidePanelBottomPx } from '../../../../hooks/usePlayerBottomBarBottomPx';
+import { Button } from '../../../../components/ui';
 
 // src/library/suites/grid/artist/ArtistGridInfoCutInPanel.tsx
 // Presents ArtistGrid metadata in the same left-side cut-in pattern used by GridView.
@@ -51,9 +52,9 @@ export const ArtistGridInfoCutInPanel = ({
                 >
                     <div className="mb-4 flex items-center justify-between gap-2">
                         <h3 className="min-w-0 flex-1 truncate text-lg font-bold">{artistName}</h3>
-                        <button type="button" onClick={onClose} className="shrink-0 rounded-full p-1.5 hover:bg-black/10 dark:hover:bg-white/10" aria-label={t('ui.close')}>
+                        <Button type="button" onClick={onClose} className="shrink-0 rounded-full p-1.5 hover:bg-black/10 dark:hover:bg-white/10" aria-label={t('ui.close')}>
                             <X size={18} />
-                        </button>
+                        </Button>
                     </div>
 
                     <div data-folia-cut-in-cover="true" className="relative mb-4 aspect-square w-full shrink-0 overflow-hidden rounded-2xl bg-zinc-800/20 shadow-lg">
@@ -75,7 +76,7 @@ export const ArtistGridInfoCutInPanel = ({
                             className="mt-4 border-t pt-4"
                             style={{ borderTopColor: 'color-mix(in srgb, var(--text-primary) 12%, transparent)' }}
                         >
-                            <button
+                            <Button
                                 type="button"
                                 onClick={() => onEditEntity(entityId)}
                                 className="flex w-full items-center justify-center gap-1.5 rounded-full py-3 text-xs font-bold transition-transform hover:scale-102 active:scale-98"
@@ -83,7 +84,7 @@ export const ArtistGridInfoCutInPanel = ({
                             >
                                 <Pencil size={14} />
                                 {t('localMusic.entityInfo', { kind: t('localMusic.artistLabel') })}
-                            </button>
+                            </Button>
                         </div>
                     )}
                 </motion.aside>

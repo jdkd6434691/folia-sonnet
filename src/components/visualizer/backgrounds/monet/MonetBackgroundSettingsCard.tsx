@@ -10,6 +10,7 @@ import {
     type MonetBackgroundWashColorMode,
 } from '../../../../types';
 import { Button, Group, PictureGrid, Reveal, Row, Segmented, Value, type SettingsGroupDef } from '../../../modal/settings/kit';
+import { TextField } from '../../../ui';
 import { percent, SliderRow, ToggleRow } from '../../panelRows';
 
 // src/components/visualizer/backgrounds/monet/MonetBackgroundSettingsCard.tsx
@@ -140,7 +141,7 @@ export const MonetBackgroundSettingsCard: React.FC<MonetBackgroundSettingsCardPr
                     >
                         {t('options.monetClearBackground')}
                     </Button>
-                    <input
+                    <TextField
                         ref={fileInputRef}
                         type="file"
                         accept=".png,.jpg,.jpeg,.gif,.webp,.svg,image/*"

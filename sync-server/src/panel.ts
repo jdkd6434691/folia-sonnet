@@ -196,11 +196,6 @@ export const renderPanelPage = (): string => shell('Folia 云服务后台', `
   <button id="logout">退出登录</button>
 </div>
 
-<!-- 出厂凭据还在用就在顶上挂一条，别让「能登进去」被误当成「已经配好了」 -->
-<div class="warn" id="default-credential-warning" hidden>
-  正在使用出厂默认凭据。请设置 <code>ADMIN_USERNAME</code> 与 <code>ADMIN_PASSWORD</code> 环境变量后重启服务。
-</div>
-
 <div class="stats" id="stats"></div>
 
 <div class="tabs" role="tablist">
@@ -397,20 +392,6 @@ const refreshAll = async () => {
   await Promise.all([loadStats(), loadFonts(), loadCache()]);
 };
 
-/* 还在吃出厂凭据就把顶上那条警告放出来。失败也无所谓，只是少一句提醒。 */
-const flagDefaultCredentials = async () => {
-  try {
-    const response = await fetch('/admin/session', { headers: { Accept: 'application/json' } });
-    if (!response.ok) return;
-    const data = await response.json();
-    if (data?.signedIn && data?.usingDefault) {
-      document.getElementById('default-credential-warning').hidden = false;
-    }
-  } catch {
-    // ignore
-  }
-};
-
 /* ---------------------------------------------------------------- preview */
 let previewBlob = null;
 
@@ -524,7 +505,6 @@ document.getElementById('logout').addEventListener('click', async () => {
   window.location.reload();
 });
 
-void flagDefaultCredentials();
 
 document.getElementById('make-preview').addEventListener('click', () => { void buildPreview(); });
 document.getElementById('do-upload').addEventListener('click', () => { void uploadFont(); });

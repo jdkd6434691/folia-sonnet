@@ -5,6 +5,7 @@ import { Radio, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { usePlaybackEntryViewStore } from '../../../stores/usePlaybackEntryViewStore';
 import { useThemeSettingsStore } from '../../../stores/useThemeSettingsStore';
+import { Button } from '@/components/ui';
 
 // src/components/modal/playback-entry-view/LatticeFmNotice.tsx
 // Explains why Personal FM opened the standard player instead of Lattice.
@@ -45,8 +46,7 @@ export const LatticeFmNotice: React.FC = () => {
                 >
                     <Radio size={18} className={`mt-0.5 shrink-0 ${isDaylight ? 'text-amber-600' : 'text-amber-300'}`} />
                     <span className="text-sm leading-relaxed">{t('status.latticeFmOpenedInPlayer')}</span>
-                    <button
-                        type="button"
+                    <Button
                         onClick={dismiss}
                         aria-label={t('ui.close')}
                         title={t('ui.close')}
@@ -55,7 +55,7 @@ export const LatticeFmNotice: React.FC = () => {
                             : 'text-white/50 hover:bg-white/10 hover:text-white'}`}
                     >
                         <X size={14} />
-                    </button>
+                    </Button>
                 </motion.div>
             )}
         </AnimatePresence>,

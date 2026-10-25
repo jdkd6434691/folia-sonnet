@@ -83,9 +83,11 @@ final class LocalAudioServer {
         .followRedirects(true)
         .followSslRedirects(true)
         .build();
-    private final Map<String, String> remoteAudioUrls = new LinkedHashMap<>();
-    /** 转发时要额外带上的请求头（按 token 存）；没有时为 null，见 {@link #registerRemoteAudio}。 */
-    private final Map<String, Map<String, String>> remoteAudioHeaders = new LinkedHashMap<>();
+    private final OkHttpClient credentialResourceClient = remoteAudioClient.newBuilder()
+        .followRedirects(false)
+        .followSslRedirects(false)
+        .build();
+    private final RemoteAudioRegistry remoteAudioRegistry = new RemoteAudioRegistry();
     private ServerSocket serverSocket;
     private int port;
 
@@ -138,6 +140,10 @@ final class LocalAudioServer {
      * 两个开关都由调用方显式打开，白名单那一路（Kuwo / 网易）行为不变。
      */
     synchronized String registerRemoteAudio(String value, Map<String, String> headers, boolean allowAnyHost) throws IOException {
+        return registerRemoteAudio(value, headers, allowAnyHost, true);
+    }
+
+    private String registerRemoteAudio(String value, Map<String, String> headers, boolean allowAnyHost, boolean reusable) throws IOException {
         URL url = new URL(value);
         String host = url.getHost() == null ? "" : url.getHost().toLowerCase(Locale.ROOT);
         if (!("http".equals(url.getProtocol()) || "https".equals(url.getProtocol()))
@@ -145,22 +151,21 @@ final class LocalAudioServer {
             throw new IOException("Unsupported remote audio host");
         }
         int localPort = start();
-        String token = android.util.Base64.encodeToString(
-            value.getBytes(StandardCharsets.UTF_8),
-            android.util.Base64.URL_SAFE | android.util.Base64.NO_PADDING | android.util.Base64.NO_WRAP
-        );
-        synchronized (remoteAudioUrls) {
-            remoteAudioUrls.remove(token);
-            remoteAudioUrls.put(token, value);
-            remoteAudioHeaders.remove(token);
-            if (headers != null && !headers.isEmpty()) remoteAudioHeaders.put(token, new HashMap<>(headers));
-            while (remoteAudioUrls.size() > 128) {
-                String oldest = remoteAudioUrls.keySet().iterator().next();
-                remoteAudioUrls.remove(oldest);
-                remoteAudioHeaders.remove(oldest);
-            }
-        }
+        String token = reusable ? remoteAudioRegistry.registerReusable(value, headers)
+            : remoteAudioRegistry.register(value, headers);
         return "http://127.0.0.1:" + localPort + REMOTE_AUDIO_PATH_PREFIX + token;
+    }
+
+    synchronized String registerScopedRemoteAudio(String value, Map<String, String> headers, String origin) throws IOException {
+        RemoteAudioRegistry.validateOrigin(value, origin);
+        return registerRemoteAudio(value, headers, true, false);
+    }
+
+    synchronized void unregisterRemoteAudio(String value) throws IOException {
+        URL url = new URL(value);
+        if (!"http".equals(url.getProtocol()) || !"127.0.0.1".equals(url.getHost())
+            || url.getPort() != port || !url.getPath().startsWith(REMOTE_AUDIO_PATH_PREFIX)) return;
+        remoteAudioRegistry.remove(url.getPath().substring(REMOTE_AUDIO_PATH_PREFIX.length()));
     }
 
     /** 有些 CDN 看 Referer 决定给不给资源：不带时回的是一段 HTML 而不是音频。 */
@@ -436,20 +441,15 @@ final class LocalAudioServer {
         Map<String, String> headers,
         String token
     ) throws IOException {
-        String target;
-        synchronized (remoteAudioUrls) {
-            target = remoteAudioUrls.get(token);
-        }
-        if (target == null) {
+        RemoteAudioRegistry.Entry entry = remoteAudioRegistry.get(token);
+        if (entry == null) {
             Log.w(TAG, "remote audio token unknown: " + token);
             writeStatus(output, 404, "Not Found");
             return;
         }
 
-        Map<String, String> extraHeaders;
-        synchronized (remoteAudioUrls) {
-            extraHeaders = remoteAudioHeaders.get(token);
-        }
+        String target = entry.url;
+        Map<String, String> extraHeaders = entry.headers;
         Request.Builder request = new Request.Builder().url(target);
         // 有些 CDN 看 UA / Referer 决定给不给资源，不带的话会回一段 HTML 而不是音频
         // —— 那种回包喂进 <audio> 正是「Format error」的经典来源。
@@ -457,14 +457,15 @@ final class LocalAudioServer {
         request.header("Referer", remoteAudioReferer(target));
         // 调用方带来的头（飞牛的 music-token）最后写：同名的以它为准。
         if (extraHeaders != null) {
-            for (Map.Entry<String, String> entry : extraHeaders.entrySet()) {
-                request.header(entry.getKey(), entry.getValue());
+            for (Map.Entry<String, String> header : extraHeaders.entrySet()) {
+                request.header(header.getKey(), header.getValue());
             }
         }
         String range = headers.get("range");
         if (range != null && range.startsWith("bytes=")) request.header("Range", range);
 
-        Response upstream = remoteAudioClient.newCall(request.build()).execute();
+        OkHttpClient client = entry.allowsRedirects() ? remoteAudioClient : credentialResourceClient;
+        Response upstream = client.newCall(request.build()).execute();
         try {
             ResponseBody body = upstream.body();
             if (!upstream.isSuccessful() || body == null) {

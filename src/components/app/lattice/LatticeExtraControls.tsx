@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { usePlayerChromeSettingsStore } from '../../../stores/usePlayerChromeSettingsStore';
 import { resolvePlayerControlSlot, type PlayerControlSlotActionId } from '../../floating-player/playerControlSlotActions';
 import { useLatticePlaybackActions } from './LatticePlaybackProvider';
+import { Button } from '@/components/ui';
 
 // src/components/app/lattice/LatticeExtraControls.tsx
 // Transport and the main bar's configured slots share their handlers, icons and availability.
@@ -15,12 +16,12 @@ export default function LatticeExtraControls({ disabled }: { disabled: boolean }
         {actions.map((action, index) => {
             const slot = resolvePlayerControlSlot(action, context);
             const Icon = slot.icon;
-            return <button key={index} type="button" data-action={action} className={slot.active ? 'is-active' : ''}
+            return <Button key={index} data-action={action} className={slot.active ? 'is-active' : ''}
                 disabled={disabled || slot.disabled} onClick={() => slot.onActivate()}
-                aria-label={t(slot.labelKey)} title={t(slot.labelKey)}
+                aria-label={t(slot.labelKey)} tip={t(slot.labelKey)}
                 aria-pressed={action === 'loop' || action === 'like' ? slot.active : undefined}>
                 <Icon size={20} fill={slot.filled ? 'currentColor' : 'none'} />
-            </button>;
+            </Button>;
         })}
 
     </div>;

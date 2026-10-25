@@ -13,6 +13,7 @@ import SearchResultsList from './SearchResultsList';
 import { useCollectionNavigationStore } from '../../../stores/useCollectionNavigationStore';
 import { useOnlineProviderAccountStore } from '../../../stores/useOnlineProviderAccountStore';
 import { omni } from '../../../services/onlineMusic/omni';
+import { Button, TextField } from '@/components/ui';
 
 // src/components/app/search/SearchWorkspace.tsx
 
@@ -206,7 +207,7 @@ const SearchWorkspace: React.FC<SearchWorkspaceProps> = ({
                                 ) : (
                                     <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 opacity-45" />
                                 )}
-                                <input
+                                <TextField
                                     value={searchQuery}
                                     onChange={event => setSearchQuery(event.target.value)}
                                     placeholder={t('search.placeholder')}
@@ -214,8 +215,7 @@ const SearchWorkspace: React.FC<SearchWorkspaceProps> = ({
                                     autoFocus
                                 />
                             </form>
-                            <button
-                                type="button"
+                            <Button
                                 onClick={onClose}
                                 className={`rounded-full p-3 ${
                                     isDaylight ? 'bg-black/5 hover:bg-black/10' : 'bg-white/10 hover:bg-white/15'
@@ -223,7 +223,7 @@ const SearchWorkspace: React.FC<SearchWorkspaceProps> = ({
                                 aria-label={t('ui.backToHome')}
                             >
                                 <X size={20} />
-                            </button>
+                            </Button>
                         </div>
 
                         {/*
@@ -234,8 +234,7 @@ const SearchWorkspace: React.FC<SearchWorkspaceProps> = ({
                         */}
                         <nav className="hide-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
                             {sources.map(source => (
-                                <button
-                                    type="button"
+                                <Button
                                     key={source}
                                     onClick={() => {
                                         if (source !== searchSourceTab) {
@@ -255,7 +254,7 @@ const SearchWorkspace: React.FC<SearchWorkspaceProps> = ({
                                     } : undefined}
                                 >
                                     {getSourceLabel(source)}
-                                </button>
+                                </Button>
                             ))}
                         </nav>
                     </header>
@@ -274,13 +273,12 @@ const SearchWorkspace: React.FC<SearchWorkspaceProps> = ({
                             <div className="flex h-full flex-col items-center justify-center gap-3 text-center opacity-65">
                                 <AlertCircle size={32} />
                                 <p>{searchErrorText}</p>
-                                <button
-                                    type="button"
+                                <Button
                                     onClick={() => onSubmitSearch()}
                                     className="rounded-full border border-current/15 px-4 py-2 text-sm"
                                 >
                                     {t('search.retry')}
-                                </button>
+                                </Button>
                             </div>
                         ) : results.length === 0 ? (
                             <div className="flex h-full items-center justify-center text-sm opacity-50">
@@ -313,19 +311,17 @@ const SearchWorkspace: React.FC<SearchWorkspaceProps> = ({
                                 {searchError ? (
                                     <div className="flex shrink-0 items-center justify-center gap-3 py-3 text-sm">
                                         <span className="opacity-60">{searchErrorText}</span>
-                                        <button
-                                            type="button"
+                                        <Button
                                             disabled={isLoadingMore}
                                             onClick={onLoadMore}
                                             className="rounded-full border border-current/15 px-4 py-2 disabled:opacity-50"
                                         >
                                             {t('search.retry')}
-                                        </button>
+                                        </Button>
                                     </div>
                                 ) : hasMore && (
                                     <div className="flex shrink-0 justify-center py-3">
-                                        <button
-                                            type="button"
+                                        <Button
                                             disabled={isLoadingMore}
                                             onClick={onLoadMore}
                                             className={`rounded-full border px-5 py-2 text-sm disabled:opacity-50 ${
@@ -335,7 +331,7 @@ const SearchWorkspace: React.FC<SearchWorkspaceProps> = ({
                                             }`}
                                         >
                                             {isLoadingMore ? t('localMusic.searching') : t('home.loadMore')}
-                                        </button>
+                                        </Button>
                                     </div>
                                 )}
                             </div>

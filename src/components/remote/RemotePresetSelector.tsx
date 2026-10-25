@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { VIDEO_EXPORT_PRESET_MAX, VIDEO_EXPORT_PRESET_MIN } from '../../types/videoExport';
 import { REMOTE_NO_DRAG_STYLE } from './remoteWindowBridge';
 import type { RemoteExportDraft } from './useRemoteExportDraft';
+import { Button, TextField } from '../ui';
 
 // src/components/remote/RemotePresetSelector.tsx
 // 导出用的预设弹层：左边竖排四份预设，右边改选中那一份的宽高。整层盖在卡片上，
@@ -63,8 +64,7 @@ const RemotePresetSelector: React.FC<RemotePresetSelectorProps> = ({ isDaylight,
             <div className="flex items-center justify-between mb-1.5">
                 <span className={`text-[13px] font-bold transition-colors ${isDaylight ? 'text-black/90' : 'text-white/90'
                     }`}>{t('remote.presetSelectorTitle')}</span>
-                <button
-                    type="button"
+                <Button
                     onClick={onClose}
                     className={`flex h-6 w-6 items-center justify-center rounded-full transition ${isDaylight
                         ? 'bg-black/5 text-black/50 hover:bg-black/10 hover:text-black'
@@ -72,7 +72,7 @@ const RemotePresetSelector: React.FC<RemotePresetSelectorProps> = ({ isDaylight,
                         }`}
                 >
                     <X size={14} />
-                </button>
+                </Button>
             </div>
             <div className="flex gap-3 flex-1 overflow-hidden py-0.5">
                 {/* Left Column: Vertical Presets List */}
@@ -80,9 +80,8 @@ const RemotePresetSelector: React.FC<RemotePresetSelectorProps> = ({ isDaylight,
                     {exportPresets.map((preset, index) => {
                         const isSelected = preset.id === selectedPresetId;
                         return (
-                            <button
+                            <Button
                                 key={preset.id}
-                                type="button"
                                 role="option"
                                 aria-selected={isSelected}
                                 onClick={() => handleSelectExportPreset(preset.id)}
@@ -107,7 +106,7 @@ const RemotePresetSelector: React.FC<RemotePresetSelectorProps> = ({ isDaylight,
                                         <Check size={10} className="stroke-[3]" />
                                     </div>
                                 )}
-                            </button>
+                            </Button>
                         );
                     })}
                 </div>
@@ -135,7 +134,7 @@ const RemotePresetSelector: React.FC<RemotePresetSelectorProps> = ({ isDaylight,
                                     }`}
                             >
                                 <span className="text-[9px] opacity-50 font-semibold">{t('remote.widthPx')}</span>
-                                <input
+                                <TextField
                                     type="text"
                                     inputMode="numeric"
                                     value={draftWidth}
@@ -151,7 +150,7 @@ const RemotePresetSelector: React.FC<RemotePresetSelectorProps> = ({ isDaylight,
                                     }`}
                             >
                                 <span className="text-[9px] opacity-50 font-semibold">{t('remote.heightPx')}</span>
-                                <input
+                                <TextField
                                     type="text"
                                     inputMode="numeric"
                                     value={draftHeight}
@@ -175,8 +174,7 @@ const RemotePresetSelector: React.FC<RemotePresetSelectorProps> = ({ isDaylight,
                         <div className={`text-[9px] leading-tight opacity-50 ${isDaylight ? 'text-black' : 'text-white'}`}>
                             {t('remote.rangeHint', { min: VIDEO_EXPORT_PRESET_MIN, max: VIDEO_EXPORT_PRESET_MAX })} {t('remote.encodingHint')}
                         </div>
-                        <button
-                            type="button"
+                        <Button
                             onClick={handleApplyCustomPresetValues}
                             className={`flex h-8 items-center justify-center rounded-lg text-[11px] font-bold shadow-sm transition active:scale-[0.98] ${isDaylight
                                 ? 'bg-zinc-900 text-white hover:bg-zinc-800'
@@ -184,7 +182,7 @@ const RemotePresetSelector: React.FC<RemotePresetSelectorProps> = ({ isDaylight,
                                 }`}
                         >
                             {t('remote.saveToPreset', { index: activePresetIndex })}
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>

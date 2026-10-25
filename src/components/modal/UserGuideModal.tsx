@@ -6,6 +6,7 @@ import { useSettingsModalStore } from '../../stores/useSettingsModalStore';
 import { useThemeSettingsStore } from '../../stores/useThemeSettingsStore';
 import { openCurrentPagePonder } from '../../services/ponder/pagePonderTarget';
 import type { Theme } from '../../types';
+import { Button } from '@/components/ui';
 
 // src/components/modal/UserGuideModal.tsx
 // 版本后的旧帮助轮播已由 Ponder 取代。这个门只教入口；真正的页面说明在 Ponder 里完成。
@@ -58,8 +59,7 @@ export const UserGuideModal: React.FC<{ theme?: Theme | null }> = ({ theme }) =>
                         )}
 
                         {/* 按钮始终在：这一步完不成就出不去，指针判断一旦错了，没有键盘的人只看到 Ctrl+G 会被卡死。 */}
-                        <button
-                            type="button"
+                        <Button
                             data-testid="ponder-onboarding-open-button"
                             onClick={openCurrentPagePonder}
                             className={`${supportsFinePointer ? 'mt-4' : 'mt-7'} inline-flex items-center gap-2 rounded-full border px-5 py-3 text-sm font-medium transition-transform active:scale-95`}
@@ -67,7 +67,7 @@ export const UserGuideModal: React.FC<{ theme?: Theme | null }> = ({ theme }) =>
                         >
                             <Lightbulb size={17} aria-hidden="true" />
                             {t('ponder.openPage')}
-                        </button>
+                        </Button>
 
                         <p className="mt-6 text-xs opacity-45">{t('ponder.onboarding.required')}</p>
                     </motion.div>

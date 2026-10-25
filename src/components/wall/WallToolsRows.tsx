@@ -1,5 +1,6 @@
 import { useRef, useState, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import type { LucideIcon } from 'lucide-react';
+import { Button, TextField } from '../ui';
 
 // src/components/wall/WallToolsRows.tsx
 // 墙面工具面板（WallToolsButton）里的各种行：条目（动作 / 开关 / 滑条 / 分组小标题）与顶部那排纯图标快捷格。
@@ -121,20 +122,19 @@ function WallToolsSliderRow({ entry }: { entry: Extract<WallToolsEntry, { kind: 
     return (
         <div role="group" aria-label={entry.label} className="lattice-tools-slider" data-wall-tools-slider={entry.id}>
             {entry.iconAction ? (
-                <button
-                    type="button"
+                <Button
                     className="lattice-tools-slider-icon"
                     aria-label={entry.iconAction.label}
-                    title={entry.iconAction.label}
+                    tip={entry.iconAction.label}
                     aria-pressed={entry.iconAction.pressed}
                     onClick={entry.iconAction.onPress}
                 >
                     <Icon aria-hidden="true" />
-                </button>
+                </Button>
             ) : (
                 <span className="lattice-tools-slider-icon" aria-hidden="true"><Icon /></span>
             )}
-            <input
+            <TextField
                 type="range"
                 min={0}
                 max={1}
@@ -168,9 +168,8 @@ export function WallToolsQuickRow({ actions, onDone }: { actions: readonly WallT
                 const Icon = action.icon;
                 const tooltip = [action.label, action.status, action.kbd].filter(Boolean).join(' · ');
                 return (
-                    <button
+                    <Button
                         key={action.id}
-                        type="button"
                         role="menuitem"
                         className={action.busy ? 'lattice-tools-quick-action is-busy' : 'lattice-tools-quick-action'}
                         data-wall-tools-quick={action.id}
@@ -179,7 +178,7 @@ export function WallToolsQuickRow({ actions, onDone }: { actions: readonly WallT
                         aria-busy={action.busy || undefined}
                         aria-expanded={action.expanded}
                         aria-controls={action.controls}
-                        title={tooltip}
+                        tip={tooltip}
                         disabled={action.disabled}
                         onClick={() => {
                             action.onSelect();
@@ -187,7 +186,7 @@ export function WallToolsQuickRow({ actions, onDone }: { actions: readonly WallT
                         }}
                     >
                         <Icon aria-hidden="true" />
-                    </button>
+                    </Button>
                 );
             })}
         </div>
@@ -207,8 +206,7 @@ export function WallToolsRow({ entry, onDone }: { entry: WallToolsEntry; onDone:
     const Icon = entry.icon;
     if (entry.kind === 'toggle') {
         return (
-            <button
-                type="button"
+            <Button
                 role="menuitemcheckbox"
                 aria-checked={entry.checked}
                 className="lattice-tools-action"
@@ -219,12 +217,11 @@ export function WallToolsRow({ entry, onDone }: { entry: WallToolsEntry; onDone:
                 <span className={`lattice-tools-toggle ${entry.checked ? 'is-on' : ''}`} aria-hidden="true">
                     <span />
                 </span>
-            </button>
+            </Button>
         );
     }
     return (
-        <button
-            type="button"
+        <Button
             role="menuitem"
             className="lattice-tools-action"
             onClick={() => {
@@ -237,6 +234,6 @@ export function WallToolsRow({ entry, onDone }: { entry: WallToolsEntry; onDone:
             <span>{entry.label}</span>
             {entry.value !== undefined && <span className="lattice-tools-value">{entry.value}</span>}
             {entry.kbd !== undefined && (entry.kbdHidden ? <kbd aria-hidden="true">{entry.kbd}</kbd> : <kbd>{entry.kbd}</kbd>)}
-        </button>
+        </Button>
     );
 }

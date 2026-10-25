@@ -10,6 +10,7 @@ import {
 } from '../../services/analysis/modelStore';
 import { useAnalysisModelStore } from '../../stores/useAnalysisModelStore';
 import ThemedDialog from '../shared/ThemedDialog';
+import { Button, Checkbox } from '@/components/ui';
 
 // src/components/modal/AnalysisModelsPrompt.tsx
 // Asks once, a little after startup, whether to fetch the analysis models: automix's beat grid and
@@ -89,8 +90,7 @@ const AnalysisModelsPrompt: React.FC<{ isDaylight: boolean }> = ({ isDaylight })
             <div className="mb-3.5 space-y-2">
                 {MODELS.map(name => (
                     <label key={name} className={rowClass}>
-                        <input
-                            type="checkbox"
+                        <Checkbox
                             checked={chosen[name]}
                             onChange={event => setChosen(previous => ({ ...previous, [name]: event.target.checked }))}
                             className="mt-0.5"
@@ -110,23 +110,21 @@ const AnalysisModelsPrompt: React.FC<{ isDaylight: boolean }> = ({ isDaylight })
             </div>
             <div className="flex flex-wrap items-center justify-end gap-2">
                 {/* Left and quieter: not now is an answer too, and also ends the prompt. */}
-                <button
-                    type="button"
+                <Button
                     disabled={busy}
                     onClick={decline}
                     className={`mr-auto text-sm underline opacity-50 hover:opacity-80 disabled:opacity-30 ${isDaylight ? 'text-zinc-900' : 'text-white'}`}
                 >
                     {t('options.analysisModelsLater')}
-                </button>
-                <button
-                    type="button"
+                </Button>
+                <Button
                     disabled={busy}
                     onClick={confirm}
                     className="rounded-xl bg-white px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-white/90 flex items-center gap-1.5 disabled:opacity-50"
                 >
                     <Download size={14} />
                     {t('options.analysisModelsEnable')}
-                </button>
+                </Button>
             </div>
         </ThemedDialog>
     );

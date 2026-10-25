@@ -14,6 +14,7 @@ import { closeFoliumHomeTab } from '../../../mods/folium/registries/homeTabs';
 import { useFoliumPanelContext } from '../../../mods/folium/registries/useFoliumPanelContext';
 import { resolveFoliumLabel } from '../../../mods/params/params';
 import { isCommandPaletteShortcut, isTextEntryTarget } from '../../../utils/keyboardTargets';
+import { Button } from '@/components/ui';
 import { useLibraryHomeSurfaceStore } from '../../../library/core/home/useLibraryHomeSurfaceStore';
 import { selectNativeHomeTabFromPage } from './useFoliumHomeNavigation';
 import {
@@ -105,21 +106,21 @@ export function FoliumHomePage({ entry, extraTabs, account, surfaceProps }: Foli
         }}>
         {focusGuard('start')}
         <header className="flex shrink-0 items-center gap-4 px-4 py-3 md:px-8 border-b border-current/10">
-            <button type="button" onClick={closeFoliumHomeTab} title={t('mods.homeBackToLibrary')}
-                aria-label={t('mods.homeBackToLibrary')} className="rounded-full p-2 hover:bg-current/10">
+            <Button onClick={closeFoliumHomeTab} tip={t('mods.homeBackToLibrary')} aria-label={t('mods.homeBackToLibrary')}
+                className="rounded-full p-2 hover:bg-current/10">
                 <ChevronLeft size={20} />
-            </button>
+            </Button>
             <nav className="flex flex-1 flex-wrap items-center gap-1" aria-label={t('mods.homePageNavigation')}>
-                {nativeSources.tabs.map(tab => <button key={tab.key} type="button" disabled={Boolean(tab.disabledReason)}
+                {nativeSources.tabs.map(tab => <Button key={tab.key} disabled={Boolean(tab.disabledReason)}
                     title={tab.disabledReason || tab.label} onClick={() => { selectNativeHomeTabFromPage(tab.key, nativeSources.setTab); }}
                     className="rounded-full px-3 py-1.5 text-sm opacity-70 hover:opacity-100 disabled:opacity-30">
                     {tab.label}
-                </button>)}
-                {extraTabs.map(tab => <button key={tab.id} type="button" aria-pressed={tab.active}
+                </Button>)}
+                {extraTabs.map(tab => <Button key={tab.id} aria-pressed={tab.active}
                     ref={tab.active ? activeTabRef : undefined}
                     onClick={tab.select} className={`rounded-full px-3 py-1.5 text-sm ${tab.active ? 'bg-current/10 font-semibold' : 'opacity-70 hover:opacity-100'}`}>
                     {tab.label}
-                </button>)}
+                </Button>)}
             </nav>
         </header>
         <FoliumMountHost key={entry.id} modId={entry.modId} where={`home tab ${entry.id}`}

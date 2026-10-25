@@ -4,6 +4,7 @@ import type { RowComponentProps } from 'react-window';
 import type { Theme } from '../../types';
 import type { CommandPaletteCommand } from './types';
 import { getCommandDescription, getCommandTitle } from './commandText';
+import { Button } from '../ui';
 
 // src/components/command-palette/CommandPaletteAllCommandsRow.tsx
 // 「全部命令」浏览列表的一行。从 CommandPalette.tsx 里原样抽出来的，为了让整份列表能走
@@ -46,8 +47,7 @@ const CommandPaletteAllCommandsRow = ({
 
     return (
         <div style={style}>
-            <button
-                type="button"
+            <Button
                 onClick={() => onPick(command)}
                 style={{ height: ALL_COMMANDS_ROW_HEIGHT }}
                 className={`flex w-full items-center gap-3 rounded-2xl px-3 text-left transition-colors ${itemIdleBg}`}
@@ -68,7 +68,7 @@ const CommandPaletteAllCommandsRow = ({
                     </div>
                     <div className="mt-0.5 truncate text-xs opacity-50">{getCommandDescription(command, t)}</div>
                 </div>
-            </button>
+            </Button>
         </div>
     );
 };

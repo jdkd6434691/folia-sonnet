@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import ThemedDialog from '../shared/ThemedDialog';
 import { QQ_COMMUNITY_GROUP_NUMBER } from '../shared/qqCommunity';
 import { copyText } from '../../utils/system/clipboard';
+import { Button } from '@/components/ui';
 
 // src/components/modal/FreeSoftwareNoticeModal.tsx
 // 首次启动的免费软件声明。
@@ -70,8 +71,7 @@ const FreeSoftwareNoticeModal: React.FC<FreeSoftwareNoticeModalProps> = ({ isOpe
                 </p>
             </div>
 
-            <button
-                type="button"
+            <Button
                 onClick={() => void copyGroupNumber()}
                 className={`mt-5 flex w-full items-center gap-3 rounded-xl border p-4 text-left transition hover:-translate-y-0.5 ${panelBg}`}
             >
@@ -97,7 +97,7 @@ const FreeSoftwareNoticeModal: React.FC<FreeSoftwareNoticeModalProps> = ({ isOpe
                 <span className={`inline-flex shrink-0 items-center gap-1 text-xs font-medium ${textSecondary}`}>
                     {groupCopied ? <Check size={14} /> : <Copy size={14} />}
                 </span>
-            </button>
+            </Button>
 
             <p className={`mt-4 flex items-start gap-2 text-xs leading-5 ${textSecondary}`}>
                 <ShieldCheck size={14} className="mt-0.5 shrink-0" aria-hidden />
@@ -105,20 +105,18 @@ const FreeSoftwareNoticeModal: React.FC<FreeSoftwareNoticeModalProps> = ({ isOpe
             </p>
 
             <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:justify-end">
-                <button
-                    type="button"
+                <Button
                     onClick={onClose}
                     className={`rounded-full border px-4 py-2 text-sm font-medium transition ${secondaryBtnClass}`}
                 >
                     {t('ui.close', '关闭')}
-                </button>
-                <button
-                    type="button"
+                </Button>
+                <Button
                     onClick={onClose}
                     className={`rounded-full px-5 py-2 text-sm font-semibold transition ${primaryBtnClass}`}
                 >
                     {t('freeSoftwareNotice.acknowledge', '我知道了')}
-                </button>
+                </Button>
             </div>
         </ThemedDialog>
     );

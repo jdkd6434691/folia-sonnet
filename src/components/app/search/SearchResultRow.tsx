@@ -9,6 +9,7 @@ import { getSizedCoverUrl } from '../../../utils/coverUrl';
 import { getSongUnavailableLabel, isSongUnavailable } from '../../../services/onlineMusic/songAvailability';
 import { canResolveSongCatalogRef } from '../../../services/onlineMusic/catalogRefs';
 import { getProviderSongMetadata } from '../../../services/onlineMusic/songMetadata';
+import { Button } from '@/components/ui';
 
 // src/components/app/search/SearchResultRow.tsx
 
@@ -79,8 +80,7 @@ const SearchResultRow: React.FC<SearchResultRowProps> = ({
                         : 'border-white/[0.06] bg-white/[0.04] hover:bg-white/[0.08]'
                 }`}
             >
-                <button
-                    type="button"
+                <Button
                     disabled={isUnavailable}
                     onClick={() => onPlayTrack(track)}
                     className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-zinc-500/15 disabled:cursor-not-allowed"
@@ -98,19 +98,18 @@ const SearchResultRow: React.FC<SearchResultRowProps> = ({
                             <Play size={18} fill="currentColor" />
                         </span>
                     )}
-                </button>
+                </Button>
 
                 <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                        <button
-                            type="button"
+                        <Button
                             disabled={isUnavailable}
                             onClick={() => onPlayTrack(track)}
                             className="truncate text-left text-sm font-semibold disabled:cursor-not-allowed"
                             style={{ color: 'var(--text-primary)' }}
                         >
                             {formatSongName(track)}
-                        </button>
+                        </Button>
                         {isUnavailable && (
                             <span className="shrink-0 rounded-full border border-current/10 px-2 py-0.5 text-[10px] opacity-60">
                     {unavailableLabel}
@@ -128,14 +127,13 @@ const SearchResultRow: React.FC<SearchResultRowProps> = ({
                                 return (
                                     <React.Fragment key={`${artist.entityId || artist.id}-${index}`}>
                                         {index > 0 && ', '}
-                                        <button
-                                            type="button"
+                                        <Button
                                             disabled={!canOpenArtist}
                                             onClick={() => onOpenArtist(track, artist.name, artist.id, artist.entityId)}
                                             className="enabled:hover:underline disabled:cursor-default"
                                         >
                                             {artist.name}
-                                        </button>
+                                        </Button>
                                     </React.Fragment>
                                 );
                             })}
@@ -143,14 +141,13 @@ const SearchResultRow: React.FC<SearchResultRowProps> = ({
                         {album?.name && (
                             <>
                                 <span className="shrink-0 opacity-40">•</span>
-                                <button
-                                    type="button"
+                                <Button
                                     disabled={!canOpenAlbum}
                                     onClick={() => onOpenAlbum(track, album.name, album.id, album.entityId)}
                                     className="max-w-[45%] truncate text-left enabled:hover:underline disabled:cursor-default"
                                 >
                                     {album.name}
-                                </button>
+                                </Button>
                             </>
                         )}
                     </div>
@@ -160,14 +157,14 @@ const SearchResultRow: React.FC<SearchResultRowProps> = ({
                     {formatDuration(metadata.durationMs)}
                 </span>
                 {!isUnavailable && (
-                    <button
-                        type="button"
+                    <Button
                         onClick={() => onAddTrackToQueue(track)}
                         className="shrink-0 rounded-full p-2 opacity-60 transition-all hover:bg-black/10 hover:opacity-100 dark:hover:bg-white/10 sm:opacity-0 sm:group-hover:opacity-100"
-                        title={t('navidrome.addToQueue')}
+                        aria-label={t('navidrome.addToQueue')}
+                        tip={t('navidrome.addToQueue')}
                     >
                         <Plus size={16} />
-                    </button>
+                    </Button>
                 )}
             </motion.div>
         </div>

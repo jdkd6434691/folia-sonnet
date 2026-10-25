@@ -3,6 +3,7 @@ import { AnimatePresence, motion, type MotionValue } from 'framer-motion';
 import { ChevronLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { RemoteTrackFace } from './remoteTrackTransition';
+import { Button } from '../ui';
 
 // src/components/remote/RemoteCoverTile.tsx
 // 卡片左边的 112px 封面。换歌时走两张面的交错：手动切歌是方向性淡入，音频过渡（AutoMix/
@@ -94,15 +95,14 @@ const RemoteCoverTile: React.FC<RemoteCoverTileProps> = ({
                 })}
             </AnimatePresence>
             {showBack && (
-                <button
-                    type="button"
-                    title={t('remote.back')}
+                <Button
+                    tip={t('remote.back')}
                     onClick={onBack}
                     className={`absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-xl backdrop-blur-sm ${isDaylight ? 'bg-stone-900/65 text-white' : 'bg-zinc-950/65 text-white'
                         }`}
                 >
                     <ChevronLeft size={24} strokeWidth={2.5} />
-                </button>
+                </Button>
             )}
             <AnimatePresence mode="popLayout">
                 {countdown !== null && (

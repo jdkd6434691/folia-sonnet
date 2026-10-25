@@ -12,6 +12,7 @@ import { isCapacitorAndroid } from '../../../../platform/runtime';
 import AndroidUpdatePanel from '../AndroidUpdatePanel';
 import { FoundUpdateRow } from './FoundUpdateRow';
 import { iconLabel } from './iconLabel';
+import { Button as UiButton } from '@/components/ui';
 
 // src/components/modal/settings/pages/HelpPage.tsx
 // The 帮助 page, reached from the foot of the side list: two entry cards (the release notes, the
@@ -50,8 +51,7 @@ type TileProps = {
 
 /** An entry card: an icon, a title, one line, and an arrow. The whole card opens what it names. */
 const Tile: React.FC<TileProps> = ({ testId, icon: Icon, title, line, onClick }) => (
-    <button
-        type="button"
+    <UiButton
         data-testid={testId}
         onClick={onClick}
         className="group st-t-fast flex min-h-[72px] items-center gap-3.5 rounded-xl bg-[var(--st-card)] px-4 py-3.5 text-left shadow-[0_0_0_1px_var(--st-line)] transition-colors hover:bg-[color-mix(in_srgb,var(--st-card)_93%,var(--st-t1))]"
@@ -64,7 +64,7 @@ const Tile: React.FC<TileProps> = ({ testId, icon: Icon, title, line, onClick })
             <span className="mt-0.5 block text-xs leading-[18px] text-[color:var(--st-t2)]">{line}</span>
         </span>
         <ChevronRight size={16} className="st-t-fast shrink-0 text-[color:var(--st-t3)] transition-transform group-hover:translate-x-0.5" />
-    </button>
+    </UiButton>
 );
 
 type KeyRowProps = {
@@ -172,7 +172,7 @@ const HelpPage: React.FC<HelpPageProps> = ({ onOpenReleaseNotes, onOpenAiHelp, o
                 <Row
                     label={(
                         // The settings window counts the clicks and shows the cat at the seventh.
-                        <button type="button" onClick={onProjectLabelClick} className="cursor-default">{t('help.madeBy')}</button>
+                        <UiButton onClick={onProjectLabelClick} className="cursor-default">{t('help.madeBy')}</UiButton>
                     )}
                 >
                     {/*

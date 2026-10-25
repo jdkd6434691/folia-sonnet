@@ -26,6 +26,7 @@ import { isAndroidNativeRuntime } from '../../../services/nativeLocalMusic';
 import LibraryTuiDirectory from './LibraryTuiDirectory';
 import LibraryTuiAccountList from './LibraryTuiAccountList';
 import type { LibraryTuiPromptRequest } from './LibraryTuiPrompt';
+import { Button, TextField } from '../../../components/ui';
 
 // src/library/suites/tui/LibraryTuiHomeLists.tsx
 // TUI 首页三个来源的列表：在线（账户歌单 / 电台 / 收藏专辑）、本地（四个 section，文件夹是目录树、带批量）、
@@ -60,16 +61,15 @@ const ActionBar: React.FC<{ actions: { id: string; label: string; disabled: bool
     actions.length === 0 ? null : (
         <div className="flex shrink-0 flex-wrap items-center gap-x-3 px-4 py-1 text-[12px]" data-tui-home-actions>
             {actions.map(action => (
-                <button
+                <Button
                     key={action.id}
-                    type="button"
                     data-tui-home-action={action.id}
                     disabled={action.disabled}
                     onClick={() => onRun(action.id)}
                     className="opacity-70 hover:opacity-100 disabled:opacity-30"
                 >
                     {`[${action.pending ? '~' : ''}${action.label}]`}
-                </button>
+                </Button>
             ))}
         </div>
     )
@@ -238,7 +238,7 @@ export const LibraryTuiLocalList: React.FC<LibraryTuiListCommonProps & {
     });
 
     const fileInput = (
-        <input
+        <TextField
             ref={playlistFileInputRef}
             type="file"
             accept=".m3u,.m3u8,audio/x-mpegurl,application/vnd.apple.mpegurl"
@@ -266,15 +266,14 @@ export const LibraryTuiLocalList: React.FC<LibraryTuiListCommonProps & {
                 <span>{t('localMusic.noLocalMusic')}</span>
                 <div className="flex flex-wrap items-center gap-x-3 self-start">
                     {emptyActions.map(action => (
-                        <button
+                        <Button
                             key={action.id}
-                            type="button"
                             disabled={action.disabled}
                             onClick={() => runAction(action.id)}
                             className="opacity-70 hover:opacity-100 disabled:opacity-30"
                         >
                             {`[${action.pending ? '~' : ''}${t(action.labelKey)}]`}
-                        </button>
+                        </Button>
                     ))}
                 </div>
             </StatusText>
@@ -348,9 +347,9 @@ export const LibraryTuiNavidromeList: React.FC<LibraryTuiListCommonProps & {
             <StatusText status="navidrome-not-configured">
                 <span>{t('navidrome.notConfigured') || 'Navidrome is not configured.'}</span>
                 {onOpenSettings ? (
-                    <button type="button" onClick={onOpenSettings} className="self-start opacity-70 hover:opacity-100">
+                    <Button onClick={onOpenSettings} className="self-start opacity-70 hover:opacity-100">
                         {`[${t('navidrome.settings') || 'Navidrome Settings'}]`}
-                    </button>
+                    </Button>
                 ) : null}
             </StatusText>
         );

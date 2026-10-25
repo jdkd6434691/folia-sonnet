@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { List as VirtualList, type RowComponentProps } from 'react-window';
 import type { LocalSong } from '../../types';
 import { filterEntityMemberSongs } from './entityEditorModel';
+import { Button, TextField } from '../ui';
 
 // src/components/local-library-entity/FolderSongPicker.tsx
 // Provides a reusable virtualized folder-song selector with an optional per-song match action.
@@ -31,8 +32,7 @@ const SongRow = ({ index, style, ariaAttributes, songs, selectedSongIds, onToggl
             <div className={`flex h-full items-center gap-3 rounded-xl border px-3 transition-colors ${selected
                 ? isDaylight ? 'border-blue-300 bg-blue-50' : 'border-blue-500/40 bg-blue-500/15'
                 : isDaylight ? 'border-black/5 bg-white' : 'border-white/10 bg-white/5'}`}>
-                <button
-                    type="button"
+                <Button
                     disabled={disabled || automaticMatchDisabled}
                     onClick={() => onToggle(song.id)}
                     className="flex min-w-0 flex-1 items-center gap-3 text-left disabled:cursor-not-allowed"
@@ -51,17 +51,16 @@ const SongRow = ({ index, style, ariaAttributes, songs, selectedSongIds, onToggl
                                 || song.fileName}
                         </span>
                     </span>
-                </button>
+                </Button>
                 {onManualMatch && (
-                    <button
-                        type="button"
+                    <Button
                         disabled={disabled}
                         onClick={() => onManualMatch(song)}
                         className="shrink-0 rounded-lg p-2 opacity-55 transition hover:bg-blue-500/10 hover:opacity-100 disabled:opacity-25"
                         aria-label={manualMatchLabel}
                     >
                         <WandSparkles size={15} />
-                    </button>
+                    </Button>
                 )}
             </div>
         </div>
@@ -77,7 +76,7 @@ export const FolderSongPicker = (props: FolderSongPickerProps) => {
         <div className="min-w-0">
             <label className={`flex items-center gap-3 rounded-xl border px-4 py-3 ${props.isDaylight ? 'border-black/10 bg-white/70' : 'border-white/10 bg-black/20'}`}>
                 <Search size={15} className="opacity-50" />
-                <input
+                <TextField
                     value={query}
                     onChange={event => setQuery(event.target.value)}
                     placeholder={t('localMusic.searchEntitySongs')}

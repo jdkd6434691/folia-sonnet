@@ -8,6 +8,7 @@ import { FoliumParamFields, type FoliumParamFieldToken } from '../../params/Foli
 import { mergeFoliumParamValues, resolveFoliumLabel } from '../../params/params';
 import { useFoliumRegistryEntries } from '../../runtime/registry';
 import { commandsRegistry, runFoliumCommand, useFoliumCommandState } from './commands';
+import { Button } from '../../../components/ui';
 
 // src/mods/folium/registries/FoliumCommandSurfaceView.tsx
 // Command-palette body for a mod command that declares params: the same form
@@ -72,8 +73,7 @@ const FoliumCommandSurfaceView: React.FC<FoliumCommandSurfaceViewProps> = ({ com
                 />
             </div>
             <div className="flex items-center gap-3">
-                <button
-                    type="button"
+                <Button
                     disabled={running}
                     onClick={() => void run()}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
@@ -81,7 +81,7 @@ const FoliumCommandSurfaceView: React.FC<FoliumCommandSurfaceViewProps> = ({ com
                 >
                     {running ? <Loader2 size={13} className="animate-spin" /> : <Play size={13} />}
                     {running ? t('mods.running') : t('mods.runCommand')}
-                </button>
+                </Button>
                 {runState?.lastError ? (
                     <span className="flex items-center gap-1.5 text-[11px] text-red-400">
                         <TriangleAlert size={13} />

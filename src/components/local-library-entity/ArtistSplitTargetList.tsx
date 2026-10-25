@@ -1,6 +1,7 @@
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { LocalLibrarySplitTarget } from '../../types/localLibrary';
+import { Button } from '../ui';
 
 // src/components/local-library-entity/ArtistSplitTargetList.tsx
 // Shows every artist that selected songs will link to after a split.
@@ -27,14 +28,13 @@ export const ArtistSplitTargetList = ({ targets, selectedTheme, onRemove }: Arti
                         className={`flex max-w-full items-center gap-2 rounded-full border py-1.5 pl-3 pr-1.5 text-sm font-semibold ${selectedTheme}`}
                     >
                         <span className="truncate">{target.displayName}</span>
-                        <button
-                            type="button"
+                        <Button
                             onClick={() => onRemove(index)}
                             className="shrink-0 rounded-full p-1 transition-colors hover:bg-blue-500/20"
                             aria-label={t('localMusic.removeArtistSplitTarget', { name: target.displayName })}
                         >
                             <X size={14} />
-                        </button>
+                        </Button>
                     </span>
                 ))}
             </div>

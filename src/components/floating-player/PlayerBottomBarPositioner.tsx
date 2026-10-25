@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Check, RotateCcw, X } from 'lucide-react';
 import { PLAYER_BOTTOM_BAR_BASE_OFFSET_PX } from '../../utils/playerBottomBarLayout';
+import { Button } from '../ui';
 
 // src/components/floating-player/PlayerBottomBarPositioner.tsx
 // 定位模式的取景框：标出底部基线能移动到哪里，并提供复位 / 确认 / 取消。
@@ -61,34 +62,31 @@ const PlayerBottomBarPositioner: React.FC<PlayerBottomBarPositionerProps> = ({
                 <div className={`flex items-center gap-3 rounded-full border px-4 py-2 text-sm shadow-xl backdrop-blur-xl ${chipClass}`}>
                     <span className="select-none">{t('options.playerBottomBarPositioningHint')}</span>
                     <span className="h-4 w-px opacity-20" style={{ backgroundColor: 'currentColor' }} />
-                    <button
-                        type="button"
+                    <Button
                         onClick={onReset}
                         className="rounded-full p-1.5 opacity-60 transition-opacity hover:opacity-100"
-                        title={t('options.playerBottomBarReset')}
+                        tip={t('options.playerBottomBarReset')}
                         aria-label={t('options.playerBottomBarReset')}
                     >
                         <RotateCcw size={15} />
-                    </button>
-                    <button
-                        type="button"
+                    </Button>
+                    <Button
                         onClick={onCancel}
                         className="rounded-full p-1.5 opacity-60 transition-opacity hover:opacity-100"
-                        title={t('ui.cancel')}
+                        tip={t('ui.cancel')}
                         aria-label={t('ui.cancel')}
                     >
                         <X size={15} />
-                    </button>
-                    <button
-                        type="button"
+                    </Button>
+                    <Button
                         onClick={onCommit}
                         className="rounded-full p-1.5 transition-transform hover:scale-105"
                         style={{ backgroundColor: accentColor, color: isDaylight ? '#fff' : '#000' }}
-                        title={t('options.save')}
+                        tip={t('options.save')}
                         aria-label={t('options.save')}
                     >
                         <Check size={15} />
-                    </button>
+                    </Button>
                 </div>
             </motion.div>
         </>

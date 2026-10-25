@@ -3,6 +3,7 @@ import { Download, ImagePlus, Loader2, Trash2 } from 'lucide-react';
 import type { TFunction } from 'i18next';
 import type { TemperaLayerImage } from '../../../types';
 import ThemedDialog from '../../shared/ThemedDialog';
+import { Button, TextField } from '../../ui';
 import TemperaImageImportMenu from './TemperaImageImportMenu';
 import TemperaImagePlacementEditor from './TemperaImagePlacementEditor';
 import { TemperaRangeControl } from './TemperaSettingsControls';
@@ -76,8 +77,7 @@ interface ChipProps {
 }
 
 const Chip: React.FC<ChipProps> = ({ label, active, tokens, onClick }) => (
-    <button
-        type="button"
+    <Button
         onClick={onClick}
         aria-pressed={active}
         className="rounded-full border px-3 py-1.5 text-xs transition-colors"
@@ -88,7 +88,7 @@ const Chip: React.FC<ChipProps> = ({ label, active, tokens, onClick }) => (
         }}
     >
         {label}
-    </button>
+    </Button>
 );
 
 interface PoolActionProps {
@@ -100,8 +100,7 @@ interface PoolActionProps {
 }
 
 const PoolAction: React.FC<PoolActionProps> = ({ label, icon, tokens, disabled, onClick }) => (
-    <button
-        type="button"
+    <Button
         onClick={onClick}
         disabled={disabled}
         className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-colors disabled:opacity-35 disabled:hover:bg-transparent ${tokens.hoverSurfaceClass}`}
@@ -109,7 +108,7 @@ const PoolAction: React.FC<PoolActionProps> = ({ label, icon, tokens, disabled, 
     >
         {icon}
         {label}
-    </button>
+    </Button>
 );
 
 const TemperaImageLayerDialog: React.FC<TemperaImageLayerDialogProps> = ({
@@ -183,8 +182,7 @@ const TemperaImageLayerDialog: React.FC<TemperaImageLayerDialogProps> = ({
             size="l"
             fill
             headerActions={(
-                <button
-                    type="button"
+                <Button
                     disabled={images.length === 0 || busy !== 'idle'}
                     onClick={onClearAll}
                     className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition-colors disabled:opacity-35 disabled:hover:bg-transparent ${tokens.hoverSurfaceClass}`}
@@ -192,7 +190,7 @@ const TemperaImageLayerDialog: React.FC<TemperaImageLayerDialogProps> = ({
                 >
                     <Trash2 size={13} />
                     {t('options.temperaClearLayerImages')}
-                </button>
+                </Button>
             )}
             footer={(
                 <div className="flex w-full flex-wrap items-center gap-2">
@@ -240,8 +238,7 @@ const TemperaImageLayerDialog: React.FC<TemperaImageLayerDialogProps> = ({
                                 {t(BUSY_LABELS[busy].key) || BUSY_LABELS[busy].fallback}
                             </span>
                         )}
-                        <button
-                            type="button"
+                        <Button
                             onClick={requestClose}
                             disabled={writeLocked}
                             // Why the button is dead has to be said: once the file picker that
@@ -254,7 +251,7 @@ const TemperaImageLayerDialog: React.FC<TemperaImageLayerDialogProps> = ({
                             style={{ color: tokens.textPrimary, borderColor: tokens.line }}
                         >
                             {t('options.temperaLayerImageSave') || '保存'}
-                        </button>
+                        </Button>
                     </span>
                 </div>
             )}
@@ -336,7 +333,7 @@ const TemperaImageLayerDialog: React.FC<TemperaImageLayerDialogProps> = ({
                 )}
             </div>
 
-            <input
+            <TextField
                 ref={fileInputRef}
                 type="file"
                 accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
@@ -347,7 +344,7 @@ const TemperaImageLayerDialog: React.FC<TemperaImageLayerDialogProps> = ({
                     event.target.value = '';
                 }}
             />
-            <input
+            <TextField
                 ref={importInputRef}
                 type="file"
                 accept="application/zip,.zip"

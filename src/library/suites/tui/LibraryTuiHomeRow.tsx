@@ -6,6 +6,7 @@ import type { LibraryDirectoryRow } from '../../core/directory/directoryTree';
 import { resolveDirectoryFolderLabel } from '../../core/directory/directoryItems';
 import { resolveDirectoryNodeSelection } from '../../core/directory/directoryBatch';
 import { isDirectoryItemHidden, isHideableDirectoryItem } from '../../core/directory/directoryVisibility';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/tui/LibraryTuiHomeRow.tsx
 // TUI 首页目录的一行：焦点 / 选中标记、名称（本地文件夹按目录树缩进，可展开的节点带 ▾ / ▸）、类型、曲目数、
@@ -97,8 +98,7 @@ const LibraryTuiHomeRow = (props: RowComponentProps<LibraryTuiHomeRowProps>): Re
             <span className={`${cell} opacity-55`}>{description}</span>
             <span>
                 {hideable && onToggleHidden && item ? (
-                    <button
-                        type="button"
+                    <Button
                         data-tui-toggle-hidden
                         title={hidden ? props.unhideLabel : props.hideLabel}
                         onClick={(event) => {
@@ -108,7 +108,7 @@ const LibraryTuiHomeRow = (props: RowComponentProps<LibraryTuiHomeRowProps>): Re
                         className="opacity-50 hover:opacity-100"
                     >
                         {`[${hidden ? props.unhideLabel : props.hideLabel}]`}
-                    </button>
+                    </Button>
                 ) : null}
             </span>
         </div>

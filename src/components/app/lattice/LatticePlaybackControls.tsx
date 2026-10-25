@@ -8,6 +8,7 @@ import { useLatticeTransport } from './LatticeTransportContext';
 import type { LatticeSongTile } from './latticeModel';
 import LatticeChromeTime from './LatticeChromeTime';
 import LatticeExtraControls from './LatticeExtraControls';
+import { Button } from '@/components/ui';
 import './LatticeChrome.css';
 
 // Adapts the shared Player Chrome transport and progress bar to one expanded wall tile.
@@ -53,23 +54,22 @@ export default function LatticePlaybackControls({
             aria-label={t('home.latticePlaybackControls')}
         >
             <div className="lattice-chrome-transport">
-                <button
-                    type="button"
+                <Button
                     className="lattice-transport-button"
                     onClick={() => canControlCurrent ? onTogglePlayback() : onPlay(tile)}
                     aria-label={isPlaying ? t('player.pause') : t('player.play')}
-                    title={isPlaying ? t('player.pause') : t('player.play')}
+                    tip={isPlaying ? t('player.pause') : t('player.play')}
                 >
                     {isPlaying ? <Pause fill="currentColor" /> : <Play fill="currentColor" />}
-                </button>
+                </Button>
                 <div className="lattice-chrome-details" inert={!revealed} aria-hidden={!revealed}>
                     <LatticeExtraControls disabled={!canControlCurrent} />
                 </div>
                 <LatticeChromeTime currentTime={canControlCurrent ? currentTime : idleTime} duration={duration} />
-                <button type="button" className="lattice-secondary-action" onClick={onOpenPlayer}
-                    aria-label={t('home.latticeOpenPlayer')} title={t('home.latticeOpenPlayer')}>
+                <Button className="lattice-secondary-action" onClick={onOpenPlayer}
+                    aria-label={t('home.latticeOpenPlayer')} tip={t('home.latticeOpenPlayer')}>
                     <ArrowUpRight size={20} />
-                </button>
+                </Button>
             </div>
             <div className="lattice-progress">
                 <ProgressBar

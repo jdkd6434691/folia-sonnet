@@ -1,235 +1,42 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Disc } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { formatGridMapFolderTitle } from '../../../../utils/gridMapFolderPath';
-import { getSizedCoverUrl } from '../../../../utils/coverUrl';
 import { useHomeLayoutSettingsStore } from '../../../../stores/useHomeLayoutSettingsStore';
 import { useReducedMotionFor } from '../../../../hooks/useReducedMotionFor';
-import { useCompactUiScale } from '../../../../hooks/useCompactUiScale';import { hasBlockingWindow } from '../../../../utils/keyboardTargets';
-import { CARD_TITLE_ATTR, MORPH_FRAME_ATTR } from '../transitions/gridMorphContract';
+import { useCompactUiScale } from '../../../../hooks/useCompactUiScale';
+import { hasBlockingWindow } from '../../../../utils/keyboardTargets';
+import { Grid3DSliderCard } from './Grid3DSliderCard';
+import {
+    DISCRETE_WHEEL_DISTANCE_MULTIPLIER,
+    GRID3D_CARD_GAP,
+    GRID3D_COMPACT_CAPTION_PX,
+    GRID3D_COMPACT_CARD_RATIO,
+    GRID3D_COMPACT_MIN_COVER_PX,
+    GRID3D_COMPACT_PEAK_SCALE,
+    GRID3D_COMPACT_SCROLLER_PAD_PX,
+    PROGRAMMATIC_SCROLL_IDLE_TIMEOUT_MS,
+    PROGRAMMATIC_SCROLL_SETTLE_PX,
+    PROGRAMMATIC_SCROLL_TIMEOUT_MS,
+    WHEEL_SMOOTHING_MAX_DURATION_MS,
+    WHEEL_SMOOTHING_MIN_PROGRESS,
+    WHEEL_SMOOTHING_SETTLE_DISTANCE,
+    clampFocusedIndex,
+    getGrid3DItemsSignature,
+    getGrid3DSliderDisplayName,
+    getGrid3DSliderSecondaryText,
+    getGrid3DTargetScrollLeft,
+    getGrid3DWindowRange,
+    resolveGrid3DLeapPlan,
+    resolveGrid3DTransitionMode,
+    resolveGrid3DWheelInput,
+    type Grid3DSliderProps,
+} from './grid3DSliderModel';
 
 // src/library/suites/grid/home/Grid3DSlider.tsx
 // Controlled desktop Grid3D slider shared by Netease, local music, and Navidrome overview surfaces.
-
-export interface Grid3DSliderItem {
-    id: string | number;
-    name: React.ReactNode;
-    coverUrl?: string;
-    description?: string;
-    summary?: string;
-    trackCount?: number;
-    trackIds?: string[];
-    type?: string;
-    isVirtual?: boolean;
-}
-
-interface Grid3DSliderProps {
-    items: Grid3DSliderItem[];
-    focusedIndex: number;
-    onFocusedIndexChange: (index: number) => void;
-    onSelect: (item: Grid3DSliderItem, index: number) => void;
-    isInteractive?: boolean;
-    isLoading?: boolean;
-    emptyMessage?: string;
-    isDaylight: boolean;
-    hasFloatingPlayer?: boolean;
-}
-
-const compactDescription = (description?: string, maxLength = 72) => {
-    if (!description) return '';
-    const normalized = description.replace(/\s+/g, ' ').trim();
-    return normalized.length > maxLength ? `${normalized.substring(0, maxLength)}...` : normalized;
-};
-
-type Grid3DSliderTextItem = Pick<Grid3DSliderItem, 'type' | 'description' | 'summary'>
-    & Partial<Pick<Grid3DSliderItem, 'name' | 'isVirtual'>>;
-
-// 文件夹卡片的第二行 / 信息行显示文件夹路径（= 名称）。虚拟的「全部歌曲」没有真实路径，但同一个位置照样
-// 显示它的名称（「All Songs / 全部歌曲」），不退回描述「Folder / 本地」：这是一直以来的可见文字，
-// test/ui 的 local-library 截图基线锁着它。isVirtual 只用于语义判断（批量删除不按文件夹删它）。
-const getLocalFolderPath = (item: Grid3DSliderTextItem): string => (
-    item.type === 'folder' && typeof item.name === 'string'
-        ? item.name
-        : ''
-);
-
-export const getGrid3DSliderDisplayName = (
-    item: Pick<Grid3DSliderItem, 'name' | 'type' | 'isVirtual'>,
-): React.ReactNode => {
-    const folderPath = getLocalFolderPath(item);
-    return folderPath ? formatGridMapFolderTitle(folderPath) : item.name;
-};
-
-export const getGrid3DSliderSecondaryText = (
-    item: Grid3DSliderTextItem,
-): string => (
-    getLocalFolderPath(item)
-        || (item.type === 'playlist'
-        ? compactDescription(item.summary) || compactDescription(item.description)
-        : compactDescription(item.description) || compactDescription(item.summary))
-);
-
-export const getGrid3DSliderSummaryText = (
-    item: Pick<Grid3DSliderItem, 'type' | 'description' | 'summary'>,
-): string => {
-    const summary = compactDescription(item.summary);
-    return summary && summary !== getGrid3DSliderSecondaryText(item) ? summary : '';
-};
-
-const DISCRETE_WHEEL_PIXEL_THRESHOLD = 40;
-const DISCRETE_WHEEL_DISTANCE_MULTIPLIER = 3;
-const GRID3D_CARD_GAP = 48;
-
-/**
- * 手机横屏（紧凑档）的纵向预算 —— 这几个数必须与 styles/androidPhoneFit.css 里同名的样式对上，
- * 少一个卡片就会被滚动容器裁掉：
- *   `[data-grid3d-slider]` 的上下内边距、`[data-grid3d-caption]` 的高度。
- * 卡片本身在这一档是 1:1（相纸卡的素材文字被隐藏），所以比例常数是 1。
- *
- * 放大倍数也要降：`scale()` 只改绘制不改布局，卡片会以自己为中心溢出「宽 ×(倍数−1)/2」，
- * 再叠上聚焦卡那 6px 上移，同样由滚动容器的内边距兜着 —— 桌面档封面几百像素、内边距 96px
- * 兜得住，紧凑档内边距只剩 20px，倍数不降的话封面一大就又把内边距吃穿、重新被裁。
- */
-const GRID3D_COMPACT_SCROLLER_PAD_PX = 20;
-const GRID3D_COMPACT_CAPTION_PX = 36;
-const GRID3D_COMPACT_CARD_RATIO = 1;
-const GRID3D_COMPACT_PEAK_SCALE = 1.12;
-const GRID3D_COMPACT_MIN_COVER_PX = 64;
-
-export const GRID3D_WINDOW_RADIUS = 18;
-export const GRID3D_LEAP_CARDS = 4;
-const PROGRAMMATIC_SCROLL_SETTLE_PX = 3;
-const PROGRAMMATIC_SCROLL_TIMEOUT_MS = 600;
-const PROGRAMMATIC_SCROLL_IDLE_TIMEOUT_MS = 250;
-const WHEEL_SMOOTHING_SETTLE_DISTANCE = 0.5;
-const WHEEL_SMOOTHING_MIN_PROGRESS = 0.01;
-const WHEEL_SMOOTHING_MAX_DURATION_MS = 800;
-
-export interface Grid3DWheelInput {
-    delta: number;
-    isDiscreteMouseWheel: boolean;
-}
-
-// Normalizes browser wheel units while keeping high-frequency trackpad input on the direct-scroll path.
-export const resolveGrid3DWheelInput = (
-    deltaX: number,
-    deltaY: number,
-    deltaMode: number,
-    pageSize: number,
-): Grid3DWheelInput => {
-    const rawDelta = Math.abs(deltaX) > Math.abs(deltaY) ? deltaX : deltaY;
-    const unitScale = deltaMode === 1
-        ? 32
-        : deltaMode === 2
-            ? Math.max(pageSize, 1)
-            : 1;
-
-    return {
-        delta: rawDelta * unitScale,
-        isDiscreteMouseWheel: deltaMode !== 0 || Math.abs(rawDelta) >= DISCRETE_WHEEL_PIXEL_THRESHOLD,
-    };
-};
-
-/**
- * Serializes item IDs safely to prevent collision when IDs contain commas (e.g. folder paths).
- */
-export const getGrid3DItemsSignature = (items: { id: string | number }[]): string =>
-    JSON.stringify(items.map(item => String(item.id)));
-
-/**
- * Calculates clamped target scrollLeft to center the card at the given index.
- */
-export const getGrid3DTargetScrollLeft = (
-    index: number,
-    containerWidth: number,
-    scrollWidth: number,
-    cardPitch: number,
-    coverSize: number,
-    edgePadding: number,
-): number => {
-    const maxScrollLeft = Math.max(0, scrollWidth - containerWidth);
-    const rawTarget = edgePadding + index * cardPitch + coverSize / 2 - containerWidth / 2;
-    return Math.max(0, Math.min(maxScrollLeft, rawTarget));
-};
-
-/**
- * Identifies the layout the cached card centers were measured in. The card count alone is not
- * enough: `coverSize` and `edgePadding` move every card whenever a container breakpoint flips or
- * the floating player appears, and neither changes the count.
- */
-export const getGrid3DCardGeometryKey = (
-    cardCount: number,
-    viewportWidth: number,
-    firstCardWidth: number,
-    firstCardOffsetLeft: number,
-): string => `${cardCount}:${viewportWidth}:${firstCardWidth}:${firstCardOffsetLeft}`;
-
-const clampFocusedIndex = (index: number, itemCount: number) => {
-    if (itemCount <= 0 || !Number.isFinite(index)) {
-        return 0;
-    }
-
-    return Math.min(Math.max(0, Math.trunc(index)), itemCount - 1);
-};
-
-export const getGrid3DWindowRange = (
-    focusedIndex: number,
-    itemCount: number,
-    radius = GRID3D_WINDOW_RADIUS,
-): { start: number; end: number } => {
-    const safeIndex = clampFocusedIndex(focusedIndex, itemCount);
-    return {
-        start: Math.max(0, safeIndex - radius),
-        end: Math.min(itemCount, safeIndex + radius + 1),
-    };
-};
-
-export type Grid3DTransitionMode = 'none' | 'direct' | 'leap';
-
-/**
- * Resolves the transition mode for external focus changes:
- * - 'none': Immediate jump (list change, same index, or reduced motion).
- * - 'direct': Continuous smooth scroll within the rendered window radius.
- * - 'leap': Distant jump that stages cards near the destination before smoothly gliding in.
- */
-export const resolveGrid3DTransitionMode = ({
-    isListChanged,
-    prevIndex,
-    nextIndex,
-    reduceMicroMotion = false,
-}: {
-    isListChanged: boolean;
-    prevIndex: number;
-    nextIndex: number;
-    reduceMicroMotion?: boolean;
-}): Grid3DTransitionMode => {
-    if (reduceMicroMotion || isListChanged || prevIndex === nextIndex) {
-        return 'none';
-    }
-    if (Math.abs(nextIndex - prevIndex) <= GRID3D_WINDOW_RADIUS) {
-        return 'direct';
-    }
-    return 'leap';
-};
-
-/**
- * Resolves staging index and scroll direction for leap transitions.
- */
-export const resolveGrid3DLeapPlan = ({
-    prevIndex,
-    nextIndex,
-    itemCount,
-    leapCards = GRID3D_LEAP_CARDS,
-}: {
-    prevIndex: number;
-    nextIndex: number;
-    itemCount: number;
-    leapCards?: number;
-}): { direction: number; stagingIndex: number } => {
-    const direction = Math.sign(nextIndex - prevIndex);
-    const stagingIndex = clampFocusedIndex(nextIndex - direction * leapCards, itemCount);
-    return { direction, stagingIndex };
-};
+//
+// 纯函数与显示文案在 grid3DSliderModel，卡片在 Grid3DSliderCard；这里只剩滚动、焦点与底部字幕。
+// 对外导出保持原路径：DesktopGrid3DSurface 与 test/unit/gridView/grid3DSlider.test 都从这里引。
+export * from './grid3DSliderModel';
 
 export const Grid3DSlider: React.FC<Grid3DSliderProps> = ({
     items,
@@ -855,17 +662,17 @@ export const Grid3DSlider: React.FC<Grid3DSliderProps> = ({
                         {windowedItems.map((item, localIndex) => {
                             const index = windowStart + localIndex;
                             const isFocused = index === safeFocusedIndex;
-                            const folderPath = getLocalFolderPath(item);
-                            const displayName = getGrid3DSliderDisplayName(item);
-                            const secondaryText = getGrid3DSliderSecondaryText(item);
-                            const summaryText = getGrid3DSliderSummaryText(item);
 
                             return (
-                                <div
+                                <Grid3DSliderCard
                                     key={item.id}
-                                    data-grid3d-index={index}
-                                    className="shrink-0 cursor-pointer pointer-events-auto select-none"
-                                    style={{ marginRight: index < items.length - 1 ? GRID3D_CARD_GAP : 0 }}
+                                    item={item}
+                                    index={index}
+                                    isFocused={isFocused}
+                                    coverSize={coverSize}
+                                    cardStyle={grid3dCardStyle}
+                                    hasCover={loadedIndices.has(index)}
+                                    marginRight={index < items.length - 1 ? GRID3D_CARD_GAP : 0}
                                     onClick={() => {
                                         if (!isInteractive || dragDistanceRef.current >= 8) return;
                                         if (isFocused) {
@@ -874,60 +681,7 @@ export const Grid3DSlider: React.FC<Grid3DSliderProps> = ({
                                             scrollToIndex(index);
                                         }
                                     }}
-                                	>
-                                    {grid3dCardStyle === 'image' ? (
-                                        <div
-                                            data-grid3d-card="image"
-                                            className={`aspect-square rounded-2xl overflow-hidden shadow-2xl relative border border-white/10 ${
-                                                isFocused ? 'ring-2 ring-white/30' : ''
-                                            }`}
-                                            style={{ width: coverSize, height: coverSize }}
-                                        >
-                                            {item.coverUrl && loadedIndices.has(index) ? (
-                                                <img src={getSizedCoverUrl(item.coverUrl, coverSize)} alt={typeof displayName === 'string' ? displayName : ''} loading="lazy" decoding="async" className="w-full h-full object-cover pointer-events-none select-none" />
-                                            ) : (
-                                                <div className="w-full h-full bg-zinc-800/20 flex items-center justify-center">
-                                                    <Disc size={64} className="opacity-20" />
-                                                </div>
-                                            )}
-                                            <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity" />
-                                        </div>
-                                    ) : (
-                                        <div
-                                            {...{ [MORPH_FRAME_ATTR]: '' }}
-                                            data-grid3d-card="polaroid"
-                                            className="rounded-xl border p-4 flex flex-col items-center backdrop-blur-md shadow-lg hover:shadow-2xl theme-polaroid-card"
-                                            style={{ width: coverSize }}
-                                        >
-                                            <div data-grid3d-card-cover className="w-full aspect-square rounded-lg overflow-hidden bg-zinc-800/20 relative shadow-inner mb-4 flex items-center justify-center">
-                                                {item.coverUrl && loadedIndices.has(index) ? (
-                                                    <img src={getSizedCoverUrl(item.coverUrl, coverSize)} alt={typeof displayName === 'string' ? displayName : ''} loading="lazy" decoding="async" className="w-full h-full object-cover pointer-events-none select-none" />
-                                                ) : (
-                                                    <Disc size={64} className="opacity-20" />
-                                                )}
-                                            </div>
-
-                                            <div data-grid3d-card-text className="w-full text-left pt-2 min-w-0">
-                                                <h3 {...{ [CARD_TITLE_ATTR]: '' }} className="font-bold text-sm truncate max-w-full tracking-tight">
-                                                    {displayName}
-                                                </h3>
-                                                {secondaryText && (
-                                                    <p
-                                                        className={`text-xs opacity-50 max-w-full mt-1 font-medium ${folderPath ? 'line-clamp-2 break-words' : 'truncate'}`}
-                                                        title={folderPath || undefined}
-                                                    >
-                                                        {secondaryText}
-                                                    </p>
-                                                )}
-                                                {summaryText && (
-                                                    <p className="text-[10px] leading-snug opacity-45 mt-2 line-clamp-2">
-                                                        {summaryText}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
+                                />
                             );
                         })}
                         {trailingSpacerWidth > 0 && (

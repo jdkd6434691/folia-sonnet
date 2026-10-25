@@ -1046,7 +1046,8 @@ export default {
       "syncAppliedRemote": "Pengaturan remote ditarik dan diterapkan",
       "syncPushedLocal": "Pengaturan lokal terbaru didorong ke remote",
       "syncSettingsComplete": "Pengaturan visual tersinkronisasi. {{details}}",
-      "syncSettingsNoChange": "Pengaturan visual sudah sinkron, tidak ada yang perlu dilakukan."
+      "syncSettingsNoChange": "Pengaturan visual sudah sinkron, tidak ada yang perlu dilakukan.",
+      "syncSettingsConflictPending": "Pengaturan berbeda atau berubah saat sinkronisasi. Tidak ada yang ditimpa. Pilih yang ingin disimpan."
     },
     "unsupportedFontFormat": "Hanya mendukung file font woff2, woff, ttf, otf.",
     "cloudDrive": "Cloud Drive",
@@ -2272,6 +2273,10 @@ export default {
     "r2SyncTesting": "Menguji...",
     "r2SyncNow": "Sinkronkan Tema AI",
     "syncVisualSettings": "Sinkronkan pengaturan visual",
+    "syncSettingsConflictTitle": "Konflik pengaturan visual",
+    "syncSettingsConflictDesc": "Pengaturan berbeda tanpa acuan bersama yang terkonfirmasi, atau berubah saat sinkronisasi. Simpan lokal menimpa pengaturan server; Gunakan server menimpa perangkat ini. Perubahan server bersamaan memerlukan pilihan baru.",
+    "syncSettingsKeepLocal": "Simpan lokal",
+    "syncSettingsKeepRemote": "Gunakan server",
     "r2SyncSyncing": "Menyinkronkan...",
     "r2SyncExportLibrary": "Ekspor zip",
     "r2SyncExporting": "Mengekspor...",

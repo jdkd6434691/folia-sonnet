@@ -13,6 +13,7 @@ import {
 } from '../../services/localLibraryCatalogService';
 import { EntityEditorWorkspace } from '../local-library-entity/EntityEditorWorkspace';
 import { useEscapeClose } from '../../hooks/useEscapeClose';
+import { Button } from '@/components/ui';
 
 // src/components/modal/LocalLibraryEntityPanel.tsx
 // Orchestrates entity mutations in Folia's context-aware editor.
@@ -97,14 +98,13 @@ export const LocalLibraryEntityPanel = ({
             </div>
             <h2 id="local-library-entity-title" className="truncate text-xl font-bold tracking-tight">{entity.displayName}</h2>
           </div>
-          <button
-            type="button"
+          <Button
             onClick={onClose}
             className={`shrink-0 rounded-full p-2.5 transition-colors ${closeButtonTheme}`}
             aria-label={t('localMusic.cancel')}
           >
             <X size={22} />
-          </button>
+          </Button>
         </header>
 
         <AnimatePresence>

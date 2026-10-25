@@ -3,6 +3,7 @@ import { Puzzle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { AUDIO_EQUALIZER_CUSTOM_SLOT_IDS } from '../../../utils/audioEqualizer';
 import { useAudioSettingsStore } from '../../../stores/useAudioSettingsStore';
+import { Button } from '../../ui';
 
 // src/components/panelTab/equalizer/ModCurveNotice.tsx
 // The note over the presets while a mod's equalizer curve is kept (Folium 1.7 `folium.equalizer`): whose it
@@ -41,23 +42,22 @@ const ModCurveNotice: React.FC = () => {
                 )}
                 <div className="mt-2.5 flex flex-wrap gap-1.5">
                     {suspended ? (
-                        <button type="button" className={ACTION_CLASS} onClick={backToOwnSound}>
+                        <Button className={ACTION_CLASS} onClick={backToOwnSound}>
                             {t('ui.equalizerModCurveDiscard')}
-                        </button>
+                        </Button>
                     ) : (
                         <>
-                            <button type="button" className={ACTION_CLASS} onClick={backToOwnSound}>
+                            <Button className={ACTION_CLASS} onClick={backToOwnSound}>
                                 {t('ui.equalizerModCurveRelease')}
-                            </button>
+                            </Button>
                             {AUDIO_EQUALIZER_CUSTOM_SLOT_IDS.map(slotId => (
-                                <button
+                                <Button
                                     key={slotId}
-                                    type="button"
                                     className={ACTION_CLASS}
                                     onClick={() => saveToSlot(slotId)}
                                 >
                                     {t('ui.equalizerModCurveSave', { slot: t(`ui.equalizerPreset.${slotId}`) })}
-                                </button>
+                                </Button>
                             ))}
                         </>
                     )}

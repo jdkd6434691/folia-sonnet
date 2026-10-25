@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, useDragControls, useMotionValue } from 'framer-motion';
 import { X } from 'lucide-react';
+import { Button } from '../ui';
 
 // src/components/shared/DraggableDebugWindow.tsx
 // The shell both debug windows sit in: a title bar you can drag, a close button, and a position
@@ -133,8 +134,7 @@ const DraggableDebugWindow: React.FC<DraggableDebugWindowProps> = ({
                     {shortcutLabel && (
                         <div className="shrink-0 text-[10px] opacity-70 whitespace-nowrap">{shortcutLabel}</div>
                     )}
-                    <button
-                        type="button"
+                    <Button
                         onClick={onClose}
                         aria-label="Close"
                         // Stops the press from also starting a drag - a close button that moves the
@@ -143,7 +143,7 @@ const DraggableDebugWindow: React.FC<DraggableDebugWindowProps> = ({
                         className={`shrink-0 rounded p-1 transition-colors ${isDaylight ? 'hover:bg-black/[0.08]' : 'hover:bg-white/[0.12]'}`}
                     >
                         <X size={12} />
-                    </button>
+                    </Button>
                 </div>
                 <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-3">
                     {children}

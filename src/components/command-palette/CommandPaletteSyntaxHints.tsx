@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Theme } from '../../types';
 import type { SyntaxSuggestion } from './syntax/suggest';
+import { Button } from '../ui';
 
 // src/components/command-palette/CommandPaletteSyntaxHints.tsx
 // The `--` completion strip, shown for any command that declares a `syntax`.
@@ -42,9 +43,8 @@ const CommandPaletteSyntaxHints: React.FC<CommandPaletteSyntaxHintsProps> = ({
                 {suggestions.map((suggestion, index) => {
                     const isActive = index === activeIndex;
                     return (
-                        <button
+                        <Button
                             key={suggestion.id}
-                            type="button"
                             data-syntax-flag={suggestion.flag}
                             data-syntax-active={isActive ? 'true' : undefined}
                             onClick={() => onAccept(suggestion)}
@@ -71,7 +71,7 @@ const CommandPaletteSyntaxHints: React.FC<CommandPaletteSyntaxHintsProps> = ({
                                     {suggestion.aliases.map(alias => `--${alias}`).join(' ')}
                                 </span>
                             )}
-                        </button>
+                        </Button>
                     );
                 })}
             </div>

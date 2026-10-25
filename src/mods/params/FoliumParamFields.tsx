@@ -5,6 +5,7 @@ import { ColorField } from '@/components/modal/settings/kit/ColorField';
 import type { FoliumSetting } from '../folium/contract';
 import { formatFoliumParamNumber, isFoliumSecretParam, resolveFoliumLabel, resolveFoliumParamDefault, resolveFoliumParamStep, sanitizeFoliumParams } from './params';
 import { FoliumSelectField } from './FoliumSelectField';
+import { Button, TextField } from '../../components/ui';
 
 // src/mods/params/FoliumParamFields.tsx
 // The one param-form implementation in the mod system. Every schema-backed
@@ -122,7 +123,7 @@ const FoliumParamField: React.FC<{
             )}
 
             {param.type === 'number' ? (
-                <input
+                <TextField
                     type="range"
                     className={token.rangeClass ?? 'w-full h-1.5 appearance-none rounded-full bg-white/10 cursor-pointer disabled:opacity-40 min-w-0'}
                     style={token.rangeStyle}
@@ -135,7 +136,7 @@ const FoliumParamField: React.FC<{
                 />
             ) : null}
             {param.type === 'text' ? (
-                <input
+                <TextField
                     type="text"
                     className={token.input}
                     style={token.inputStyle}
@@ -146,8 +147,7 @@ const FoliumParamField: React.FC<{
                 />
             ) : null}
             {param.type === 'boolean' ? (
-                <button
-                    type="button"
+                <Button
                     disabled={disabled}
                     onClick={() => onChange(param, !value)}
                     className={`flex items-center gap-2 w-fit px-2.5 py-1 rounded-lg text-xs transition-colors ${
@@ -160,7 +160,7 @@ const FoliumParamField: React.FC<{
                         style={value ? token.dotOnStyle : token.dotOffStyle}
                     />
                     {value ? onLabel : offLabel}
-                </button>
+                </Button>
             ) : null}
             {param.type === 'select' ? (
                 <FoliumSelectField

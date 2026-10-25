@@ -4,6 +4,7 @@ import { LogIn, Loader2 } from 'lucide-react';
 import type { LibraryPasswordLoginError } from '../../../library/core/account/account.contract';
 import type { LoginPasswordField, PasswordLoginCredentials } from '../../../types/onlineMusic';
 import { FIELD_CLASS } from '../../modal/settings/kit/TextField';
+import { Button, TextField } from '../../ui';
 
 // src/components/login/window/PasswordLoginForm.tsx
 // 密码登录的表单（没有二维码的自建服务：地址 + 用户名 + 密码）。
@@ -69,7 +70,7 @@ export const PasswordLoginForm: React.FC<PasswordLoginFormProps> = ({ needsServe
             {needsServerUrl && (
                 <label className="flex flex-col gap-1">
                     <span className="text-xs text-[color:var(--st-t2)]">{t(field?.labelKey ?? 'home.loginServerUrl')}</span>
-                    <input
+                    <TextField
                         type="text"
                         className={`${FIELD_CLASS} w-full px-2.5`}
                         value={url}
@@ -84,7 +85,7 @@ export const PasswordLoginForm: React.FC<PasswordLoginFormProps> = ({ needsServe
             )}
             <label className="flex flex-col gap-1">
                 <span className="text-xs text-[color:var(--st-t2)]">{t('home.loginUsername')}</span>
-                <input
+                <TextField
                     ref={usernameRef}
                     type="text"
                     className={`${FIELD_CLASS} w-full px-2.5`}
@@ -98,7 +99,7 @@ export const PasswordLoginForm: React.FC<PasswordLoginFormProps> = ({ needsServe
             </label>
             <label className="flex flex-col gap-1">
                 <span className="text-xs text-[color:var(--st-t2)]">{t('home.loginPassword')}</span>
-                <input
+                <TextField
                     type="password"
                     className={`${FIELD_CLASS} w-full px-2.5`}
                     value={secret}
@@ -110,14 +111,14 @@ export const PasswordLoginForm: React.FC<PasswordLoginFormProps> = ({ needsServe
                 <p className="text-xs leading-[18px] text-[color:var(--st-err)]" role="alert">{t(ERROR_KEY[error])}</p>
             )}
             {/* 原生的 submit：回车（手机上键盘的「前往」）也能提交，不只是点一下。 */}
-            <button
+            <Button
                 type="submit"
                 disabled={!canSubmit}
                 className="st-t-fast mt-0.5 inline-flex h-8 shrink-0 items-center justify-center gap-1.5 self-start whitespace-nowrap rounded-lg bg-[var(--st-accent)] px-3 text-[13px] text-[color:var(--st-on-accent)] transition-[background-color,color,opacity,scale] enabled:active:scale-[0.97] enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             >
                 {busy ? <Loader2 size={14} className="animate-spin" aria-hidden /> : <LogIn size={14} aria-hidden />}
                 {t(busy ? 'home.loggingIn' : 'home.loginSubmit')}
-            </button>
+            </Button>
         </form>
     );
 };

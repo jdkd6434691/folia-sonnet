@@ -6,6 +6,7 @@ import type { LocalLibraryAssignment } from '../../types/localLibrary';
 import { batchAutoMatchLocalSongMetadata, useImportedSnapshotForLocalSong } from '../../services/localSongMetadataMatchService';
 import type { OnlineMetadataCandidate } from '../../services/onlineMetadataSearchService';
 import { FolderSongPicker } from './FolderSongPicker';
+import { Button, Checkbox } from '../ui';
 
 // src/components/local-library-entity/FolderAutoMatchEditor.tsx
 // Runs and reports the metadata-and-cover folder batch while keeping manual song matching available.
@@ -112,18 +113,18 @@ export const FolderAutoMatchEditor = ({ songs, assignments, isDaylight, onManual
                     <div className="mt-1 text-xs opacity-55">{t('localMusic.batchMetadataMatchHint')}</div>
                 </div>
                 {running ? (
-                    <button type="button" onClick={() => abortControllerRef.current?.abort()} className="flex items-center gap-2 rounded-xl bg-red-500/15 px-4 py-2 text-sm font-bold text-red-500">
+                    <Button onClick={() => abortControllerRef.current?.abort()} className="flex items-center gap-2 rounded-xl bg-red-500/15 px-4 py-2 text-sm font-bold text-red-500">
                         <Square size={14} /> {t('localMusic.cancelMatch')} ({completed}/{selectedCount})
-                    </button>
+                    </Button>
                 ) : (
                     <div className="flex flex-wrap items-center gap-2">
-                        <button type="button" disabled={selectedCount === 0 || busy} onClick={() => void useLocalInfo()} className="flex items-center gap-2 rounded-xl border border-amber-500/35 bg-amber-500/10 px-4 py-2 text-sm font-bold text-amber-500 disabled:opacity-35">
+                        <Button disabled={selectedCount === 0 || busy} onClick={() => void useLocalInfo()} className="flex items-center gap-2 rounded-xl border border-amber-500/35 bg-amber-500/10 px-4 py-2 text-sm font-bold text-amber-500 disabled:opacity-35">
                             {restoringLocalInfo ? <Loader2 size={15} className="animate-spin" /> : <HardDrive size={15} />}
                             {t('localMusic.useLocalInfoForSelected', { count: selectedCount })}
-                        </button>
-                        <button type="button" disabled={selectedCount === 0 || busy} onClick={() => void run()} className="flex items-center gap-2 rounded-xl bg-blue-500 px-4 py-2 text-sm font-bold text-white disabled:opacity-35">
+                        </Button>
+                        <Button disabled={selectedCount === 0 || busy} onClick={() => void run()} className="flex items-center gap-2 rounded-xl bg-blue-500 px-4 py-2 text-sm font-bold text-white disabled:opacity-35">
                             <WandSparkles size={15} /> {t('localMusic.startAutoMatch', { count: selectedCount })}
-                        </button>
+                        </Button>
                     </div>
                 )}
             </div>
@@ -133,9 +134,8 @@ export const FolderAutoMatchEditor = ({ songs, assignments, isDaylight, onManual
                 </div>
             )}
             <label className="flex w-fit items-center gap-2 text-xs font-semibold">
-                <input
+                <Checkbox
                     ref={selectAllRef}
-                    type="checkbox"
                     checked={allSelected}
                     disabled={busy || eligibleSongs.length === 0}
                     onChange={() => setSelectedSongIds(allSelected

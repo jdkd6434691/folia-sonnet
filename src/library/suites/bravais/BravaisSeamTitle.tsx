@@ -1,10 +1,11 @@
 import React, { useCallback, useId, useRef } from 'react';
 import { shouldToggleSeamFromTitle } from './bravaisSeamTitleClick';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisSeamTitle.tsx
 // 缝里可点的竖排标题（设计稿 §5「开口等级」）：完整信息条的标题区域（上下一对引号 + 竖排大标题）点一下收成书脊，
 // 书脊上的竖排标题点一下展开回完整信息条——取代原来面包屑行右侧的「收起」按钮，让面包屑拿到整行宽度。
-// 两者都是原生 <button>：Enter / Space 激活、进缝里的方向键序列（fb8a），读屏名是「收起信息条」/「展开信息条」，
+// 两者都是 Button（渲染成原生 button）：Enter / Space 激活、进缝里的方向键序列（fb8a），读屏名是「收起信息条」/「展开信息条」，
 // 标题文字经 aria-describedby 仍读得到。拖了一段再松手（像是想拖选文字）不算点击（bravaisSeamTitleClick）。
 // 两者都挂 data-bravais-seam-toggle：键盘切换时缝整条翻，转完焦点交给新内容里的那一个（useBravaisSeam）。
 
@@ -40,8 +41,7 @@ export const BravaisSeamTitleArea: React.FC<BravaisSeamTitleAreaProps> = ({ titl
     const titleId = useId();
     const handlers = useBravaisSeamTitleClick(onCollapse);
     return (
-        <button
-            type="button"
+        <Button
             className="bravais-seam-title-area"
             data-bravais-seam-action="spine"
             data-bravais-seam-toggle=""
@@ -55,7 +55,7 @@ export const BravaisSeamTitleArea: React.FC<BravaisSeamTitleAreaProps> = ({ titl
                 <span id={titleId} className="bravais-seam-vtitle" data-bravais-seam-title style={{ fontSize }}>{title}</span>
             </span>
             <span className="bravais-seam-quote is-closing" aria-hidden>{row ? '”' : '“'}</span>
-        </button>
+        </Button>
     );
 };
 
@@ -72,8 +72,7 @@ export const BravaisSeamSpineTitle: React.FC<BravaisSeamSpineTitleProps> = ({ ti
     const titleId = useId();
     const handlers = useBravaisSeamTitleClick(onExpand);
     return (
-        <button
-            type="button"
+        <Button
             className="bravais-seam-vtitle is-button"
             data-bravais-seam-action="expand"
             data-bravais-seam-title
@@ -85,6 +84,6 @@ export const BravaisSeamSpineTitle: React.FC<BravaisSeamSpineTitleProps> = ({ ti
             {...handlers}
         >
             <span id={titleId}>{title}</span>
-        </button>
+        </Button>
     );
 };

@@ -24,6 +24,7 @@ import VisPlaygroundSampleStage from '../../visualizer/window/VisPlaygroundSampl
 import { Tooltip } from '../settings/kit';
 import { SAMPLE_COLOR_MOTION_CLASS, ThemeSampleButton, ThemeSampleCard, themeSampleVars } from './ThemeSample';
 import type { EditableMode } from './themeParkDraft';
+import { Button } from '@/components/ui';
 
 // src/components/modal/theme-park/ThemeParkPreview.tsx
 // The sample of the Theme Park editor: the draft theme through the same VisualizerRenderer the
@@ -166,8 +167,7 @@ const ThemePreview: React.FC<{
                 </div>
 
                 <Tooltip text={pauseLabel} className="absolute right-3 top-3 z-30 inline-flex">
-                    <button
-                        type="button"
+                    <Button
                         onClick={(e) => {
                             e.stopPropagation();
                             onTogglePause();
@@ -176,7 +176,7 @@ const ThemePreview: React.FC<{
                         className="st-t-fast grid h-8 w-8 place-items-center rounded-full bg-black/45 text-white transition-colors hover:bg-black/65"
                     >
                         {isPaused ? <Play size={14} className="translate-x-[1px]" fill="currentColor" /> : <Pause size={14} fill="currentColor" />}
-                    </button>
+                    </Button>
                 </Tooltip>
             </div>
         );

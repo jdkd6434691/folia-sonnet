@@ -2,6 +2,7 @@ import { Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { List as VirtualList, type RowComponentProps } from 'react-window';
 import type { GridMapItem } from './GridMap';
+import { Button } from '../../../../components/ui';
 
 // src/library/suites/grid/directory/GridMapBatchItemList.tsx
 // Renders the flat virtual selector used by local album and artist GridMaps.
@@ -31,8 +32,7 @@ const ItemRow = ({
 
     return (
         <div {...ariaAttributes} style={style} className="px-1 py-0.5">
-            <button
-                type="button"
+            <Button
                 onClick={() => onSetItemsSelected([itemId], !selected)}
                 className="flex h-full w-full items-center gap-3 rounded-xl px-3 text-left transition hover:bg-black/5 dark:hover:bg-white/5"
             >
@@ -47,7 +47,7 @@ const ItemRow = ({
                         {item.description || t('home.gridBatchTrackCount', { count: trackCount })}
                     </span>
                 </span>
-            </button>
+            </Button>
         </div>
     );
 };

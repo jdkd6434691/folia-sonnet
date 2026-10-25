@@ -17,6 +17,7 @@ import CommandPaletteAllCommandsList from './CommandPaletteAllCommandsList';
 import { setIsCommandFilterOpen } from '../../stores/useAppViewStore';
 import { isGridFilterSyntaxAvailable, resolveGridFilterAction } from './gridFilterQuery';
 import { FILTER_VIEW_COMMAND_ID } from './commands/filterViewCommand';
+import { Button, TextField } from '../ui';
 
 // src/components/command-palette/CommandPalette.tsx
 // Full-screen command input overlay with autocomplete and keyboard execution.
@@ -206,7 +207,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({
     // composition handling, the surface's own inputProps and the executing lock have to be
     // identical, so they are written once.
     const renderQueryInput = (className: string) => (
-        <input
+        <TextField
             ref={inputRef}
             type="text"
             {...(surface?.inputProps?.(surfaceArgs) ?? {})}
@@ -461,8 +462,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({
                                     style={{ borderColor: isDaylight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.15)' }}
                                 >
                                     <span>{getCommandTitle(activeCommand, t)}</span>
-                                    <button
-                                        type="button"
+                                    <Button
                                         disabled={isExecuting}
                                         onClick={() => {
                                             onActiveCommandChange(null);
@@ -473,27 +473,25 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({
                                         aria-label={t('ui.clearActiveCommand')}
                                     >
                                         <X size={12} />
-                                    </button>
+                                    </Button>
                                 </div>
                             )}
                             {renderQueryInput('min-w-0 flex-1 bg-transparent py-2 text-sm outline-none placeholder:opacity-45 disabled:opacity-50')}
-                            <button
-                                type="button"
+                            <Button
                                 onClick={() => setIsShowingAllCommands(current => !current)}
                                 className={`rounded-full p-2 transition-colors ${isShowingAllCommands ? itemActiveBg : (isDaylight ? 'hover:bg-black/10' : 'hover:bg-white/10')}`}
                                 aria-label={t('commandPalette.showAllCommands') || 'Show all commands'}
-                                title={t('commandPalette.showAllCommands') || 'Show all commands'}
+                                tip={t('commandPalette.showAllCommands') || 'Show all commands'}
                             >
                                 <CircleHelp size={17} />
-                            </button>
-                            <button
-                                type="button"
+                            </Button>
+                            <Button
                                 onClick={onClose}
                                 className={`rounded-full p-2 transition-colors ${isDaylight ? 'hover:bg-black/10' : 'hover:bg-white/10'}`}
                                 aria-label={t('commandPalette.close') || 'Close command palette'}
                             >
                                 <X size={16} />
-                            </button>
+                            </Button>
                         </div>
 
                         {/* Removed activePreview top panel, it is now shown inline in the list items description */}
@@ -552,10 +550,9 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({
                                     const commandHint = primaryTermOf(match.command);
                                     const Icon = match.command.icon ?? Command;
                                     return (
-                                        <button
+                                        <Button
                                             key={match.command.id}
                                             ref={isActive ? activeMatchRowRef : undefined}
-                                            type="button"
                                             disabled={isExecuting}
                                             onMouseEnter={() => {
                                                 if (!isExecuting) {
@@ -602,7 +599,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({
                                                     {t('commandPalette.run') || 'Run'}
                                                 </div>
                                             )}
-                                        </button>
+                                        </Button>
                                     );
                                 })
                             )}

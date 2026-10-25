@@ -3,6 +3,7 @@ import { CircleHelp, Search, X, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useDragToScroll } from '../../../../hooks/useDragToScroll';
 import type { SettingsNavGroup, SettingsSectionId } from './settingsNavModel';
+import { Button, TextField } from '@/components/ui';
 // src/components/modal/settings/navigation/SettingsSideList.tsx
 // The settings' side list: a search field, then the categories under their group names, and Help at
 // the foot. It lists categories only; what a page holds is in that page's header. Under 768px the
@@ -53,9 +54,8 @@ export const SettingsSideList: React.FC<SettingsSideListProps> = ({
     const renderItem = (id: SettingsSectionId | 'help', Icon: LucideIcon, label: string, onSelect: () => void) => {
         const isActive = activeId === id;
         return (
-            <button
+            <Button
                 key={id}
-                type="button"
                 aria-current={isActive ? 'page' : undefined}
                 onClick={() => {
                     if (!isWide && hasDragged()) return;
@@ -65,7 +65,7 @@ export const SettingsSideList: React.FC<SettingsSideListProps> = ({
             >
                 <Icon size={16} className={`hidden shrink-0 md:block ${isActive ? '' : 'opacity-70'}`} />
                 <span className="truncate">{label}</span>
-            </button>
+            </Button>
         );
     };
 
@@ -73,7 +73,7 @@ export const SettingsSideList: React.FC<SettingsSideListProps> = ({
         <aside className="flex min-h-0 shrink-0 flex-col border-b border-[var(--st-line)] bg-[var(--st-side)] px-3 pb-2 pt-3 md:border-b-0 md:border-r md:px-2.5 md:pb-2.5 md:pt-3.5">
             <label className="flex h-8 shrink-0 items-center gap-2 rounded-lg border border-transparent bg-[var(--st-fill)] px-2.5 text-[color:var(--st-t3)] transition-colors focus-within:border-[var(--st-line2)]">
                 <Search size={14} className="shrink-0" />
-                <input
+                <TextField
                     type="search"
                     value={query}
                     onChange={event => onQueryChange(event.target.value)}
@@ -83,14 +83,13 @@ export const SettingsSideList: React.FC<SettingsSideListProps> = ({
                     className="min-w-0 flex-1 bg-transparent text-[13px] text-[color:var(--st-t1)] outline-none placeholder:text-[color:var(--st-t3)] [&::-webkit-search-cancel-button]:hidden"
                 />
                 {query && (
-                    <button
-                        type="button"
+                    <Button
                         onClick={() => onQueryChange('')}
                         aria-label={t('options.settingsSearchClear')}
                         className="shrink-0 transition-colors hover:text-[color:var(--st-t1)]"
                     >
                         <X size={14} />
-                    </button>
+                    </Button>
                 )}
             </label>
             <nav

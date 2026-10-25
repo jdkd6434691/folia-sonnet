@@ -1,5 +1,6 @@
 import React from 'react';
 import { Row, type SettingsOptionDef } from './kit';
+import { Button } from '@/components/ui';
 
 // src/components/modal/settings/SettingsRow.tsx
 // One row of the wallpaper section. It used to draw its own two lines — the title, then the
@@ -61,8 +62,7 @@ type SettingsToggleProps = {
 };
 
 export const SettingsToggle: React.FC<SettingsToggleProps> = ({ checked, onChange, offClass, onColor, disabled, ariaLabel }) => (
-    <button
-        type="button"
+    <Button
         onClick={onChange}
         disabled={disabled}
         aria-pressed={checked}
@@ -71,7 +71,7 @@ export const SettingsToggle: React.FC<SettingsToggleProps> = ({ checked, onChang
         style={{ backgroundColor: checked ? onColor || 'rgba(114, 119, 134, 1)' : undefined }}
     >
         <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${checked ? 'translate-x-6' : 'translate-x-0'}`} />
-    </button>
+    </Button>
 );
 
 export default SettingsRow;

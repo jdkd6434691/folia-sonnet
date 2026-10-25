@@ -9,6 +9,7 @@ import { translateHomeMessage } from '../../core/home/homeSources';
 import { colorWithAlpha } from '../../../utils/visualizer/colorMix';
 import { openLoginWindow } from '../../../components/login/loginWindowStore';
 import { useLibraryTuiAccountListKeys } from './useLibraryTuiHomeKeyboard';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/tui/LibraryTuiAccountList.tsx
 // TUI 首页在线页签的平台列表（account-select / account-logout）：每个在线平台一行——当前标记、名称、账户状态
@@ -118,8 +119,7 @@ const LibraryTuiAccountList: React.FC<LibraryTuiAccountListProps> = ({ account, 
                             <span className="truncate text-[12px] opacity-50">{actionLabel}</span>
                             <span className="text-right">
                                 {showLogout ? (
-                                    <button
-                                        type="button"
+                                    <Button
                                         data-tui-account-logout={provider.providerId}
                                         disabled={logoutPending}
                                         onClick={() => runLogout(provider)}
@@ -128,7 +128,7 @@ const LibraryTuiAccountList: React.FC<LibraryTuiAccountListProps> = ({ account, 
                                         <span aria-hidden="true">[</span>
                                         {logoutPending && logout.providerId === provider.providerId ? t('libraryTui.accountLoggingOut') : t('account.logout')}
                                         <span aria-hidden="true">]</span>
-                                    </button>
+                                    </Button>
                                 ) : null}
                             </span>
                         </div>

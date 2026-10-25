@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import ThemedDialog from '../shared/ThemedDialog';
 import AndroidUpdatePanel from './settings/AndroidUpdatePanel';
+import { Button } from '@/components/ui';
 
 // src/components/modal/AppUpdatePromptDialog.tsx
 // 启动时发现新版本的提示。
@@ -39,12 +40,12 @@ const AppUpdatePromptDialog: React.FC<AppUpdatePromptDialogProps> = ({
             panelKind="app-update"
             footer={(
                 <>
-                    <button type="button" onClick={onIgnoreVersion} className={ghostClass}>
+                    <Button onClick={onIgnoreVersion} className={ghostClass}>
                         {t('options.androidUpdateIgnoreVersion')}
-                    </button>
-                    <button type="button" onClick={onClose} className={ghostClass}>
+                    </Button>
+                    <Button onClick={onClose} className={ghostClass}>
                         {t('options.androidUpdateLater')}
-                    </button>
+                    </Button>
                 </>
             )}
         >

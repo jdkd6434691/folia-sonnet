@@ -6,6 +6,7 @@ import type { LocalLibraryAssignment } from '../../types/localLibrary';
 import { FolderAutoMatchEditor } from '../local-library-entity/FolderAutoMatchEditor';
 import { LocalSongMetadataMatchDialog } from './LocalSongMetadataMatchDialog';
 import { useEscapeClose } from '../../hooks/useEscapeClose';
+import { Button } from '@/components/ui';
 
 // src/components/modal/LocalFolderSongInfoPanel.tsx
 // Hosts explicit folder-scoped automatic and per-song online matching workflows.
@@ -36,7 +37,7 @@ export const LocalFolderSongInfoPanel = ({ folderName, songs, assignments, isDay
                         <h2 className="mt-1 truncate text-xl font-bold">{folderName}</h2>
                         <p className="mt-1 text-xs opacity-50">{t('localMusic.folderSongInfoHint', { count: songs.length })}</p>
                     </div>
-                    <button type="button" onClick={onClose} className="rounded-full p-2.5 hover:bg-current/10"><X size={21} /></button>
+                    <Button onClick={onClose} tip={t('ui.close')} className="rounded-full p-2.5 hover:bg-current/10"><X size={21} /></Button>
                 </header>
                 <main className="min-h-0 flex-1 overflow-y-auto p-6 custom-scrollbar">
                     <FolderAutoMatchEditor

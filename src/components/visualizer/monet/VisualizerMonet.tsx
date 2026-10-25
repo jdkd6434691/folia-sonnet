@@ -5,6 +5,7 @@ import { RotateCcw } from 'lucide-react';
 import { useElementWidth } from '../../../hooks/useElementWidth';
 import { DEFAULT_MONET_TUNING } from '../../../types';
 import { colorWithAlpha } from '../../../utils/visualizer/colorMix';
+import { Button } from '../../ui';
 import { type VisualizerSharedProps } from '../definition';
 import { useVisualizerRuntime } from '../runtime';
 import VisualizerShell from '../VisualizerShell';
@@ -396,8 +397,7 @@ const VisualizerMonet: React.FC<VisualizerMonetProps> = (props) => {
                                             zIndex: 5,
                                         }}
                                     >
-                                        <button
-                                            type="button"
+                                        <Button
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 offsetX.set(0);
@@ -409,10 +409,10 @@ const VisualizerMonet: React.FC<VisualizerMonetProps> = (props) => {
                                                 border: `1px solid ${colorWithAlpha(theme.primaryColor, 0.16)}`,
                                                 boxShadow: `0 4px 12px ${colorWithAlpha('#000000', 0.12)}`,
                                             }}
-                                            title={t('common.reset')}
+                                            tip={t('common.reset')}
                                         >
                                             <RotateCcw size={14} />
-                                        </button>
+                                        </Button>
                                     </div>
                                 )}
 

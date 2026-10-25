@@ -6,7 +6,7 @@ import { resolveFoliumLabel, resolveFoliumSelectDisplayValue } from './params';
 
 // src/mods/params/FoliumSelectField.tsx
 // The control of a `select` param: the host CustomSelect instead of a native
-// <select> (#485). The native popup ignores the app theme (a light grey list
+// select (#485). The native popup ignores the app theme (a light grey list
 // over dark chrome) and its keyboard differs from every other dropdown here.
 // The trigger is compact and wears the form token's input class/style, so it
 // stands level with, and looks like, the text fields of the same form.

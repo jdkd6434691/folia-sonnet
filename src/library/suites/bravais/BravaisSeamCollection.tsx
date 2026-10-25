@@ -12,6 +12,7 @@ import { BravaisSeamFlipText } from './BravaisSeamFlip';
 import { useBravaisReducedTransitions } from './bravaisMotion';
 import { bravaisPopMotion, bravaisRevealMotion, seamPopAnchorFor } from './bravaisSeamMotion';
 import './bravaisCollection.css';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisSeamCollection.tsx
 // 完整信息条里集合层的那几块（设计稿 §10.1 放置原则、§10.2、§10.6）：
@@ -38,9 +39,9 @@ export const BravaisSeamStatusLine: React.FC<{ status: BravaisSeamStatus }> = ({
             <Icon aria-hidden className={status.tone === 'loading' ? 'animate-spin' : undefined} />
             <span>{status.text}</span>
             {status.action && (
-                <button type="button" className="bravais-seam-link" data-bravais-seam-action={status.action.id} onClick={status.action.run}>
+                <Button className="bravais-seam-link" data-bravais-seam-action={status.action.id} onClick={status.action.run}>
                     {status.action.label}
-                </button>
+                </Button>
             )}
         </BravaisSeamFlipText>
     );
@@ -51,8 +52,7 @@ export const BravaisSeamStatusLine: React.FC<{ status: BravaisSeamStatus }> = ({
  * 那一行的末尾（BravaisSeamContent），是那一排动作里的一个图标按钮。
  */
 export const BravaisSeamStar: React.FC<{ subscribe: BravaisSeamSubscribe }> = ({ subscribe }) => (
-    <button
-        type="button"
+    <Button
         className={`bravais-seam-star${subscribe.subscribed ? ' is-on' : ''}`}
         data-bravais-seam-action="subscribe"
         data-bravais-subscribe={subscribe.pending ? 'pending' : subscribe.subscribed ? 'on' : 'off'}
@@ -63,7 +63,7 @@ export const BravaisSeamStar: React.FC<{ subscribe: BravaisSeamSubscribe }> = ({
         onClick={subscribe.onToggle}
     >
         {subscribe.pending ? <Loader2 aria-hidden className="animate-spin" /> : <Star aria-hidden />}
-    </button>
+    </Button>
 );
 
 /** 元数据行的补页进度、每日推荐的日期步进。 */
@@ -72,10 +72,10 @@ export const BravaisSeamCollectionMeta: React.FC<{ collection: BravaisSeamCollec
     return (
         <>
             {sync && (sync.onResume ? (
-                <button type="button" className="bravais-seam-sync is-interrupted" data-bravais-sync="interrupted" title={sync.title} onClick={sync.onResume}>
+                <Button className="bravais-seam-sync is-interrupted" data-bravais-sync="interrupted" title={sync.title} onClick={sync.onResume}>
                     <RefreshCw aria-hidden />
                     {sync.label}
-                </button>
+                </Button>
             ) : (
                 <div className="bravais-seam-sync" data-bravais-sync="syncing">
                     <RefreshCw aria-hidden className="animate-spin" />
@@ -84,20 +84,20 @@ export const BravaisSeamCollectionMeta: React.FC<{ collection: BravaisSeamCollec
             ))}
             {daily && (
                 <div className="bravais-seam-daily" role="group" aria-label={daily.ariaLabel} data-bravais-daily>
-                    <button type="button" className="bravais-seam-icon" data-bravais-seam-action="daily-previous" disabled={daily.disabled || !daily.onPrevious}
+                    <Button className="bravais-seam-icon" data-bravais-seam-action="daily-previous" disabled={daily.disabled || !daily.onPrevious}
                         onClick={daily.onPrevious} aria-label="‹">
                         <ChevronLeft aria-hidden />
-                    </button>
+                    </Button>
                     <BravaisSeamFlipText flipKey={daily.label} className="bravais-seam-daily-label" data-bravais-daily-date>{daily.label}</BravaisSeamFlipText>
-                    <button type="button" className="bravais-seam-icon" data-bravais-seam-action="daily-next" disabled={daily.disabled || !daily.onNext}
+                    <Button className="bravais-seam-icon" data-bravais-seam-action="daily-next" disabled={daily.disabled || !daily.onNext}
                         onClick={daily.onNext} aria-label="›">
                         <ChevronRight aria-hidden />
-                    </button>
+                    </Button>
                     {daily.onRefresh && (
-                        <button type="button" className="bravais-seam-icon" data-bravais-seam-action="daily-refresh" disabled={daily.disabled}
+                        <Button className="bravais-seam-icon" data-bravais-seam-action="daily-refresh" disabled={daily.disabled}
                             onClick={daily.onRefresh} aria-label={daily.refreshLabel} title={daily.refreshLabel}>
                             <RefreshCw aria-hidden />
-                        </button>
+                        </Button>
                     )}
                 </div>
             )}
@@ -148,24 +148,23 @@ export const BravaisSeamCollectionMenu: React.FC<{
             <div ref={anchorRef} className="bravais-seam-more-anchor" onKeyDown={onKeyDown}>
             <div className="bravais-seam-actions">
                 {collection?.listLabel && onOpenList && (
-                    <button type="button" className="bravais-chrome-button" data-bravais-seam-action="list" onClick={onOpenList}>
+                    <Button className="bravais-chrome-button" data-bravais-seam-action="list" onClick={onOpenList}>
                         <List aria-hidden />{collection.listLabel}
-                    </button>
+                    </Button>
                 )}
                 {hasMenu && (
-                    <button type="button" className="bravais-chrome-button" data-bravais-seam-action="more" aria-expanded={isOpen}
+                    <Button className="bravais-chrome-button" data-bravais-seam-action="more" aria-expanded={isOpen}
                         onClick={() => setIsOpen(open => !open)}>
                         <MoreHorizontal aria-hidden />{collection?.moreLabel ?? t('libraryBravaisCollection.more')}
-                    </button>
+                    </Button>
                 )}
             </div>
             <AnimatePresence>
                 {isOpen && (
                     <motion.div key="menu" className="bravais-seam-menu" role="menu" data-bravais-seam-menu {...pop}>
                         {items.map(item => (
-                            <button
+                            <Button
                                 key={item.id}
-                                type="button"
                                 role="menuitem"
                                 className={item.danger ? 'is-danger' : undefined}
                                 disabled={item.disabled}
@@ -176,12 +175,11 @@ export const BravaisSeamCollectionMenu: React.FC<{
                                 }}
                             >
                                 {item.label}
-                            </button>
+                            </Button>
                         ))}
                         {fold && items.length > 0 && <div className="bravais-seam-menu-rule" role="separator" />}
                         {fold && (
-                            <button
-                                type="button"
+                            <Button
                                 role="menuitem"
                                 data-bravais-seam-action="hide"
                                 onClick={() => {
@@ -190,7 +188,7 @@ export const BravaisSeamCollectionMenu: React.FC<{
                                 }}
                             >
                                 {fold.label}
-                            </button>
+                            </Button>
                         )}
                     </motion.div>
                 )}

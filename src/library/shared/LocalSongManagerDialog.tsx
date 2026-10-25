@@ -7,6 +7,7 @@ import ConfirmDialog from '../../components/shared/ConfirmDialog';
 import type { LocalSong } from '../../types';
 import { formatTime } from '../../utils/appPlaybackHelpers';
 import { isAndroidNativeRuntime } from '../../services/nativeLocalMusic';
+import { Button, TextField, Checkbox } from '../../components/ui';
 
 // src/library/shared/LocalSongManagerDialog.tsx
 // 本地曲库的「管理歌曲」对话框：搜索、勾选、重命名、删除。删的是曲库里的这首歌（安卓上连导入时
@@ -154,31 +155,29 @@ export const LocalSongManagerDialog: React.FC<LocalSongManagerDialogProps> = ({
                 closeDisabled={deleting || renaming}
                 footer={(
                     <div className="flex w-full items-center justify-between gap-3">
-                        <button
-                            type="button"
+                        <Button
                             onClick={() => setSelectedIds(prev => (
                                 prev.size > 0 ? new Set() : new Set(visible.map(song => song.id))
                             ))}
                             className="rounded-full border border-zinc-400/40 px-4 py-2 text-xs font-medium transition-colors opacity-80 hover:opacity-100 cursor-pointer"
                         >
                             {selected.length > 0 ? t('localMusic.deselectAllSongs') : t('localMusic.selectAllSongs')}
-                        </button>
-                        <button
-                            type="button"
+                        </Button>
+                        <Button
                             disabled={selected.length === 0 || deleting}
                             onClick={() => setPendingDelete(selected)}
                             className="rounded-full px-5 py-2 text-xs font-semibold transition-colors bg-red-500/15 text-red-500 border border-red-500/30 hover:bg-red-500/25 disabled:opacity-40 cursor-pointer flex items-center gap-1.5"
                         >
                             {deleting ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
                             {t('localMusic.deleteSelected', { count: selected.length })}
-                        </button>
+                        </Button>
                     </div>
                 )}
             >
                 <div className="flex flex-col gap-3">
                     <div className={`flex items-center gap-2 rounded-full border px-3 py-2 ${isDaylight ? 'border-zinc-200 bg-white/60' : 'border-white/10 bg-white/5'}`}>
                         <Search size={14} className={mutedClass} />
-                        <input
+                        <TextField
                             value={query}
                             onChange={event => setQuery(event.target.value)}
                             placeholder={t('localMusic.searchLocalSongs')}
@@ -202,8 +201,7 @@ export const LocalSongManagerDialog: React.FC<LocalSongManagerDialogProps> = ({
                                     key={song.id}
                                     className={`flex items-center gap-3 rounded-xl border px-3 py-2 transition-colors ${rowClass}`}
                                 >
-                                    <input
-                                        type="checkbox"
+                                    <Checkbox
                                         checked={checked}
                                         onChange={() => toggle(song.id)}
                                         className="w-4 h-4 shrink-0 cursor-pointer"
@@ -215,22 +213,20 @@ export const LocalSongManagerDialog: React.FC<LocalSongManagerDialogProps> = ({
                                     <div className={`text-xs shrink-0 ${mutedClass}`}>
                                         {song.duration > 0 ? formatTime(song.duration / 1000) : ''}
                                     </div>
-                                    <button
-                                        type="button"
+                                    <Button
                                         title={t('localMusic.renameSong')}
                                         onClick={() => openRename(song)}
                                         className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer ${isDaylight ? 'hover:bg-zinc-500/15' : 'hover:bg-white/10'}`}
                                     >
                                         <Pencil size={14} />
-                                    </button>
-                                    <button
-                                        type="button"
+                                    </Button>
+                                    <Button
                                         title={t('localMusic.deleteFromLibrary')}
                                         onClick={() => setPendingDelete([song.id])}
                                         className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-red-500 hover:bg-red-500/15 transition-colors cursor-pointer"
                                     >
                                         <Trash2 size={14} />
-                                    </button>
+                                    </Button>
                                 </div>
                             );
                         })}
@@ -254,28 +250,26 @@ export const LocalSongManagerDialog: React.FC<LocalSongManagerDialogProps> = ({
                 closeDisabled={renaming}
                 footer={(
                     <div className="flex items-center justify-end gap-3">
-                        <button
-                            type="button"
+                        <Button
                             onClick={() => setRenameTarget(null)}
                             disabled={renaming}
                             className="rounded-full border border-zinc-400/40 px-4 py-2 text-xs font-medium transition-colors opacity-80 hover:opacity-100 cursor-pointer"
                         >
                             {t('localMusic.renameCancel')}
-                        </button>
-                        <button
-                            type="button"
+                        </Button>
+                        <Button
                             disabled={renaming || !renameValue.trim()}
                             onClick={() => void submitRename()}
                             className="rounded-full px-5 py-2 text-xs font-semibold transition-colors bg-blue-500/15 text-blue-500 border border-blue-500/30 hover:bg-blue-500/25 disabled:opacity-40 cursor-pointer flex items-center gap-1.5"
                         >
                             {renaming ? <Loader2 size={13} className="animate-spin" /> : <Pencil size={13} />}
                             {t('localMusic.renameConfirm')}
-                        </button>
+                        </Button>
                     </div>
                 )}
             >
                 <div className="flex flex-col gap-3">
-                    <input
+                    <TextField
                         value={renameValue}
                         onChange={event => setRenameValue(event.target.value)}
                         onKeyDown={(event) => {

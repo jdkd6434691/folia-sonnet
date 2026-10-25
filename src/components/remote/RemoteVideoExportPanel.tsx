@@ -3,6 +3,7 @@ import { ChevronDown, Square } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { RemoteControlCommand } from '../../types/remoteControl';
 import type { VideoExportPreset, VideoExportStartMode, VideoExportState } from '../../types/videoExport';
+import { Button } from '../ui';
 
 // src/components/remote/RemoteVideoExportPanel.tsx
 // Export controls live only in the uncaptured remote window.
@@ -71,8 +72,7 @@ const RemoteVideoExportPanel: React.FC<RemoteVideoExportPanelProps> = ({
             {/* Row 1: Segment and Preset Button */}
             <div className="grid grid-cols-[1fr_1.1fr] gap-2.5">
                 <div className={`flex h-8 rounded-xl p-0.5 transition-colors ${isDaylight ? 'bg-black/5' : 'bg-white/5'}`}>
-                    <button
-                        type="button"
+                    <Button
                         disabled={exportBusy}
                         onClick={() => onStartModeChange('from-start')}
                         className={`flex-1 flex items-center justify-center rounded-lg text-[11px] font-bold transition disabled:cursor-not-allowed disabled:opacity-40 ${
@@ -82,9 +82,8 @@ const RemoteVideoExportPanel: React.FC<RemoteVideoExportPanelProps> = ({
                         }`}
                     >
                         {t('remote.exportFullSong')}
-                    </button>
-                    <button
-                        type="button"
+                    </Button>
+                    <Button
                         disabled={exportBusy}
                         onClick={() => onStartModeChange('current')}
                         className={`flex-1 flex items-center justify-center rounded-lg text-[11px] font-bold transition disabled:cursor-not-allowed disabled:opacity-40 ${
@@ -94,11 +93,10 @@ const RemoteVideoExportPanel: React.FC<RemoteVideoExportPanelProps> = ({
                         }`}
                     >
                         {t('remote.exportFromHere')}
-                    </button>
+                    </Button>
                 </div>
 
-                <button
-                    type="button"
+                <Button
                     disabled={exportBusy}
                     onClick={onOpenPresetSelector}
                     className={`flex h-8 items-center justify-between rounded-xl px-3 text-[11px] font-bold transition disabled:cursor-not-allowed disabled:opacity-40 border ${
@@ -112,7 +110,7 @@ const RemoteVideoExportPanel: React.FC<RemoteVideoExportPanelProps> = ({
                         {selectedPreset.label}
                     </span>
                     <ChevronDown size={12} className="shrink-0 ml-1 opacity-60" />
-                </button>
+                </Button>
             </div>
 
             {/* Row 2: Status Error (if any) and Action Buttons */}
@@ -149,9 +147,8 @@ const RemoteVideoExportPanel: React.FC<RemoteVideoExportPanelProps> = ({
             <div className="flex gap-2">
                 {exportBusy ? (
                     <>
-                        <button
+                        <Button
                             key="btn-stop"
-                            type="button"
                             disabled={exportState.status !== 'recording'}
                             onClick={() => sendCommand({ type: 'stop-export' })}
                             className={`flex h-8 flex-1 items-center justify-center gap-1.5 rounded-xl px-4 text-[12px] font-bold transition disabled:cursor-not-allowed disabled:opacity-40 ${
@@ -162,10 +159,9 @@ const RemoteVideoExportPanel: React.FC<RemoteVideoExportPanelProps> = ({
                         >
                             <Square size={10} fill="currentColor" />
                             {t('remote.stopAndSave')}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             key="btn-cancel"
-                            type="button"
                             onClick={() => sendCommand({ type: 'cancel-export' })}
                             className={`h-8 rounded-xl px-4 text-[12px] font-bold transition ${
                                 isDaylight
@@ -174,12 +170,11 @@ const RemoteVideoExportPanel: React.FC<RemoteVideoExportPanelProps> = ({
                             }`}
                         >
                             {t('remote.cancel')}
-                        </button>
+                        </Button>
                     </>
                 ) : (
-                    <button
+                    <Button
                         key="btn-start"
-                        type="button"
                         disabled={primaryDisabled}
                         onClick={() => sendCommand({ type: 'start-export', preset: selectedPreset, startMode })}
                         className={`h-8 w-full rounded-xl px-4 text-[12px] font-bold transition disabled:cursor-not-allowed disabled:opacity-35 ${
@@ -189,7 +184,7 @@ const RemoteVideoExportPanel: React.FC<RemoteVideoExportPanelProps> = ({
                         }`}
                     >
                         {statusLabel === 'Ready' ? t('remote.startRecording') : (statusLabel === 'Saved' ? t('remote.saved') : (statusLabel === 'Error' ? t('remote.error') : (statusLabel === 'Saving' ? t('remote.saving') : (statusLabel === 'Preparing' ? t('remote.preparing') : statusLabel))))}
-                    </button>
+                    </Button>
                 )}
             </div>
         </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { resolvePlayerControlSlot, type PlayerControlSlotActionId, type PlayerControlSlotContext } from './playerControlSlotActions';
+import { Button } from '../ui';
 
 // src/components/floating-player/PlayerControlSlotButton.tsx
 // 进度条胶囊右侧的一个可自定义槽位。样式沿用原来写死的循环 / 歌词时间轴按钮。
@@ -37,8 +38,7 @@ const PlayerControlSlotButton: React.FC<PlayerControlSlotButtonProps> = ({
             : `opacity-40 hover:opacity-100 ${isDaylight ? 'hover:bg-black/5' : 'hover:bg-white/10'}`;
 
     return (
-        <button
-            type="button"
+        <Button
             // 思索教程按它认这个槽位放的是哪个动作。纯标记，不参与任何行为。
             data-ponder-slot={actionId}
             // 手机适配的 CSS 认这一个槽位（横竖屏下尺寸不同）。
@@ -53,7 +53,7 @@ const PlayerControlSlotButton: React.FC<PlayerControlSlotButtonProps> = ({
             disabled={disabled}
             className={`rounded-full p-2 transition-colors ${stateClass} ${className}`}
             style={{ color: primaryColor }}
-            title={label}
+            tip={label}
             aria-label={label}
         >
             <Icon
@@ -61,7 +61,7 @@ const PlayerControlSlotButton: React.FC<PlayerControlSlotButtonProps> = ({
                 className="sm:h-[18px] sm:w-[18px]"
                 fill={slot.filled ? 'currentColor' : 'none'}
             />
-        </button>
+        </Button>
     );
 };
 

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { Theme } from '../../types';
 import type { CommandPaletteCommand } from './types';
 import { getCommandTitle } from './commandText';
+import { Button } from '../ui';
 
 // src/components/command-palette/PinnedCommandRow.tsx
 // Renders the three positional shortcuts below the command palette panel.
@@ -42,9 +43,8 @@ const PinnedCommandRow: React.FC<PinnedCommandRowProps> = ({
                 const Icon = command.icon ?? Command;
                 const title = getCommandTitle(command, t);
                 return (
-                    <button
+                    <Button
                         key={`${index}-${command.id}`}
-                        type="button"
                         disabled={isExecuting}
                         onClick={() => onExecute(command)}
                         className={`flex min-w-0 items-center justify-center gap-2 rounded-full border bg-transparent px-3 py-2 text-xs font-medium transition-colors disabled:pointer-events-none disabled:opacity-45 ${
@@ -55,11 +55,11 @@ const PinnedCommandRow: React.FC<PinnedCommandRowProps> = ({
                             color: 'var(--text-primary)',
                         }}
                         aria-label={t('commandPalette.runPinnedCommand', { command: title })}
-                        title={title}
+                        tip={title}
                     >
                         <Icon size={15} className="shrink-0" style={{ color: theme.accentColor }} />
                         <span className="min-w-0 truncate">{title}</span>
-                    </button>
+                    </Button>
                 );
             })}
         </div>

@@ -12,6 +12,7 @@ import BravaisSeamCrumbs from './BravaisSeamCrumbs';
 import { BravaisSeamFlip, BravaisSeamFlipText } from './BravaisSeamFlip';
 import { useBravaisReducedTransitions } from './bravaisMotion';
 import { bravaisRevealMotion } from './bravaisSeamMotion';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisDirectoryPanel.tsx
 // 目录树面板（设计稿 §5「目录树 = GridMap 的批量模式」）：首页「本地」窄缝的 ▤ 打开，缝加宽成面板。顶上面包屑
@@ -47,8 +48,7 @@ const DirectoryRow = ({ index, style, rows, panel }: RowComponentProps<RowProps>
     const roots = panel.roots;
     return (
         <div style={style} className={`bravais-dir-row${row.ignored ? ' is-ignored' : ''}`} data-bravais-dir-row={row.key}>
-            <button
-                type="button"
+            <Button
                 className="bravais-dir-toggle"
                 style={{ marginLeft: Math.min(row.depth, 5) * 12 }}
                 disabled={!row.expandable}
@@ -57,9 +57,8 @@ const DirectoryRow = ({ index, style, rows, panel }: RowComponentProps<RowProps>
                 onClick={() => panel.onToggleExpanded(row.key)}
             >
                 {row.expandable ? (row.expanded ? <ChevronDown aria-hidden /> : <ChevronRight aria-hidden />) : null}
-            </button>
-            <button
-                type="button"
+            </Button>
+            <Button
                 role="checkbox"
                 className="bravais-dir-select"
                 aria-checked={row.selection === 'all' ? true : row.selection === 'none' ? false : 'mixed'}
@@ -72,25 +71,25 @@ const DirectoryRow = ({ index, style, rows, panel }: RowComponentProps<RowProps>
                     <strong>{row.label}</strong>
                     <small>{row.detail}</small>
                 </span>
-            </button>
+            </Button>
             {roots && (row.rootPath || row.ignoredPath) && (
                 <span className="bravais-dir-ops">
                     {row.ignoredPath && (
-                        <button type="button" className="bravais-seam-icon" data-bravais-dir-action="clear-ignore" disabled={roots.disabled}
+                        <Button className="bravais-seam-icon" data-bravais-dir-action="clear-ignore" disabled={roots.disabled}
                             aria-label={roots.clearIgnoreLabel} title={roots.clearIgnoreLabel} onClick={() => roots.clearIgnore(row.ignoredPath!)}>
                             <Undo2 aria-hidden />
-                        </button>
+                        </Button>
                     )}
                     {row.rootPath && (
                         <>
-                            <button type="button" className="bravais-seam-icon" data-bravais-dir-action="rescan-root" disabled={roots.disabled}
+                            <Button className="bravais-seam-icon" data-bravais-dir-action="rescan-root" disabled={roots.disabled}
                                 aria-label={roots.rescanLabel} title={roots.rescanLabel} onClick={() => roots.rescan(row.rootPath!)}>
                                 <RefreshCw aria-hidden className={roots.busyPath === row.rootPath ? 'animate-spin' : undefined} />
-                            </button>
-                            <button type="button" className="bravais-seam-icon is-danger" data-bravais-dir-action="remove-root" disabled={roots.disabled}
+                            </Button>
+                            <Button className="bravais-seam-icon is-danger" data-bravais-dir-action="remove-root" disabled={roots.disabled}
                                 aria-label={roots.removeLabel} title={roots.removeLabel} onClick={() => roots.remove(row.rootPath!)}>
                                 <X aria-hidden />
-                            </button>
+                            </Button>
                         </>
                     )}
                 </span>
@@ -109,20 +108,19 @@ const BravaisDirectoryPanel: React.FC<{ layer: BravaisLayer; actions: BravaisPan
     return (
         <div className="bravais-seam-panel is-directory" data-bravais-directory={layer.key}>
             <div className="bravais-seam-crumbs">
-                <button type="button" className="bravais-seam-back" data-bravais-seam-action="close-directory" onClick={actions.close}
+                <Button className="bravais-seam-back" data-bravais-seam-action="close-directory" onClick={actions.close}
                     aria-label={t('libraryBravais.seamBack')} title={t('libraryBravais.seamBack')}>
                     <ChevronLeft aria-hidden />
-                </button>
+                </Button>
                 <BravaisSeamCrumbs layer={layer} panelLabel={panel.crumb} onClosePanel={actions.close} />
-                <button type="button" className="bravais-seam-level" data-bravais-seam-action="hide" onClick={actions.fold}>
+                <Button className="bravais-seam-level" data-bravais-seam-action="hide" onClick={actions.fold}>
                     {t('libraryBravais.seamFold')}
-                </button>
+                </Button>
             </div>
             {layer.seam.filter && <BravaisSeamFilterField filter={layer.seam.filter} variant="panel" />}
             <h2 className="bravais-panel-title" data-bravais-seam-title>{panel.title}</h2>
             <BravaisSeamFlipText as="div" flipKey={panel.summary} className="bravais-seam-meta" data-bravais-directory-summary>{panel.summary}</BravaisSeamFlipText>
-            <button
-                type="button"
+            <Button
                 role="checkbox"
                 className="bravais-dir-select is-all"
                 aria-checked={selectAll.state === 'all' ? true : selectAll.state === 'none' ? false : 'mixed'}
@@ -131,7 +129,7 @@ const BravaisDirectoryPanel: React.FC<{ layer: BravaisLayer; actions: BravaisPan
             >
                 <SelectionBox state={selectAll.state} />
                 <span className="bravais-dir-text"><strong>{selectAll.label}</strong></span>
-            </button>
+            </Button>
             <div className="bravais-panel-list" role="tree" aria-label={panel.title}>
                 {panel.rows.length > 0 ? (
                     <List
@@ -155,16 +153,15 @@ const BravaisDirectoryPanel: React.FC<{ layer: BravaisLayer; actions: BravaisPan
                         {panel.actions.map(action => {
                             const Icon = ACTION_ICONS[action.id];
                             return (
-                                <button
+                                <Button
                                     key={action.id}
-                                    type="button"
                                     className={`bravais-chrome-button${action.id === 'play' ? ' is-primary' : ''}${action.danger ? ' is-danger' : ''}`}
                                     data-bravais-dir-action={action.id}
                                     disabled={action.disabled}
                                     onClick={action.run}
                                 >
                                     <Icon aria-hidden />{action.label}
-                                </button>
+                                </Button>
                             );
                         })}
                     </div>

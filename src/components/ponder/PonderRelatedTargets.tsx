@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { usePonderStore } from '../../stores/usePonderStore';
 import type { PonderTargetDefinition } from '../../types/ponder';
 import { findPonderTarget } from './ponderRegistry';
+import { Button } from '../ui';
 
 // src/components/ponder/PonderRelatedTargets.tsx
 
@@ -37,15 +38,14 @@ const PonderRelatedTargets: React.FC<PonderRelatedTargetsProps> = ({ target, acc
             {relatedTargets.length > 0 ? (
                 <div className="flex flex-col gap-1">
                     {relatedTargets.map(candidate => (
-                        <button
+                        <Button
                             key={candidate.id}
-                            type="button"
                             onClick={() => usePonderStore.getState().openPonder(candidate.id)}
                             className="flex items-center justify-between rounded-xl px-3 py-2 text-left text-xs transition-colors hover:bg-white/10"
                         >
                             <span>{t(candidate.titleKey)}</span>
                             <ArrowRight size={13} style={{ color: accent }} aria-hidden="true" />
-                        </button>
+                        </Button>
                     ))}
                 </div>
             ) : (

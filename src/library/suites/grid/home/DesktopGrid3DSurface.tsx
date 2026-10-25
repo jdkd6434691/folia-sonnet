@@ -13,6 +13,7 @@ import { DEFAULT_DIRECTORY_SESSION_ID, hasDirectorySessionState } from '../../..
 import { homeCardToDirectoryItem } from '../../../core/directory/directoryItems';
 import { getLibraryDirectorySession, useLibraryDirectorySessionStore } from '../../../core/directory/useLibraryDirectorySessionStore';
 import { useHomeCardPosition } from '../../../../hooks/useHomeCardPosition';
+import { Button } from '../../../../components/ui';
 
 // src/library/suites/grid/home/DesktopGrid3DSurface.tsx
 // Shared desktop home surface that keeps Grid3D slider and GridMap controls visually consistent.
@@ -185,7 +186,7 @@ export const DesktopGrid3DSurface: React.FC<DesktopGrid3DSurfaceProps> = ({
                         {rowActions.length > 0 && (
                             <div data-ponder={ponderControls} className="pointer-events-auto flex flex-wrap items-center justify-end gap-2">
                                 {rowActions.map(action => (
-                                    <button
+                                    <Button
                                         key={action.id}
                                         onClick={action.onClick}
                                         disabled={action.disabled}
@@ -196,7 +197,7 @@ export const DesktopGrid3DSurface: React.FC<DesktopGrid3DSurfaceProps> = ({
                                     >
                                         {action.icon}
                                         <span className="whitespace-nowrap">{action.label}</span>
-                                    </button>
+                                    </Button>
                                 ))}
                             </div>
                         )}

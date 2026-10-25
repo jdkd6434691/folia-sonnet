@@ -5,6 +5,7 @@ import { List, useListRef } from 'react-window';
 import type { Theme } from '../../../types';
 import { resolveThemeFontStack } from '../../../utils/fontStacks';
 import { Button, FIELD_CLASS } from '../../modal/settings/kit';
+import { Button as UiButton, TextField } from '../../ui';
 import FontFallbackStackControl from './FontFallbackStackControl';
 
 // src/components/visualizer/window/FontPicker.tsx
@@ -129,8 +130,7 @@ const FontRow = ({ index, style, ariaAttributes, fonts, family, fontStyle, onCho
 
     return (
         <div style={style} {...ariaAttributes}>
-            <button
-                type="button"
+            <UiButton
                 aria-pressed={chosen}
                 onClick={() => onChoose(font)}
                 className={`st-focus-inside st-t-fast flex w-full flex-col justify-center rounded-lg px-3 text-left transition-colors ${chosen ? 'bg-[var(--st-fill2)] shadow-[inset_0_0_0_1.5px_var(--st-accent)]' : 'hover:bg-[var(--st-fill)]'}`}
@@ -140,7 +140,7 @@ const FontRow = ({ index, style, ariaAttributes, fonts, family, fontStyle, onCho
                     {font.label}
                 </span>
                 <span className="block truncate text-xs leading-[18px] text-[color:var(--st-t3)]">{font.family}</span>
-            </button>
+            </UiButton>
         </div>
     );
 };
@@ -276,7 +276,7 @@ export const FontPicker: React.FC<FontPickerProps> = ({
                     {!uploadsInstead && (
                         <label className={`${FIELD_CLASS} flex w-full shrink-0 items-center gap-2 px-2.5`}>
                             <Search size={14} className="shrink-0 text-[color:var(--st-t3)]" />
-                            <input
+                            <TextField
                                 type="text"
                                 // The keyboard starts in the search.
                                 autoFocus
@@ -306,7 +306,7 @@ export const FontPicker: React.FC<FontPickerProps> = ({
 
                     {uploadsInstead ? (
                         <>
-                            <input ref={uploadInputRef} type="file" accept={FONT_FILE_TYPES} className="hidden" onChange={handleUploadFile} />
+                            <TextField ref={uploadInputRef} type="file" accept={FONT_FILE_TYPES} className="hidden" onChange={handleUploadFile} />
                             {error && <Notice error>{error}</Notice>}
                             <div className="flex flex-wrap gap-2">
                                 <Button variant="primary" icon={isUploading ? undefined : Upload} disabled={isUploading} onClick={() => uploadInputRef.current?.click()}>

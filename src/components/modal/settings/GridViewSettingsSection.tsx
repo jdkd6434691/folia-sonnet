@@ -9,6 +9,7 @@ import {
     HEX_CARD_MIN_SCALE_DEFAULT,
 } from '../../../utils/hexCardFalloff';
 import { useGridViewSettingsStore } from '../../../stores/useGridViewSettingsStore';
+import { Button, TextField } from '@/components/ui';
 
 // src/components/modal/settings/GridViewSettingsSection.tsx
 // Look of the folia card grid: full-bleed covers plus the two floors of the distance falloff.
@@ -54,7 +55,7 @@ const GridViewSettingsSection: React.FC<GridViewSettingsSectionProps> = ({
                     {description}
                 </div>
             </div>
-            <button
+            <Button
                 onClick={() => onChange(!active)}
                 className={`w-12 h-6 rounded-full p-1 transition-colors shrink-0 ${!active ? toggleOffBackgroundClass : ''}`}
                 style={{ backgroundColor: active ? theme?.secondaryColor || 'rgba(114, 119, 134, 1)' : undefined }}
@@ -62,7 +63,7 @@ const GridViewSettingsSection: React.FC<GridViewSettingsSectionProps> = ({
                 aria-label={label}
             >
                 <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${active ? 'translate-x-6' : 'translate-x-0'}`} />
-            </button>
+            </Button>
         </div>
     );
 
@@ -85,7 +86,7 @@ const GridViewSettingsSection: React.FC<GridViewSettingsSectionProps> = ({
                     {Math.round(value * 100)}%
                 </span>
             </div>
-            <input
+            <TextField
                 type="range"
                 min={bounds.min}
                 max={bounds.max}
@@ -136,8 +137,7 @@ const GridViewSettingsSection: React.FC<GridViewSettingsSectionProps> = ({
                     HEX_CARD_MIN_OPACITY_BOUNDS,
                     setMinCardOpacity,
                 )}
-                <button
-                    type="button"
+                <Button
                     onClick={resetFalloff}
                     disabled={isDefaultFalloff}
                     className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition-opacity hover:bg-current/10 disabled:cursor-default disabled:opacity-35"
@@ -145,7 +145,7 @@ const GridViewSettingsSection: React.FC<GridViewSettingsSectionProps> = ({
                 >
                     <RotateCcw size={12} />
                     {t('options.gridViewCardFalloffReset')}
-                </button>
+                </Button>
             </div>
         </div>
     );

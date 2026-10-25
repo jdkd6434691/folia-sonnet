@@ -1,4 +1,5 @@
 import type {
+    SettingsConfirmation,
     SyncProviderConfig,
     SyncRemoteState,
     SyncThemeManifest,
@@ -83,11 +84,37 @@ export const getRemoteSettings = async (config: SyncProviderConfig): Promise<Syn
     parseSyncedSettingsRecord(await requestJson(config, '/settings'))
 );
 
-export const putRemoteSettings = async (config: SyncProviderConfig, record: SyncedSettingsRecord) => {
-    await requestJson(config, '/settings', {
+const parseSettingsConfirmation = (value: unknown): SettingsConfirmation => {
+    const response = value as Partial<SettingsConfirmation> | null;
+    const record = parseSyncedSettingsRecord(response?.record);
+    if (response?.protocol !== 'settings-cas-v1'
+        || (response.revision !== null && (typeof response.revision !== 'string' || !/^[a-f0-9]{64}$/.test(response.revision)))
+        || (response.revision === null ? response.record !== null : !record)) {
+        throw new Error('Sync server does not support settings confirmation; upgrade the server');
+    }
+    return { protocol: response.protocol, revision: response.revision, record };
+};
+
+export const getRemoteSettingsConfirmation = async (config: SyncProviderConfig): Promise<SettingsConfirmation> => (
+    parseSettingsConfirmation(await requestJson(config, '/settings/confirmation', { cache: 'no-store' }))
+);
+
+export const putRemoteSettings = async (
+    config: SyncProviderConfig,
+    record: SyncedSettingsRecord,
+    expectedRevision: string | null,
+): Promise<SettingsConfirmation> => {
+    const response = await requestJson<{ accepted?: boolean; record?: SyncedSettingsRecord }>(config, '/settings', {
         method: 'PUT',
-        body: JSON.stringify(record),
+        body: JSON.stringify({ ...record, expectedRevision }),
     });
+    const confirmed = parseSettingsConfirmation(response);
+    // Check the complete raw payload before parsing can discard fields; updatedAt is server-owned.
+    if (response.accepted !== true || !confirmed.record || !confirmed.revision
+        || JSON.stringify(response.record?.data) !== JSON.stringify(record.data)) {
+        throw new Error('Sync server did not confirm the uploaded settings');
+    }
+    return confirmed;
 };
 
 export const getRemoteThemes = async (

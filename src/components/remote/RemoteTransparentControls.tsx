@@ -3,6 +3,7 @@ import { Lock, LockOpen, Pin, PinOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { RemoteControlSnapshot } from '../../types/remoteControl';
 import { sendRemoteCommand } from './remoteWindowBridge';
+import { Button } from '../ui';
 
 // src/components/remote/RemoteTransparentControls.tsx
 // 遥控窗口里控制「主窗口」的那一面板：主窗口走常规还是透明、它的控件条怎么显隐、
@@ -33,24 +34,21 @@ const RemoteTransparentControls: React.FC<RemoteTransparentControlsProps> = ({ i
             {/* Row 1: Regular/Transparent mode segment control and Player Chrome visibility */}
             <div className="grid grid-cols-2 gap-2.5">
                 <div className={`flex h-8 rounded-xl p-0.5 transition-colors ${isDaylight ? 'bg-black/5' : 'bg-white/5'}`}>
-                    <button
-                        type="button"
+                    <Button
                         onClick={() => sendRemoteCommand({ type: 'set-transparent-mode-enabled', enabled: false })}
                         className={`flex-1 flex items-center justify-center rounded-lg text-[11px] font-bold transition ${segmentClass(isDaylight, !snapshot.transparentModeEnabled)}`}
                     >
                         {t('remote.standard')}
-                    </button>
-                    <button
-                        type="button"
+                    </Button>
+                    <Button
                         onClick={() => sendRemoteCommand({ type: 'set-transparent-mode-enabled', enabled: true })}
                         className={`flex-1 flex items-center justify-center rounded-lg text-[11px] font-bold transition ${segmentClass(isDaylight, snapshot.transparentModeEnabled)}`}
                     >
                         {t('remote.transparent')}
-                    </button>
+                    </Button>
                 </div>
 
-                <button
-                    type="button"
+                <Button
                     onClick={() => sendRemoteCommand({ type: 'cycle-player-chrome-visibility-mode' })}
                     className={tileClass(isDaylight, snapshot.playerChromeVisibilityMode === 'always-hidden')}
                 >
@@ -59,18 +57,17 @@ const RemoteTransparentControls: React.FC<RemoteTransparentControlsProps> = ({ i
                         : snapshot.playerChromeVisibilityMode === 'always-visible'
                             ? 'remote.uiAlwaysVisible'
                             : 'remote.uiAutoHide')}
-                </button>
+                </Button>
             </div>
 
             {/* Row 2: Main window border and Click-through controls */}
             <div className="grid grid-cols-2 gap-2.5">
-                <button
-                    type="button"
+                <Button
                     onClick={() => sendRemoteCommand({ type: 'set-main-window-border-visible', visible: !snapshot.mainWindowBorderVisible })}
                     className={tileClass(isDaylight, snapshot.mainWindowBorderVisible)}
                 >
                     {snapshot.mainWindowBorderVisible ? t('remote.hideBorder') : t('remote.showBorder')}
-                </button>
+                </Button>
 
                 <div className={`grid h-8 grid-cols-2 overflow-hidden rounded-xl border transition-colors ${isDaylight ? 'border-black/5 bg-black/5' : 'border-white/5 bg-white/5'
                     }`}>
@@ -78,10 +75,9 @@ const RemoteTransparentControls: React.FC<RemoteTransparentControlsProps> = ({ i
                      * 鼠标穿透要先开透明模式：常规模式下窗口是不透明的，穿透了也只能看见一块挡板。
                      * 所以这一格在未开透明模式时禁用。
                      */}
-                    <button
-                        type="button"
+                    <Button
                         disabled={!snapshot.transparentModeEnabled}
-                        title={snapshot.mainWindowClickThroughEnabled ? t('remote.disableClickThrough') : t('remote.enableClickThrough')}
+                        tip={snapshot.mainWindowClickThroughEnabled ? t('remote.disableClickThrough') : t('remote.enableClickThrough')}
                         aria-pressed={snapshot.mainWindowClickThroughEnabled}
                         onClick={() => sendRemoteCommand({ type: 'set-main-window-click-through', enabled: !snapshot.mainWindowClickThroughEnabled })}
                         className={`flex h-full items-center justify-center gap-1 text-[10px] font-bold transition disabled:cursor-not-allowed disabled:opacity-35 ${snapshot.mainWindowClickThroughEnabled
@@ -91,10 +87,9 @@ const RemoteTransparentControls: React.FC<RemoteTransparentControlsProps> = ({ i
                     >
                         {snapshot.mainWindowClickThroughEnabled ? <Lock size={12} /> : <LockOpen size={12} />}
                         <span>{t('remote.through')}</span>
-                    </button>
-                    <button
-                        type="button"
-                        title={snapshot.mainWindowAlwaysOnTop ? t('remote.unpinMainWindow') : t('remote.pinMainWindow')}
+                    </Button>
+                    <Button
+                        tip={snapshot.mainWindowAlwaysOnTop ? t('remote.unpinMainWindow') : t('remote.pinMainWindow')}
                         aria-pressed={snapshot.mainWindowAlwaysOnTop}
                         onClick={() => sendRemoteCommand({ type: 'set-main-window-always-on-top', enabled: !snapshot.mainWindowAlwaysOnTop })}
                         className={`flex h-full items-center justify-center gap-1 border-l text-[10px] font-bold transition ${snapshot.mainWindowAlwaysOnTop
@@ -104,7 +99,7 @@ const RemoteTransparentControls: React.FC<RemoteTransparentControlsProps> = ({ i
                     >
                         {snapshot.mainWindowAlwaysOnTop ? <Pin size={12} /> : <PinOff size={12} />}
                         <span>{t('remote.pin')}</span>
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

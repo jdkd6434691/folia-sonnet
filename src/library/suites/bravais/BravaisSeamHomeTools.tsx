@@ -17,6 +17,7 @@ import { BRAVAIS_SPECIAL_ICONS } from './bravaisSpecialIcons';
 import { closeBravaisHomePopover, setBravaisHomeOpenRequest, setBravaisHomePopover, useBravaisHomeUiStore } from './bravaisHomeUiStore';
 import { useBravaisReducedTransitions } from './bravaisMotion';
 import { bravaisPopMotion, seamPopAnchorFor } from './bravaisSeamMotion';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisSeamHomeTools.tsx
 // 首页窄缝底部的工具格。
@@ -142,11 +143,11 @@ const BravaisSeamHomeTools: React.FC<{
         const Icon = TOOL_ICONS[tool.id];
         const toggle = tool.pressed !== undefined;
         return (
-            <button key={tool.id} type="button" role={toggle ? 'menuitemcheckbox' : 'menuitem'} aria-checked={toggle ? tool.pressed : undefined}
+            <Button key={tool.id} role={toggle ? 'menuitemcheckbox' : 'menuitem'} aria-checked={toggle ? tool.pressed : undefined}
                 disabled={tool.disabled} data-bravais-seam-action={tool.id} className={`is-tool${tool.pressed ? ' is-pressed' : ''}`}
                 onClick={() => runItem(tool.run)}>
                 <Icon aria-hidden className={tool.busy ? 'animate-spin' : undefined} />{tool.label}
-            </button>
+            </Button>
         );
     };
 
@@ -158,20 +159,20 @@ const BravaisSeamHomeTools: React.FC<{
                         {jumps.map(shortcut => {
                             const Icon = BRAVAIS_SPECIAL_ICONS[shortcut.special];
                             return (
-                                <button key={shortcut.special} type="button" role="menuitem" className="is-shortcut"
+                                <Button key={shortcut.special} role="menuitem" className="is-shortcut"
                                     data-bravais-seam-action={`shortcut-${shortcut.special}`} data-bravais-shortcut={shortcut.special}
                                     onClick={() => runItem(() => (onOpenShortcut ? onOpenShortcut(shortcut) : shortcut.open()))}>
                                     <Icon aria-hidden />{shortcut.label}
-                                </button>
+                                </Button>
                             );
                         })}
                         {jumps.length > 0 && (page.length > 0 || local.length > 0 || app.length > 0) && <div className="bravais-seam-menu-rule" role="separator" />}
                         {page.map(menuTool)}
                         {local.map(item => (
-                            <button key={item.id} type="button" role="menuitem" disabled={item.disabled} data-bravais-seam-action={item.id}
+                            <Button key={item.id} role="menuitem" disabled={item.disabled} data-bravais-seam-action={item.id}
                                 className={item.danger ? 'is-danger' : undefined} onClick={() => runItem(item.run)}>
                                 {item.label}
-                            </button>
+                            </Button>
                         ))}
                         {(page.length > 0 || local.length > 0) && app.length > 0 && <div className="bravais-seam-menu-rule" role="separator" />}
                         {app.map(menuTool)}
@@ -184,9 +185,8 @@ const BravaisSeamHomeTools: React.FC<{
                     const wide = tool.id === 'stage';
                     const label = tool.badge ? `${tool.label} · ${tool.badge}` : tool.label;
                     return (
-                        <button
+                        <Button
                             key={tool.id}
-                            type="button"
                             className={`bravais-seam-icon${tool.pressed ? ' is-pressed' : ''}${wide ? ' is-wide' : ''}`}
                             data-bravais-seam-action={tool.id}
                             data-stage-active={wide ? String(Boolean(tool.active)) : undefined}
@@ -200,23 +200,23 @@ const BravaisSeamHomeTools: React.FC<{
                             <Icon aria-hidden className={tool.busy ? 'animate-spin' : undefined} />
                             {wide && !compact && tool.shortLabel && <span className="is-label" aria-hidden>{tool.shortLabel}</span>}
                             {tool.badge && compact && <span className="is-badge" aria-hidden />}
-                        </button>
+                        </Button>
                     );
                 })}
                 {hasMenu && (
-                    <button ref={moreRef} type="button" className={`bravais-seam-icon${open ? ' is-pressed' : ''}`} data-bravais-seam-action="more"
+                    <Button ref={moreRef} className={`bravais-seam-icon${open ? ' is-pressed' : ''}`} data-bravais-seam-action="more"
                         aria-haspopup="menu" aria-expanded={open} aria-label={home.menuLabel} title={home.menuLabel}
                         onClick={onMore}>
                         <MoreHorizontal aria-hidden />
-                    </button>
+                    </Button>
                 )}
             </div>
             {notice && !compact && (
-                <button type="button" className="bravais-seam-notice" data-bravais-seam-action={`${notice.id}-notice`}
+                <Button className="bravais-seam-notice" data-bravais-seam-action={`${notice.id}-notice`}
                     title={notice.badge} onClick={notice.run}>
                     <span className="is-dot" aria-hidden />
                     <span className="is-text">{notice.badge}</span>
-                </button>
+                </Button>
             )}
         </div>
     );

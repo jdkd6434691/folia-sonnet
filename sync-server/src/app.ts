@@ -6,6 +6,9 @@ import adminAuthRoutes, {
   readAdminSession,
   requireAdmin,
   touchAdminSession,
+  readAdminCredentials,
+  isSameOriginAdminMutation,
+  readAdminPublicOrigin,
 } from './admin.js';
 import { renderLoginPage, renderPanelPage } from './panel.js';
 import { aiCacheRoutes, adminCacheBackupRoutes, adminCacheRoutes, readCacheStats } from './aiCache.js';
@@ -14,6 +17,8 @@ import { adminFontRoutes, fontRoutes, readFontStats } from './fonts.js';
 import { adminStatsImageRoutes } from './statsImage.js';
 import { galleryApiRoutes, galleryPageRoutes } from './stageGallery.js';
 import type { FontBlobStore } from './fontBlobs.js';
+import { ensureAdminSessionSchema } from './adminSchema.js';
+import { compareAndSetSettings, readSettingsRow, settingsConfirmation, settingsRevision } from './settingsConfirmation.js';
 
 export type D1PreparedStatement = {
   bind: (...values: unknown[]) => D1PreparedStatement;
@@ -31,9 +36,11 @@ export type Env = {
   FOLIA_SYNC_DB: D1Database;
   SYNC_TOKEN: string;
   DASHBOARD_TOKEN?: string;
-  /** Panel credentials. Defaults to the shipped account when unset. */
+  /** Explicit panel credentials; missing/weak configuration disables admin access. */
   ADMIN_USERNAME?: string;
   ADMIN_PASSWORD?: string;
+  /** Explicit browser origin for trusted HTTPS reverse-proxy deployments. */
+  ADMIN_PUBLIC_ORIGIN?: string;
   /** Where the font bytes go. Absent means "fall back to D1". See src/fontBlobs.ts. */
   FONT_BLOBS?: FontBlobStore;
   /**
@@ -68,10 +75,9 @@ const isRecord = (value: unknown): value is Record<string, unknown> => (
   Boolean(value) && typeof value === 'object' && !Array.isArray(value)
 );
 
-let schemaEnsured = false;
+const schemaInitializations = new WeakMap<D1Database, Promise<void>>();
 
-const ensureSchema = async (db: D1Database) => {
-  if (schemaEnsured) return;
+const initializeSchema = async (db: D1Database) => {
   await db.batch([
     db.prepare(`
       CREATE TABLE IF NOT EXISTS settings (
@@ -208,18 +214,33 @@ const ensureSchema = async (db: D1Database) => {
      * SELECT 里要的每一列（updated_at/hits/cache_key/platform）都在索引里，
      * 分组与聚合全程只扫索引，不碰大字段。
      */
-    db.prepare('CREATE INDEX IF NOT EXISTS idx_ai_cache_song_group ON ai_cache(song_title, updated_at, hits, cache_key, platform)'),
   ]);
 
-  /*
-   * 老库建表时还没有 platform 列：`CREATE TABLE IF NOT EXISTS` 对已经存在的表什么都不做，
-   * 那一列就永远加不上。SQLite 没有「加列 IF NOT EXISTS」，所以单独 ALTER 一次、
-   * 已经存在（报 duplicate column）就当没事 —— 与 pruneHitLog 一样，升级不该因为
-   * 这条语句报错而把整个服务挡在门外。
-   */
-  await db.prepare('ALTER TABLE ai_cache ADD COLUMN platform TEXT').run().catch(() => undefined);
+  // Upgrade legacy tables before creating indexes that reference newer columns.
+  for (const table of ['ai_cache', 'ai_cache_backups']) {
+    const columns = await db.prepare(`PRAGMA table_info(${table})`).all<{ name: string }>();
+    if (!columns.results?.some((column) => column.name === 'platform')) {
+      try {
+        await db.prepare(`ALTER TABLE ${table} ADD COLUMN platform TEXT`).run();
+      } catch (error) {
+        const after = await db.prepare(`PRAGMA table_info(${table})`).all<{ name: string }>();
+        if (!after.results?.some((column) => column.name === 'platform')) throw error;
+      }
+    }
+  }
+  await db.prepare('CREATE INDEX IF NOT EXISTS idx_ai_cache_song_group ON ai_cache(song_title, updated_at, hits, cache_key, platform)').run();
+  await ensureAdminSessionSchema(db);
+};
 
-  schemaEnsured = true;
+const ensureSchema = (db: D1Database): Promise<void> => {
+  const pending = schemaInitializations.get(db);
+  if (pending) return pending;
+  const initialization = initializeSchema(db).catch((error) => {
+    schemaInitializations.delete(db);
+    throw error;
+  });
+  schemaInitializations.set(db, initialization);
+  return initialization;
 };
 
 const parseThemeInput = (value: unknown) => {
@@ -265,11 +286,21 @@ const getThemeManifest = async (db: D1Database) => {
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.use('*', cors({
+const publicCors = cors({
   origin: '*',
   allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Authorization', 'Content-Type'],
-}));
+});
+app.use('*', async (c, next) => {
+  if (c.req.path === '/admin' || c.req.path.startsWith('/admin/')) {
+    c.header('Cache-Control', 'no-store');
+    if (!readAdminCredentials(c.env) || !readAdminPublicOrigin(c)) return c.json({ ok: false, error: 'admin_not_configured' }, 503);
+    if (!isSameOriginAdminMutation(c)) return c.json({ ok: false, error: 'invalid_origin' }, 403);
+    await next();
+    return;
+  }
+  return publicCors(c, next);
+});
 
 // Token length validation middleware
 app.use('*', async (c, next) => {
@@ -494,10 +525,29 @@ api.get('/settings', async (c) => {
 
 api.get('/themes/manifest', async (c) => c.json(await getThemeManifest(c.env.FOLIA_SYNC_DB)));
 
+api.get('/settings/confirmation', async (c) => {
+  c.header('Cache-Control', 'no-store');
+  return c.json(await settingsConfirmation(await readSettingsRow(c.env.FOLIA_SYNC_DB)));
+});
+
 api.put('/settings', async (c) => {
   const body = await c.req.json<Record<string, unknown>>().catch(() => null);
-  if (!body || body.schemaVersion !== SCHEMA_VERSION || typeof body.updatedAt !== 'string' || !isRecord(body.data)) {
+  // Settings exports shipped as v1 even after the server's wire metadata moved to v2.
+  if (!body || (body.schemaVersion !== 1 && body.schemaVersion !== SCHEMA_VERSION) || typeof body.updatedAt !== 'string' || !isRecord(body.data)) {
     return c.json({ ok: false, error: 'invalid_settings' }, 400);
+  }
+  if ('expectedRevision' in body) {
+    c.header('Cache-Control', 'no-store');
+    if (body.expectedRevision !== null && (typeof body.expectedRevision !== 'string' || !/^[a-f0-9]{64}$/.test(body.expectedRevision))) {
+      return c.json({ ok: false, error: 'invalid_revision' }, 400);
+    }
+    const observed = await readSettingsRow(c.env.FOLIA_SYNC_DB);
+    if (await settingsRevision(observed) !== body.expectedRevision) {
+      return c.json({ ok: false, error: 'settings_conflict' }, 409);
+    }
+    const written = await compareAndSetSettings(c.env.FOLIA_SYNC_DB, observed, body);
+    if (!written) return c.json({ ok: false, error: 'settings_conflict' }, 409);
+    return c.json({ ok: true, accepted: true, ...await settingsConfirmation(written) });
   }
   await c.env.FOLIA_SYNC_DB
     .prepare(`

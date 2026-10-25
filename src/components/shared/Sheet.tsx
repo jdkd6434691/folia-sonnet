@@ -9,6 +9,7 @@ import { KIT_EASE, KIT_MOTION, kitMotionTokens, kitTransition, useKitReducedMoti
 import { Tooltip } from '../modal/settings/kit';
 import { escapeCloses, tabTarget } from './sheetKeys';
 import { isNativeBackKey } from '../../utils/keyboardTargets';
+import { Button } from '../ui';
 
 // src/components/shared/Sheet.tsx
 // The frame of every dialog: a title and the close button at the top, the content in the middle,
@@ -410,8 +411,7 @@ const SheetFrame: React.FC<SheetFrameProps> = ({
                             <div className="flex min-h-8 shrink-0 items-center gap-2">{headerActions}</div>
                         )}
                         <Tooltip text={closeDisabled ? closeDisabledTip : closeTip} className={`inline-flex shrink-0 ${overlay ? 'relative z-20' : ''}`}>
-                            <button
-                                type="button"
+                            <Button
                                 onClick={requestClose}
                                 aria-label={t('ui.close')}
                                 // Not `disabled`: the dimmed X still takes the pointer and the keyboard, so its tip can show.
@@ -419,7 +419,7 @@ const SheetFrame: React.FC<SheetFrameProps> = ({
                                 className={`st-t-fast grid h-8 w-8 place-items-center rounded-lg text-[color:var(--st-t2)] transition-[background-color,color,opacity] ${closeDisabled ? 'cursor-not-allowed opacity-40' : 'hover:bg-[var(--st-fill)] hover:text-[color:var(--st-t1)]'}`}
                             >
                                 <X size={16} />
-                            </button>
+                            </Button>
                         </Tooltip>
                     </header>
 
@@ -472,7 +472,7 @@ type SheetButtonProps = Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'cla
 
 /** A button of a sheet's bottom line: filled by default, as the settings kit's button is. */
 export const SheetButton: React.FC<SheetButtonProps> = ({ variant, ...button }) => (
-    <button type="button" {...button} className={`${BUTTON_CLASS} ${BUTTON_VARIANT_CLASS[variant ?? 'fill']}`} />
+    <Button {...button} className={`${BUTTON_CLASS} ${BUTTON_VARIANT_CLASS[variant ?? 'fill']}`} />
 );
 
 export default Sheet;

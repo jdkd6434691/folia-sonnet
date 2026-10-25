@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { DEFAULT_ONLINE_PROVIDER_ID } from '../types/onlineMusic';
 import type { MediaId, OnlineProviderId, ProviderCollection, ProviderUser } from '../types/onlineMusic';
+import { registerProviderAccountProbe } from '../utils/providerAccountSignIn';
 
 // src/stores/useOnlineProviderAccountStore.ts
 
@@ -132,3 +133,7 @@ export const useOnlineProviderAccountStore = create<OnlineProviderAccountStore>(
         },
     })),
 }));
+
+// 歌词来源只在账号登录后出现，判断在 utils/lyrics/lyricMatchSources.ts；utils 不 import stores，
+// 所以由这里把读取器交给它。每次被问时读当前状态，不在注册时留快照。
+registerProviderAccountProbe(providerId => Boolean(useOnlineProviderAccountStore.getState().accounts[providerId]?.user));

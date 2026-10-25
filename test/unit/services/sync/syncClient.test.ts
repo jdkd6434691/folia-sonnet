@@ -65,12 +65,14 @@ describe('syncClient 的通道', () => {
     });
 
     it('sends a JSON body through the same channel', async () => {
-        await putRemoteSettings(config, { schemaVersion: 1 } as never);
+        const record = { schemaVersion: 1, updatedAt: '2026-01-01T00:00:00Z', data: { visualizerMode: 'classic' } };
+        nativeFetch.mockResolvedValue(jsonResponse({ protocol: 'settings-cas-v1', accepted: true, revision: 'a'.repeat(64), record }));
+        await putRemoteSettings(config, record, null);
 
         const [url, init] = nativeFetch.mock.calls[0] as [string, RequestInit];
         expect(String(url)).toBe('https://sync.example.com/settings');
         expect(init.method).toBe('PUT');
-        expect(JSON.parse(String(init.body))).toEqual({ schemaVersion: 1 });
+        expect(JSON.parse(String(init.body))).toEqual({ ...record, expectedRevision: null });
     });
 
     /* 服务端报错要原样抛出去，别被吞成「有响应但没内容」。 */

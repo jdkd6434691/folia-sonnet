@@ -1,8 +1,10 @@
-import type { OmniCollection, OmniExploreItem, OmniExploreSection } from '../../../../types/onlineMusic';
+import type { OmniCollection, OmniExploreItem, OmniExploreSection } from '../types/onlineMusic';
 
-// src/components/app/home/explore/exploreFeedMemory.ts
+// src/utils/exploreFeedMemory.ts
 // What the explore tab remembers from one session to the next: the order its sections stand in,
 // and the collections the listener took out of their library.
+// Kept out of the explore tab's own folder (components/app/home/explore) because the feed store
+// reads it: a store does not depend on components, and nothing here draws.
 
 const STORAGE_KEY = 'folia_explore_memory';
 // A provider words some headings after an artist, so new ones keep coming; past this many for

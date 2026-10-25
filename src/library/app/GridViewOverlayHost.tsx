@@ -9,14 +9,12 @@ import {
 } from '../../stores/useCollectionNavigationStore';
 import { LocalSong, SongResult, UnifiedSong } from '../../types';
 import { getNavidromeConfig, navidromeApi } from '../../services/navidromeService';
-import { getLocalCoverAssetUrl } from '../../services/localCoverAssetUrl';
 import {
     collectionKey,
     GridViewCollectionDescriptor,
     LocalGridViewCollectionDescriptor,
     isLocalGridViewCollection,
     isNavidromeGridViewCollection,
-    refreshLocalGridViewCollection,
     resolveLocalAlbumArtistDisplay,
     resolveLocalGridViewTracks,
 } from '../../components/app/home/gridViewCollectionAdapters';
@@ -25,7 +23,6 @@ import { createLibraryMutationPort } from './createLibraryMutationPort';
 import { useCollectionResource } from '../core/collection/resource/useCollectionResource';
 import { useCollectionMutations } from '../core/collection/mutations/useCollectionMutations';
 import { useArtistResource } from '../core/artist/useArtistResource';
-import type { LibraryLocalCatalogSnapshot } from '../core/home/home.contract';
 import { LocalLibraryEntityPanel } from '../../components/modal/LocalLibraryEntityPanel';
 import { LocalFolderSongInfoPanel } from '../../components/modal/LocalFolderSongInfoPanel';
 import { LocalSongMetadataMatchDialog } from '../../components/modal/LocalSongMetadataMatchDialog';
@@ -51,6 +48,11 @@ import { resolveLibraryLayerPresentation } from '../core/suite/libraryStage';
 import { projectNavigationTrail, resolveCollectionPush } from '../core/collection/collectionNavigation';
 import { LIBRARY_HOME_SESSION_KEY } from './librarySuiteChoice';
 import LibrarySuiteStageSlot from './LibrarySuiteStageSlot';
+import {
+    getPersistentCoverUrl,
+    resolveLiveLocalCollection,
+    resolveLocalCollectionCoverUrlFromTracks,
+} from './gridViewOverlayCollections';
 
 // src/library/app/GridViewOverlayHost.tsx
 // Hosts the GridView overlay outside Grid3D so it can be opened/restored independently.
@@ -109,71 +111,6 @@ type GridViewOverlayHostProps = {
 // How long the home surface stays shown under a collection page that opens: longer than the
 // page's own fade to opaque (0.3s), which is what covers it.
 const HOME_HIDDEN_AFTER_SECONDS = 0.45;
-
-const getPersistentCoverUrl = (url?: string) => (
-    url && !url.startsWith('blob:') ? url : undefined
-);
-
-const resolveLocalCollectionCoverUrlFromTracks = (
-    tracks: UnifiedSong[],
-    localSongs: LocalSong[],
-): string | undefined => {
-    const songsById = new Map(localSongs.map(song => [song.id, song]));
-    const songs = tracks
-        .map(track => track.localRef ? songsById.get(track.localRef.songId) : undefined)
-        .filter((song): song is LocalSong => Boolean(song))
-        .sort((a, b) => (b.addedAt || 0) - (a.addedAt || 0));
-    const preferredSong = songs.find(song => {
-        const hasEmbeddedCover = Boolean(getLocalCoverAssetUrl(song.localCoverAssetId));
-        if (song.useOnlineCover) {
-            return song.onlineMetadata?.coverUrl || hasEmbeddedCover;
-        }
-        return hasEmbeddedCover || song.onlineMetadata?.coverUrl;
-    });
-
-    if (!preferredSong) {
-        return undefined;
-    }
-
-    if (preferredSong.useOnlineCover && preferredSong.onlineMetadata?.coverUrl) {
-        return preferredSong.onlineMetadata.coverUrl;
-    }
-
-    const localCoverUrl = getLocalCoverAssetUrl(preferredSong.localCoverAssetId, 512);
-    if (localCoverUrl) return localCoverUrl;
-
-    return preferredSong.onlineMetadata?.coverUrl;
-};
-
-const resolveLiveLocalCollection = (
-    collection: LocalGridViewCollectionDescriptor,
-    surfaceProps: HomeSurfaceProps,
-    catalog: LibraryLocalCatalogSnapshot,
-): LocalGridViewCollectionDescriptor | null => {
-    if (!collection.playlistId) {
-        return refreshLocalGridViewCollection(
-            collection,
-            surfaceProps.localSongs,
-            catalog.ready ? catalog : undefined,
-        );
-    }
-
-    const playlist = surfaceProps.localPlaylists.find(item => item.id === collection.playlistId);
-    if (!playlist) {
-        return null;
-    }
-
-    const validSongIds = new Set(surfaceProps.localSongs.map(song => song.id));
-    const songIds = playlist.songIds.filter(songId => validSongIds.has(songId));
-
-    return {
-        ...collection,
-        name: playlist.name,
-        songIds,
-        trackCount: songIds.length,
-        isVirtual: playlist.isFavorite,
-    };
-};
 
 const GridViewOverlayHost: React.FC<GridViewOverlayHostProps> = ({
     surfaceProps,

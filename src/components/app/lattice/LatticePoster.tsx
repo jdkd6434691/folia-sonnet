@@ -24,6 +24,7 @@ import { WALL_REFLOW_CONTROLS_REVEAL, WALL_REFLOW_SPRING } from '../../wall/wall
 import { LATTICE_TILE_ATTR, MORPH_SHADE_ATTR } from '../../collectionFlight';
 import { ENTRANCE_LIFT, LEAVING } from './tileMotion';
 import { useFlightBackTo } from './wallFlight';
+import { Button } from '@/components/ui';
 
 // Renders one poster and its expanded Player Chrome controls. A poster of the explore page that
 // is a collection (album, playlist, artist, mix) has one button there instead, which opens its page.
@@ -345,10 +346,10 @@ function LatticePoster({
                         // Nothing to play or seek: the one thing to do with a collection is open its page.
                         <div className="lattice-chrome">
                             <div className="lattice-chrome-transport">
-                                <button type="button" className="lattice-open-collection" onClick={() => onPlay(tile)}>
+                                <Button className="lattice-open-collection" onClick={() => onPlay(tile)}>
                                     <ArrowUpRight />
                                     <span>{t('home.latticeOpenCollection')}</span>
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     ) : (

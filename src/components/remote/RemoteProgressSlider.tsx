@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { REMOTE_NO_DRAG_STYLE, sendRemoteCommand } from './remoteWindowBridge';
+import { TextField } from '../ui';
 
 // src/components/remote/RemoteProgressSlider.tsx
 // 播放面板顶上那条进度：3px 的轨道 + 一条不透明度为 0 的 range 盖在上面吃点击
@@ -75,7 +76,7 @@ const RemoteProgressSlider: React.FC<RemoteProgressSliderProps> = ({
                 )}
 
                 {/* Transparent Large Hitbox Input Range */}
-                <input
+                <TextField
                     aria-label={t('ui.seek')}
                     type="range"
                     min={0}

@@ -3,6 +3,7 @@ import { Lock, Save, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { setStatusMessage } from '../../stores/useStatusMessageStore';
 import type { WallToolsHost } from './wallToolsHost';
+import { Button, TextField } from '../ui';
 
 // src/components/wall/WallToolsQueueIslandHeader.tsx
 // 队列浮岛（WallToolsQueueIsland）的头部：「播放队列 · N 首」、存为本地歌单、清空。
@@ -122,7 +123,7 @@ export function WallToolsQueueIslandHeader({ host, count, readOnly, canSave, ann
     return (
         <header className="lattice-tools-island-header">
             {naming ? (
-                <input
+                <TextField
                     ref={inputRef}
                     className="lattice-tools-island-input"
                     type="text"
@@ -148,33 +149,31 @@ export function WallToolsQueueIslandHeader({ host, count, readOnly, canSave, ann
                 </span>
             )}
             {canSave && !readOnly && !naming && (
-                <button
+                <Button
                     ref={saveButtonRef}
-                    type="button"
                     className="lattice-tools-island-header-action"
                     data-queue-island-action="save"
                     aria-label={t('wallTools.queueSave')}
-                    title={t('wallTools.queueSave')}
+                    tip={t('wallTools.queueSave')}
                     onClick={() => {
                         stopClearPending();
                         setNaming(true);
                     }}
                 >
                     <Save aria-hidden="true" />
-                </button>
+                </Button>
             )}
             {!readOnly && !naming && count > 0 && (
-                <button
-                    type="button"
+                <Button
                     className={clearPending ? 'lattice-tools-island-header-action is-confirming' : 'lattice-tools-island-header-action'}
                     data-queue-island-action="clear"
                     aria-label={clearLabel}
-                    title={clearLabel}
+                    tip={clearLabel}
                     onClick={handleClear}
                 >
                     <Trash2 aria-hidden="true" />
                     {clearPending && <span aria-hidden="true">{clearLabel}</span>}
-                </button>
+                </Button>
             )}
         </header>
     );

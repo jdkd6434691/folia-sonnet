@@ -11,6 +11,7 @@ import {
     secondaryIdleClass,
     transportButtonClass,
 } from './remoteCardVisuals';
+import { Button } from '../ui';
 
 // src/components/remote/RemoteTransportBar.tsx
 // 播放面板下半截：左右两行时间戳，加一条「上一首 / 播放 / 下一首 / 循环 —— 喜欢 / 透明控制 /
@@ -64,9 +65,8 @@ const RemoteTransportBar: React.FC<RemoteTransportBarProps> = ({
             <div className="flex w-full items-center justify-between">
                 {/* Playback domain: transport with loop mode trailing it */}
                 <div className="flex items-center gap-0.5">
-                    <button
-                        type="button"
-                        title={t('remote.previous')}
+                    <Button
+                        tip={t('remote.previous')}
                         disabled={primaryDisabled || !snapshot.canGoPrevious}
                         onMouseEnter={() => onHoverNavSideChange('prev')}
                         onMouseLeave={() => onHoverNavSideChange(null)}
@@ -74,10 +74,9 @@ const RemoteTransportBar: React.FC<RemoteTransportBarProps> = ({
                         className={transportButtonClass(isDaylight)}
                     >
                         <SkipBack size={17} strokeWidth={2} />
-                    </button>
-                    <button
-                        type="button"
-                        title={isPlaying ? t('remote.pause') : t('remote.play')}
+                    </Button>
+                    <Button
+                        tip={isPlaying ? t('remote.pause') : t('remote.play')}
                         disabled={primaryDisabled}
                         onClick={() => sendRemoteCommand({ type: 'play-pause' })}
                         className={`flex h-9 w-9 items-center justify-center rounded-full transition disabled:cursor-not-allowed disabled:opacity-30 ${isDaylight
@@ -86,10 +85,9 @@ const RemoteTransportBar: React.FC<RemoteTransportBarProps> = ({
                             }`}
                     >
                         {isPlaying ? <Pause size={16} fill="currentColor" /> : <Play size={16} className="translate-x-0.5" fill="currentColor" />}
-                    </button>
-                    <button
-                        type="button"
-                        title={t('remote.next')}
+                    </Button>
+                    <Button
+                        tip={t('remote.next')}
                         disabled={primaryDisabled || !snapshot.canGoNext}
                         onMouseEnter={() => onHoverNavSideChange('next')}
                         onMouseLeave={() => onHoverNavSideChange(null)}
@@ -97,24 +95,22 @@ const RemoteTransportBar: React.FC<RemoteTransportBarProps> = ({
                         className={transportButtonClass(isDaylight)}
                     >
                         <SkipForward size={17} strokeWidth={2} />
-                    </button>
-                    <button
-                        type="button"
-                        title={snapshot.loopMode === 'off' ? t('remote.loopOff') : snapshot.loopMode === 'one' ? t('remote.loopOne') : t('remote.loopAll')}
+                    </Button>
+                    <Button
+                        tip={snapshot.loopMode === 'off' ? t('remote.loopOff') : snapshot.loopMode === 'one' ? t('remote.loopOne') : t('remote.loopAll')}
                         aria-pressed={snapshot.loopMode !== 'off'}
                         disabled={primaryDisabled}
                         onClick={() => sendRemoteCommand({ type: 'cycle-loop-mode' })}
                         className={`${secondaryButtonBase} ml-2 ${snapshot.loopMode !== 'off' ? secondaryActiveClass(isDaylight) : secondaryIdleClass(isDaylight)}`}
                     >
                         {snapshot.loopMode === 'off' ? <RepeatOff size={15} strokeWidth={2} /> : snapshot.loopMode === 'one' ? <Repeat1 size={15} strokeWidth={2} /> : <Repeat size={15} strokeWidth={2} />}
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Track reaction, then window tools */}
                 <div className="flex items-center gap-0.5">
                     <span className="flex" title={likeUnavailableReason || (snapshot.isLiked ? t('remote.unlike') : t('remote.like'))}>
-                        <button
-                            type="button"
+                        <Button
                             aria-label={likeUnavailableReason || (snapshot.isLiked ? t('remote.unlike') : t('remote.like'))}
                             aria-pressed={snapshot.isLiked}
                             disabled={likeDisabled}
@@ -122,25 +118,23 @@ const RemoteTransportBar: React.FC<RemoteTransportBarProps> = ({
                             className={`${secondaryButtonBase} ${snapshot.isLiked ? secondaryAlertClass(isDaylight) : secondaryIdleClass(isDaylight)}`}
                         >
                             <Heart size={15} fill={snapshot.isLiked ? 'currentColor' : 'none'} strokeWidth={2} />
-                        </button>
+                        </Button>
                     </span>
-                    <button
-                        type="button"
-                        title={t('remote.transparentControls')}
+                    <Button
+                        tip={t('remote.transparentControls')}
                         onClick={onOpenTransparentControls}
                         className={`${secondaryButtonBase} ml-2 ${secondaryIdleClass(isDaylight)}`}
                     >
                         <MirrorRectangular size={15} strokeWidth={2} />
-                    </button>
-                    <button
-                        type="button"
-                        title={t('remote.videoExport')}
+                    </Button>
+                    <Button
+                        tip={t('remote.videoExport')}
                         disabled={!snapshot.hasTrack}
                         onClick={onOpenExport}
                         className={`${secondaryButtonBase} ${isExporting ? `${secondaryAlertClass(isDaylight)} animate-pulse` : secondaryIdleClass(isDaylight)}`}
                     >
                         <Video size={15} strokeWidth={2} />
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

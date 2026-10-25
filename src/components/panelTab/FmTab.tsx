@@ -10,6 +10,7 @@ import { IconSwap } from './shell/IconSwap';
 import { LikeButton } from './shell/LikeButton';
 import { PanelButton } from './shell/PanelButton';
 import { PanelIconButton } from './shell/PanelIconButton';
+import { Button } from '../ui';
 
 // src/components/panelTab/FmTab.tsx
 // The panel's radio tab, shown in place of the queue while a personal FM plays: the mode the radio
@@ -81,8 +82,7 @@ const FmTab: React.FC<FmTabProps> = ({
                         <SkipBack size={20} />
                     </PanelIconButton>
                     <Tooltip text={playLabel} className="inline-flex shrink-0">
-                        <button
-                            type="button"
+                        <Button
                             aria-label={playLabel}
                             onClick={onTogglePlay}
                             className="st-t-fast grid h-[52px] w-[52px] place-items-center rounded-full bg-[var(--st-accent)] text-[color:var(--st-on-accent)] transition-[opacity,scale] hover:opacity-90 active:scale-[0.96]"
@@ -92,7 +92,7 @@ const FmTab: React.FC<FmTabProps> = ({
                                     ? <Pause size={22} fill="currentColor" />
                                     : <Play size={22} fill="currentColor" className="ml-0.5" />}
                             </IconSwap>
-                        </button>
+                        </Button>
                     </Tooltip>
                     <PanelIconButton size="l" label={t('ui.nextTrack')} onClick={onNextTrack}>
                         <SkipForward size={20} />

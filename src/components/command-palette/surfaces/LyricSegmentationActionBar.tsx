@@ -1,6 +1,7 @@
 import React from 'react';
 import { Copy, FileText, Loader2, RotateCcw, Sparkles } from 'lucide-react';
 import type { LyricSegmentationAction } from '../lyricSegmentationQuery';
+import { Button } from '../../ui';
 
 // src/components/command-palette/surfaces/LyricSegmentationActionBar.tsx
 // Status line and actions for the segmentation surface.
@@ -43,11 +44,10 @@ type IconButtonProps = {
 };
 
 const IconButton: React.FC<IconButtonProps> = ({ isDaylight, label, onClick, disabled, active, children }) => (
-    <button
-        type="button"
+    <Button
         onClick={onClick}
         disabled={disabled}
-        title={label}
+        tip={label}
         aria-label={label}
         aria-pressed={active}
         className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors disabled:cursor-not-allowed disabled:opacity-30 ${
@@ -57,7 +57,7 @@ const IconButton: React.FC<IconButtonProps> = ({ isDaylight, label, onClick, dis
         }`}
     >
         {children}
-    </button>
+    </Button>
 );
 
 const LyricSegmentationActionBar: React.FC<LyricSegmentationActionBarProps> = ({
@@ -83,8 +83,7 @@ const LyricSegmentationActionBar: React.FC<LyricSegmentationActionBarProps> = ({
             <span className="mr-auto truncate text-[11px] font-semibold opacity-70">{statusText}</span>
 
             {isAiAvailable && (
-                <button
-                    type="button"
+                <Button
                     // While running this is the cancel affordance: a long generation with no way
                     // out but closing the palette is how it first read as a hang.
                     onClick={isRunningAi ? onCancelAi : onRunAi}
@@ -97,7 +96,7 @@ const LyricSegmentationActionBar: React.FC<LyricSegmentationActionBarProps> = ({
                 >
                     {isRunningAi ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
                     {isRunningAi ? aiRunningLabel : t('lyricSegmentation.runAi', 'Segment with AI')}
-                </button>
+                </Button>
             )}
 
             <IconButton isDaylight={isDaylight} disabled={busy} onClick={onCopyPrompt}

@@ -5,6 +5,7 @@ import type { LibraryArtistAlbum } from '../../core/artist/artist.contract';
 import type { TrackArtistLink } from '../../core/shared/trackLinks';
 import { isSongUnavailable } from '../../../services/onlineMusic/songAvailability';
 import { formatTime } from '../../../utils/appPlaybackHelpers';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/tui/LibraryTuiArtistRows.tsx
 // TUI 歌手页的两种行：热门歌曲（序号、歌名、歌手、专辑、时长、[+]）与专辑（名字、年份）。等宽排列，单击移动焦点，
@@ -79,8 +80,7 @@ export const LibraryTuiArtistSongRow: React.FC<LibraryTuiArtistSongRowProps> = (
                     <React.Fragment key={`${link.artist.id ?? 'artist'}-${linkIndex}`}>
                         {linkIndex > 0 ? ', ' : ''}
                         {link.targetId !== undefined && onOpenArtist ? (
-                            <button
-                                type="button"
+                            <Button
                                 data-tui-link="artist"
                                 onClick={(event) => {
                                     event.stopPropagation();
@@ -89,15 +89,14 @@ export const LibraryTuiArtistSongRow: React.FC<LibraryTuiArtistSongRowProps> = (
                                 className={linkClass}
                             >
                                 {link.artist.name}
-                            </button>
+                            </Button>
                         ) : link.artist.name}
                     </React.Fragment>
                 ))}
             </span>
             <span className={`${cell} opacity-55`}>
                 {onOpenAlbum ? (
-                    <button
-                        type="button"
+                    <Button
                         data-tui-link="album"
                         onClick={(event) => {
                             event.stopPropagation();
@@ -106,14 +105,13 @@ export const LibraryTuiArtistSongRow: React.FC<LibraryTuiArtistSongRowProps> = (
                         className={linkClass}
                     >
                         {song.album?.name || ''}
-                    </button>
+                    </Button>
                 ) : song.album?.name || ''}
             </span>
             <span className="tabular-nums opacity-55">{formatTime((song.durationMs || 0) / 1000)}</span>
             <span>
                 {onEnqueue ? (
-                    <button
-                        type="button"
+                    <Button
                         title={enqueueLabel}
                         aria-label={enqueueLabel}
                         onClick={(event) => {
@@ -124,7 +122,7 @@ export const LibraryTuiArtistSongRow: React.FC<LibraryTuiArtistSongRowProps> = (
                         disabled={unavailable}
                     >
                         [+]
-                    </button>
+                    </Button>
                 ) : null}
             </span>
         </div>

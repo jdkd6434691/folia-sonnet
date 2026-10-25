@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { Theme } from '../../types';
 import FastColorPicker from './FastColorPicker';
 import { useColorPreviewThrottle } from './useColorPreviewThrottle';
+import { Button, TextField } from '../ui';
 
 // Shared controls for the settings card and the command-palette surface.
 
@@ -35,8 +36,7 @@ const LatticePosterTintControls: React.FC<LatticePosterTintControlsProps> = ({
     const offBackground = isDaylight ? 'bg-black/10' : 'bg-white/10';
     const { previewColor, flushColor } = useColorPreviewThrottle(onColorChange);
     const renderToggle = (active: boolean, label: string, onChange: (enabled: boolean) => void) => (
-        <button
-            type="button"
+        <Button
             onClick={() => onChange(!active)}
             className={`w-12 h-6 rounded-full p-1 transition-colors shrink-0 ${active ? '' : offBackground}`}
             style={{ backgroundColor: active ? theme?.secondaryColor || 'rgba(114, 119, 134, 1)' : undefined }}
@@ -44,7 +44,7 @@ const LatticePosterTintControls: React.FC<LatticePosterTintControlsProps> = ({
             aria-label={label}
         >
             <span className={`block w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${active ? 'translate-x-6' : 'translate-x-0'}`} />
-        </button>
+        </Button>
     );
 
     return (
@@ -93,7 +93,7 @@ const LatticePosterTintControls: React.FC<LatticePosterTintControlsProps> = ({
                             {Math.round(intensity * 100)}%
                         </span>
                     </div>
-                    <input
+                    <TextField
                         type="range"
                         min={0}
                         max={1}

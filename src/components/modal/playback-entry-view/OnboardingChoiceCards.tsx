@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from '@/components/ui';
 
 // src/components/modal/playback-entry-view/OnboardingChoiceCards.tsx
 // 首启引导里「一张示意图 + 标题 + 一行说明」的选项卡片。两页（资料库界面、播放后进入的视图）与设置页的
@@ -44,9 +45,8 @@ export const OnboardingChoiceCards = <Value extends string>({
                 : (isDaylight ? 'bg-zinc-50 hover:bg-white' : 'bg-white/[0.03] hover:bg-white/[0.06]');
 
             return (
-                <button
+                <Button
                     key={optionValue}
-                    type="button"
                     onClick={() => onChange(optionValue)}
                     aria-pressed={isSelected}
                     {...{ [dataAttribute]: optionValue }}
@@ -75,7 +75,7 @@ export const OnboardingChoiceCards = <Value extends string>({
                     <div className="mt-1 text-[11px] leading-relaxed opacity-60" style={{ color: 'var(--text-secondary)' }}>
                         {description}
                     </div>
-                </button>
+                </Button>
             );
         })}
     </div>

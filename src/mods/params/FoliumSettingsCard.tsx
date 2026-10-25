@@ -10,6 +10,7 @@ import { FoliumSecretField, useFoliumSecretsState } from './FoliumSecretField';
 import { FoliumMountHost, foliumEntryAttributes, type FoliumEntryKind } from '../runtime/FoliumMountHost';
 import type { FoliumHostContext } from '../folium/helpers';
 import { useFoliumListeners, useFoliumNotifyOnChange } from '../runtime/listeners';
+import { Button } from '../../components/ui';
 
 // src/mods/params/FoliumSettingsCard.tsx
 // The themed card for any schema-backed Folium surface (visualizer settings,
@@ -173,14 +174,13 @@ export const FoliumSettingsCard: React.FC<FoliumSettingsCardProps> = ({
             )}
 
             {customPanel || hasPlainFields ? (
-                <button
-                    type="button"
+                <Button
                     onClick={() => access.reset()}
                     className="text-xs underline opacity-50 hover:opacity-80"
                     style={{ color: 'var(--text-secondary)' }}
                 >
                     {t('options.modVisualizerSettingsReset')}
-                </button>
+                </Button>
             ) : null}
         </div>
     );

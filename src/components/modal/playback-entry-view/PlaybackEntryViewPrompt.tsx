@@ -11,6 +11,7 @@ import { confirmOnboardingLibrarySuite } from '../../../library/app/librarySuite
 import { useDeviceProfileStore } from '../../../stores/useDeviceProfileStore';
 import { OVERLAY_CALM_TRANSITION, OVERLAY_TRANSITION } from '../../shared/overlayEntranceMotion';
 import type { Theme } from '../../../types';
+import { Button } from '@/components/ui';
 
 // src/components/modal/playback-entry-view/PlaybackEntryViewPrompt.tsx
 // Asks once, after the release notes are dismissed, how the library should look and which view
@@ -183,33 +184,30 @@ const PromptPanel: React.FC<{ theme?: Theme | null; pages: readonly PromptPage[]
 
                 <div className="flex items-center gap-2">
                     {pageIndex > 0 && (
-                        <button
-                            type="button"
+                        <Button
                             data-testid="playback-entry-view-prompt-back"
                             onClick={() => goTo(pageIndex - 1)}
                             className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${secondaryBtnClass}`}
                         >
                             {t('playbackEntryView.back')}
-                        </button>
+                        </Button>
                     )}
                     {isLastPage ? (
-                        <button
-                            type="button"
+                        <Button
                             data-testid="playback-entry-view-prompt-confirm"
                             onClick={onClose}
                             className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${btnClass}`}
                         >
                             {t('playbackEntryView.confirm')}
-                        </button>
+                        </Button>
                     ) : (
-                        <button
-                            type="button"
+                        <Button
                             data-testid="playback-entry-view-prompt-next"
                             onClick={() => goTo(pageIndex + 1)}
                             className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${btnClass}`}
                         >
                             {t('playbackEntryView.next')}
-                        </button>
+                        </Button>
                     )}
                 </div>
             </div>

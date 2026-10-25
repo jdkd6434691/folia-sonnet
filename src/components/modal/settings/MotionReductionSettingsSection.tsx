@@ -6,6 +6,7 @@ import {
     useMotionSettingsStore,
     type MotionSurfaceId,
 } from '../../../stores/useMotionSettingsStore';
+import { Button } from '@/components/ui';
 
 // src/components/modal/settings/MotionReductionSettingsSection.tsx
 // 「降低动态效果」的控制面：一个跟随系统的总开关，加每个受影响界面各自的降级开关。
@@ -62,8 +63,7 @@ const MotionReductionSettingsSection: React.FC<MotionReductionSettingsSectionPro
                     </div>
                 )}
             </div>
-            <button
-                type="button"
+            <Button
                 onClick={() => onChange(!active)}
                 className={`w-12 h-6 rounded-full p-1 transition-colors shrink-0 ${!active ? toggleOffBackgroundClass : ''}`}
                 style={{ backgroundColor: active ? theme?.secondaryColor || 'rgba(114, 119, 134, 1)' : undefined }}
@@ -71,7 +71,7 @@ const MotionReductionSettingsSection: React.FC<MotionReductionSettingsSectionPro
                 aria-label={label}
             >
                 <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${active ? 'translate-x-6' : 'translate-x-0'}`} />
-            </button>
+            </Button>
         </div>
     );
 

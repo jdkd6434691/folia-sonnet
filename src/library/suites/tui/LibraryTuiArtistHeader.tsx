@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { LibraryCollectionDescriptor } from '../../core/collection/collection.contract';
 import type { LibraryArtistCapabilities, LibraryArtistSnapshot } from '../../core/artist/artist.contract';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/tui/LibraryTuiArtistHeader.tsx
 // TUI 歌手页的状态栏：返回、歌手名（与别名）、来源、热门歌曲与专辑数、加载状态（加载中 / 专辑分页中 / 分页失败可续 /
@@ -61,9 +62,9 @@ const LibraryTuiArtistHeader: React.FC<LibraryTuiArtistHeaderProps> = ({
     return (
         <header className="shrink-0 border-b border-current/15 px-4 py-2 text-[13px]">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                <button type="button" onClick={onBack} className="opacity-70 hover:opacity-100" data-tui-back>
+                <Button onClick={onBack} className="opacity-70 hover:opacity-100" data-tui-back>
                     {`[← ${t('libraryTui.back')}]`}
-                </button>
+                </Button>
                 <span className="font-bold" style={{ color: accentColor }} data-tui-title>{detail?.name || collection.name}</span>
                 {alias && <span className="opacity-50">{alias}</span>}
                 <span className="opacity-50">{`${t('navidrome.artists') || 'Artists'} · ${sourceLabel(collection, t)}`}</span>
@@ -77,51 +78,47 @@ const LibraryTuiArtistHeader: React.FC<LibraryTuiArtistHeaderProps> = ({
                     <span className="opacity-70" data-tui-status="syncing">{t('libraryTui.artistAlbumsLoading')}</span>
                 )}
                 {status === 'error' && (
-                    <button type="button" data-tui-retry="reload" onClick={onReload} className="underline decoration-dotted">
+                    <Button data-tui-retry="reload" onClick={onReload} className="underline decoration-dotted">
                         {`[${t('ui.retry')}]`}
-                    </button>
+                    </Button>
                 )}
                 {status === 'ready' && albumsFailed && offers('resume-sync') && (
-                    <button
-                        type="button"
+                    <Button
                         data-tui-retry="albums"
                         onClick={onRetryAlbums}
                         className="underline decoration-dotted"
                     >
                         {`${t('libraryTui.artistAlbumsInterrupted')} · [${t('ui.retry')}]`}
-                    </button>
+                    </Button>
                 )}
                 {status !== 'error' && offers('reload') && (
-                    <button
-                        type="button"
+                    <Button
                         data-tui-action="reload"
                         onClick={onReload}
                         disabled={!capabilities.reload.enabled}
                         className="opacity-70 hover:opacity-100 disabled:opacity-30"
                     >
                         {`[${t('playlist.reload')}]`}
-                    </button>
+                    </Button>
                 )}
                 {offers('enqueue-scope') && (
-                    <button
-                        type="button"
+                    <Button
                         data-tui-action="enqueue-top-songs"
                         onClick={onEnqueueScope}
                         disabled={!capabilities['enqueue-scope'].enabled}
                         className="opacity-70 hover:opacity-100 disabled:opacity-30"
                     >
                         {`[${t('artistGrid.addTopSongsToQueue')}]`}
-                    </button>
+                    </Button>
                 )}
                 {offers('edit-entity') && (
-                    <button
-                        type="button"
+                    <Button
                         data-tui-action="edit-entity"
                         onClick={onEditEntity}
                         className="opacity-70 hover:opacity-100"
                     >
                         {`[${t('libraryTui.artistEdit')}]`}
-                    </button>
+                    </Button>
                 )}
             </div>
             {description && (
@@ -132,9 +129,9 @@ const LibraryTuiArtistHeader: React.FC<LibraryTuiArtistHeaderProps> = ({
                     >
                         {isBioExpanded ? description : description.replace(/\s+/g, ' ')}
                     </p>
-                    <button type="button" onClick={onToggleBio} className="shrink-0 opacity-70 hover:opacity-100" data-tui-bio-toggle>
+                    <Button onClick={onToggleBio} className="shrink-0 opacity-70 hover:opacity-100" data-tui-bio-toggle>
                         {`[${t(isBioExpanded ? 'libraryTui.bioLess' : 'libraryTui.bioMore')}]`}
-                    </button>
+                    </Button>
                 </div>
             )}
             <div className="mt-1 flex items-center gap-3 opacity-70">

@@ -116,6 +116,8 @@ android/.gradle-home*/
 .tools/
 
 # ---- 本机开发产物 ----
+# test/render/preview.mjs 的截图与本机布局自检报告，不进仓库。
+preview/
 # 单测覆盖率与 Playwright 的默认输出目录。
 coverage/
 playwright-report/

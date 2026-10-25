@@ -8,6 +8,7 @@ import {
     THEME_DESCRIPTION_MAX_LENGTH,
     type EditableMode,
 } from './themeParkDraft';
+import { TextArea } from '@/components/ui';
 
 // src/components/modal/theme-park/ThemeParkDetailsPanel.tsx
 // Details tab: the per-mode name and atmosphere description that the quick editor could only
@@ -44,7 +45,7 @@ const ThemeParkDetailsPanel: React.FC<ThemeParkDetailsPanelProps> = ({ draft, on
                         <Row
                             label={t('theme.themeDescription')}
                             below={(
-                                <textarea
+                                <TextArea
                                     value={description}
                                     onChange={(event) => onFieldChange(mode, { description: event.target.value })}
                                     maxLength={THEME_DESCRIPTION_MAX_LENGTH}

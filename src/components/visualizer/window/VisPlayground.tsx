@@ -10,6 +10,7 @@ import { selectVisualizerSettingsSnapshot, useVisualizerSettingsStore } from '..
 import { PictureGrid, Tooltip } from '../../modal/settings/kit';
 import { kitTransition, useKitReducedMotion } from '../../modal/settings/kit/motion';
 import StudioWindow from '../../shared/StudioWindow';
+import { Button } from '../../ui';
 import { visualizersRegistry } from '@/mods/folium/registries/visualizers';
 import { useFoliumRegistryEntries } from '@/mods/runtime/registry';
 import { colorWithAlpha } from '../../../utils/visualizer/colorMix';
@@ -536,14 +537,13 @@ const VisPlayground: React.FC<VisPlaygroundProps> = ({
                     labels={hotspotLabels}
                 />
                 <Tooltip text={t(isPreviewPaused ? 'options.resumePreview' : 'options.pausePreview')} className="absolute right-3 top-3 z-40 inline-flex">
-                    <button
-                        type="button"
+                    <Button
                         onClick={() => setIsPreviewPaused(previous => !previous)}
                         aria-label={t(isPreviewPaused ? 'options.resumePreview' : 'options.pausePreview')}
                         className="st-t-fast grid h-8 w-8 place-items-center rounded-full bg-black/45 text-white transition-colors hover:bg-black/65"
                     >
                         {isPreviewPaused ? <Play size={14} fill="currentColor" /> : <Pause size={14} fill="currentColor" />}
-                    </button>
+                    </Button>
                 </Tooltip>
             </div>
             <div className="flex shrink-0 flex-col">

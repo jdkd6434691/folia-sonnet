@@ -7,6 +7,7 @@ import { getSizedCoverUrl } from '../../../utils/coverUrl';
 import { LikeButton, type SongLike } from './LikeButton';
 import { useIsWideShortViewport } from './panelViewport';
 import { useMeasuredSize } from './useMeasuredSize';
+import { Button } from '../../ui';
 
 // src/components/panelTab/shell/SongHeader.tsx
 // The playing song at the top of the panel. On the cover tab it is the large cover with what the
@@ -117,17 +118,16 @@ const SongHeader: React.FC<SongHeaderProps> = ({ isBig, currentSong, coverUrl, l
                 <span className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0_0_0_1px_var(--st-line)]" />
             </div>
 
-            <button
+            <Button
                 // A new song's line comes in as a page of the kit does.
                 key={currentSong?.id ?? ''}
-                type="button"
                 onClick={onShowCover}
                 inert={isBig}
                 className={`st-page-in st-t-move absolute left-[60px] right-11 top-[5px] flex flex-col text-left transition-[opacity,translate] ${isBig ? '-translate-y-1 opacity-0' : ''}`}
             >
                 <span className="truncate text-sm font-semibold leading-5">{currentSong?.name || t('ui.noTrack')}</span>
                 <span className="truncate text-xs leading-[18px] text-[color:var(--st-t2)]">{artists}</span>
-            </button>
+            </Button>
             <LikeButton
                 like={like}
                 className={`st-t-move absolute right-0 top-2 transition-[opacity,translate,visibility] ${isBig ? 'invisible -translate-y-1 opacity-0' : ''}`}

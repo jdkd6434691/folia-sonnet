@@ -6,6 +6,7 @@ import type { Theme } from '../../../types';
 import { usePlayerBottomBarBottomPx } from '../../../hooks/usePlayerBottomBarBottomPx';
 import { usePlayerOverlayObstacle } from '../../../hooks/usePlayerOverlayLayout';
 import { PANEL_BOTTOM_LIFT_PX } from './panelBottomBaseline';
+import { Button } from '../../ui';
 
 // src/components/panelTab/shell/PanelHandle.tsx
 // The round button at the bottom right of the playing page that opens the panel and, white, closes
@@ -407,9 +408,8 @@ const PanelHandle: React.FC<PanelHandleProps> = ({
                             />
                         </div>
 
-                        <button
+                        <Button
                             ref={toggleButtonRef}
-                            type="button"
                             onPointerDown={handleToggleButtonPointerDown}
                             onPointerMove={handleToggleButtonPointerMove}
                             onPointerUp={clearToggleButtonGesture}
@@ -420,7 +420,7 @@ const PanelHandle: React.FC<PanelHandleProps> = ({
                                 border-none absolute right-0 top-0 z-10 ${isOpen ? 'bg-white text-black' : (isDaylight ? 'bg-white/70 text-zinc-900' : 'bg-black/40 text-white')}`}
                         >
                             {isOpen ? <X size={20} /> : <Settings2 size={20} />}
-                        </button>
+                        </Button>
                     </div>
                 </motion.div>
             )}

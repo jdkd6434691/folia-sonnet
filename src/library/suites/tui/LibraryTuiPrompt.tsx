@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button, TextField } from '../../../components/ui';
 
 // src/library/suites/tui/LibraryTuiPrompt.tsx
 // TUI 的行内提示：一行等宽文字，贴在列表下方。改名是一个输入框（Enter 提交、Esc 取消），
@@ -71,7 +72,7 @@ const LibraryTuiPrompt: React.FC<LibraryTuiPromptProps> = ({ request, pending, a
                 className="flex shrink-0 items-center gap-2 border-t border-current/15 px-4 py-1.5 text-[13px]"
             >
                 <label htmlFor={inputId} style={{ color: accentColor }}>{`${label}>`}</label>
-                <input
+                <TextField
                     id={inputId}
                     ref={inputRef}
                     value={value}
@@ -99,12 +100,12 @@ const LibraryTuiPrompt: React.FC<LibraryTuiPromptProps> = ({ request, pending, a
             className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1 border-t border-current/15 px-4 py-1.5 text-[13px] outline-none"
         >
             <span className="text-red-500">{request.message}</span>
-            <button type="button" disabled={pending} onClick={() => onSubmit('')} className="text-red-500 hover:underline disabled:opacity-40">
+            <Button disabled={pending} onClick={() => onSubmit('')} className="text-red-500 hover:underline disabled:opacity-40">
                 {`[${t('libraryTui.confirm')}]`}
-            </button>
-            <button type="button" onClick={onCancel} className="opacity-70 hover:opacity-100">
+            </Button>
+            <Button onClick={onCancel} className="opacity-70 hover:opacity-100">
                 {`[${t('libraryTui.cancel')}]`}
-            </button>
+            </Button>
             <span className="opacity-50">{t('libraryTui.promptHint')}</span>
         </div>
     );

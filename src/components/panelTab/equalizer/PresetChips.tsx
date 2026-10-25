@@ -3,6 +3,7 @@ import { RotateCcw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { AudioEqualizerModeId } from '../../../utils/audioEqualizer';
 import PanelIconButton from '../shell/PanelIconButton';
+import { Button } from '../../ui';
 
 // src/components/panelTab/equalizer/PresetChips.tsx
 // The presets of the audio effect window: a line of chips that wraps, the chosen one in the accent
@@ -25,9 +26,8 @@ const PresetChips: React.FC<PresetChipsProps> = ({ presetIds, chosen, onChoose, 
         <div className="flex items-start gap-2">
             <div className="flex flex-1 flex-wrap gap-1.5">
                 {presetIds.map(presetId => (
-                    <button
+                    <Button
                         key={presetId}
-                        type="button"
                         onClick={() => onChoose(presetId)}
                         aria-pressed={chosen === presetId}
                         className={`st-t-fast h-7 whitespace-nowrap rounded-lg px-3 text-[13px] transition-[background-color,color,scale] active:scale-[0.96] ${chosen === presetId
@@ -35,7 +35,7 @@ const PresetChips: React.FC<PresetChipsProps> = ({ presetIds, chosen, onChoose, 
                             : 'bg-[var(--st-fill)] text-[color:var(--st-t2)] hover:bg-[var(--st-fill2)] hover:text-[color:var(--st-t1)]'}`}
                     >
                         {t(`ui.equalizerPreset.${presetId}`)}
-                    </button>
+                    </Button>
                 ))}
             </div>
             <PanelIconButton label={t('ui.equalizerReset')} disabled={!canReset} onClick={onReset}>

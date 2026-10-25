@@ -49,7 +49,7 @@ const TWO_STEPS: Record<string, { pairs: number; why: string }> = {
     'src/components/app/playback/start/usePlaybackQueueController.ts': { pairs: 1, why: 'playSong waits for the stored lyrics state between asking and showing' },
     'src/components/app/playback/start/useLibraryPlaybackController.ts': { pairs: 2, why: 'a local play and a Navidrome play each write the lyrics between asking and showing' },
     'src/components/app/playback/useStagePlaybackController.ts': { pairs: 1, why: 'a stage media session waits for its lyrics to be parsed between asking and showing' },
-    'src/App.tsx': { pairs: 1, why: 'cancelling a blend shows the outgoing song first and moves the key back last' },
+    'src/components/app/appWiring/useAppPlaybackActions.ts': { pairs: 1, why: 'cancelling a blend shows the outgoing song first and moves the key back last' },
 };
 
 const collectSourceFiles = async (relativeDir: string): Promise<string[]> => {

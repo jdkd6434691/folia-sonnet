@@ -2,8 +2,9 @@ import type { SongResult, UnifiedSong } from '../../types';
 import type { OmniProviderId } from '../../types/onlineMusic';
 import { getPlaybackSourceRef } from '../../utils/appPlaybackGuards';
 import { announceLocalCoverReady } from '../localCoverReadyEvent';
-import { proxyNativeRemoteAudioUrl } from '../nativeRemoteAudio';
-import { feiniuResourceHeaders } from './feiniuTransport';
+import { proxyNativeScopedResourceUrl, unregisterNativeRemoteAudioUrl } from '../nativeRemoteAudio';
+import { getFeiniuResourceSession, isFeiniuCoverUrl, onFeiniuResourceSessionChange } from './feiniuTransport';
+import type { FeiniuResourceSession } from './feiniuTransport';
 
 // src/services/onlineMusic/onlineCoverFallback.ts
 // 缺封面的歌，按名字去网络平台搜一张来顶。
@@ -78,47 +79,67 @@ const artistNameOf = (song: SongResult | null | undefined): string => (
 // 而且换出来的地址是本机回环，原生下载它不需要任何凭据。
 // ---------------------------------------------------------------------------
 
-/** 代理地址按原地址缓存：注册一次就够了，别每渲染一次过一个桥。 */
+/** 代理只在当前会话内复用；歌曲保留原地址，避免队列快照携带旧账号代理。 */
 const proxiedCovers = new Map<string, string>();
+const pendingCovers = new Map<string, Promise<string>>();
+onFeiniuResourceSessionChange(() => {
+    for (const proxied of proxiedCovers.values()) void unregisterNativeRemoteAudioUrl(proxied);
+    proxiedCovers.clear();
+    pendingCovers.clear();
+});
 
-const isFeiniuAssetUrl = (url: string): boolean => (
-    url.includes('/music/api/v1/static/')
-);
+const coverSession = (song: SongResult, url: string): FeiniuResourceSession | null => {
+    const source = getPlaybackSourceRef(song);
+    if (source.kind !== 'online' || source.providerId !== 'feiniu') return null;
+    const session = getFeiniuResourceSession();
+    return session && isFeiniuCoverUrl(url, session) ? session : null;
+};
 
-const proxyFeiniuCoverUrl = async (url: string): Promise<string> => {
+const proxyFeiniuCoverUrl = (url: string, session: FeiniuResourceSession): Promise<string> => {
     const cached = proxiedCovers.get(url);
-    if (cached !== undefined) return cached;
-    try {
-        const proxied = await proxyNativeRemoteAudioUrl(url, {
-            headers: feiniuResourceHeaders() ?? undefined,
-            allowAnyHost: true,
-        });
-        const value = typeof proxied === 'string' && proxied ? proxied : url;
-        proxiedCovers.set(url, value);
-        return value;
-    } catch {
-        proxiedCovers.set(url, url);
-        return url;
-    }
+    if (cached !== undefined) return Promise.resolve(cached);
+    const pending = pendingCovers.get(url);
+    if (pending) return pending;
+    const work = proxyNativeScopedResourceUrl(url, {
+        headers: session.headers,
+        credentialOrigin: session.origin,
+    }).then(async (proxied) => {
+        if (getFeiniuResourceSession() !== session) {
+            if (proxied !== url) await unregisterNativeRemoteAudioUrl(proxied);
+            return url;
+        }
+        // 无插件/注册失败不负缓存：稍后重试安全入口。
+        if (proxied !== url) {
+            proxiedCovers.set(url, proxied);
+            // 原生注册表有容量上限；这里也限制持有量并撤销不再使用的凭据代理。
+            while (proxiedCovers.size > 64) {
+                const oldest = proxiedCovers.keys().next().value!;
+                void unregisterNativeRemoteAudioUrl(proxiedCovers.get(oldest)!);
+                proxiedCovers.delete(oldest);
+            }
+        }
+        return proxied;
+    }).finally(() => {
+        if (pendingCovers.get(url) === work) pendingCovers.delete(url);
+    });
+    pendingCovers.set(url, work);
+    return work;
 };
 
 /**
  * 同步换出「能真正拿到字节」的封面地址。
  *
- * 缓存里有就用缓存里的；没有就先返回原地址，同时**排一次代理** —— 拿到之后写回歌曲
- * 并广播，界面下一次渲染就是代理地址。渲染路径不能 await（那会把界面卡住），
+ * 缓存里有就用缓存里的；没有就先返回原地址，同时**排一次代理** —— 拿到之后缓存
+ * 并广播，界面下一次渲染就是代理地址（歌曲本身仍保留原地址）。渲染路径不能 await（那会把界面卡住），
  * 列表出口那一侧（见 {@link backfillSongCovers}）是 await 的，所以首屏通常直接就是好的。
  */
 export const resolveProxiedSongCover = (song: SongResult, coverUrl: string): string => {
-    if (!isFeiniuAssetUrl(coverUrl)) return coverUrl;
+    const session = coverSession(song, coverUrl);
+    if (!session) return coverUrl;
     const cached = proxiedCovers.get(coverUrl);
-    if (cached !== undefined) {
-        if (cached !== coverUrl && song.album) song.album.coverUrl = cached;
-        return cached;
-    }
-    void proxyFeiniuCoverUrl(coverUrl).then((proxied) => {
-        if (proxied === coverUrl || !song.album) return;
-        song.album.coverUrl = proxied;
+    if (cached !== undefined) return cached;
+    void proxyFeiniuCoverUrl(coverUrl, session).then((proxied) => {
+        if (proxied === coverUrl || getFeiniuResourceSession() !== session) return;
         announceLocalCoverReady({ songId: String(song.id ?? ''), coverUrl: proxied });
     });
     return coverUrl;
@@ -230,12 +251,10 @@ export const backfillSongCovers = async <T extends UnifiedSong>(songs: T[], limi
     for (const song of songs) {
         if (proxied >= PROXY_PER_PAGE_LIMIT) break;
         const coverUrl = typeof song?.album?.coverUrl === 'string' ? song.album.coverUrl : '';
-        if (!coverUrl || !isFeiniuAssetUrl(coverUrl)) continue;
-        const value = await proxyFeiniuCoverUrl(coverUrl);
-        if (value !== coverUrl && song.album) {
-            song.album = { ...song.album, coverUrl: value };
-            proxied += 1;
-        }
+        const session = coverUrl ? coverSession(song, coverUrl) : null;
+        if (!session) continue;
+        const value = await proxyFeiniuCoverUrl(coverUrl, session);
+        if (value !== coverUrl) proxied += 1;
     }
 
     // 整页都过一遍：头几首同步等（首屏就有图），其余的挂到异步那一路排队补齐 ——

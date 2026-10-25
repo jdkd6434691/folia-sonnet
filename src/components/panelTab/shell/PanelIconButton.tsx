@@ -1,5 +1,6 @@
 import React from 'react';
 import { Tooltip } from '../../modal/settings/kit/Tooltip';
+import { Button } from '../../ui';
 
 // src/components/panelTab/shell/PanelIconButton.tsx
 // A button of the panel that is only an icon. Its name is its tooltip (the kit's own, not the
@@ -39,8 +40,7 @@ export const PanelIconButton: React.FC<PanelIconButtonProps> = ({
     ...button
 }) => (
     <Tooltip text={label} className={`inline-flex shrink-0${className ? ` ${className}` : ''}`}>
-        <button
-            type="button"
+        <Button
             {...button}
             aria-label={label}
             aria-pressed={pressed}
@@ -51,7 +51,7 @@ export const PanelIconButton: React.FC<PanelIconButtonProps> = ({
                 : `hover:text-[color:var(--st-t1)] active:scale-[0.96] ${filled ? 'hover:bg-[var(--st-fill2)]' : 'hover:bg-[var(--st-fill)]'}`}`}
         >
             {children}
-        </button>
+        </Button>
     </Tooltip>
 );
 

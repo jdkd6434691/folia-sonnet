@@ -2,6 +2,7 @@ import React from 'react';
 import { Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ThemedDialog from './ThemedDialog';
+import { Button } from '../ui';
 
 interface PlaylistSelectionDialogItem {
     id: string | number;
@@ -45,8 +46,7 @@ const PlaylistSelectionDialog: React.FC<PlaylistSelectionDialogProps> = ({
     const [secondaryBusy, setSecondaryBusy] = React.useState(false);
     const panelClass = isDaylight ? 'bg-black/[0.04] border-black/5 hover:bg-black/[0.06]' : 'bg-white/[0.05] border-white/10 hover:bg-white/[0.08]';
     const secondaryButton = secondaryAction ? (
-        <button
-            type="button"
+        <Button
             onClick={async () => {
                 try {
                     setSecondaryBusy(true);
@@ -59,7 +59,7 @@ const PlaylistSelectionDialog: React.FC<PlaylistSelectionDialogProps> = ({
             className={`w-full rounded-2xl border px-5 py-3 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${panelClass}`}
         >
             {secondaryAction.label}
-        </button>
+        </Button>
     ) : null;
     React.useEffect(() => {
         if (!isOpen) {
@@ -82,24 +82,22 @@ const PlaylistSelectionDialog: React.FC<PlaylistSelectionDialogProps> = ({
             {/* data-folia-playlist-selection：手机适配 CSS 靠它给「新建歌单」按钮单独排版。 */}
             <div data-folia-playlist-selection="true" className="flex min-h-0 flex-1 flex-col">
             {onCreate && (
-                <button
-                    type="button"
+                <Button
                     onClick={onCreate}
                     disabled={submittingId !== null}
                     className="st-t-fast mb-3 flex h-10 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--st-fill)] text-[13px] transition-colors enabled:hover:bg-[var(--st-fill2)] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                     <Plus size={16} />
                     {createLabel || t('localMusic.saveQueueAsPlaylist') || 'Create Playlist'}
-                </button>
+                </Button>
             )}
             {playlists.length > 0 ? (
                 // The list scrolls; the line above it stays.
                 // data-folia-playlist-list：手机适配 CSS 靠它收掉写死的高度（src/styles/androidPhoneFit.css）。
                 <div data-folia-playlist-list="true" className="st-card st-scroll min-h-0 overflow-y-auto rounded-xl bg-[var(--st-card)] shadow-[0_0_0_1px_var(--st-line)]">
                     {playlists.map((playlist) => (
-                        <button
+                        <Button
                             key={playlist.id}
-                            type="button"
                             data-folia-playlist-option="true"
                             onClick={async () => {
                                 try {
@@ -120,7 +118,7 @@ const PlaylistSelectionDialog: React.FC<PlaylistSelectionDialogProps> = ({
                                 )}
                             </div>
                             <Plus size={16} className="shrink-0 text-[color:var(--st-t3)]" />
-                        </button>
+                        </Button>
                     ))}
                 </div>
             ) : (

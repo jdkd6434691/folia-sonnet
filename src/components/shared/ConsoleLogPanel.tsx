@@ -11,6 +11,7 @@ import {
 } from '../../utils/consoleLogBuffer';
 import { readConsoleLogFilters, writeConsoleLogFilters } from '../../utils/consoleLogFilters';
 import { copyText } from '../../utils/system/clipboard';
+import { Button, TextField } from '../ui';
 
 // src/components/shared/ConsoleLogPanel.tsx
 // The session log, narrowed down to the part worth reading. Shared by the player's debug overlay
@@ -52,13 +53,12 @@ const Pill: React.FC<{
         : 'border-white/10 hover:bg-white/[0.07]';
     const activeClass = isDaylight ? 'bg-black/[0.08] text-zinc-950' : 'bg-white/[0.12] text-white';
     return (
-        <button
-            type="button"
+        <Button
             onClick={onClick}
             className={`rounded-full border px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] transition-colors ${baseClass} ${isActive ? activeClass : 'opacity-75'}`}
         >
             {label}
-        </button>
+        </Button>
     );
 };
 
@@ -70,15 +70,14 @@ const MenuRow: React.FC<{
     onClick: () => void;
     isDaylight: boolean;
 }> = ({ label, count, isOn, onClick, isDaylight }) => (
-    <button
-        type="button"
+    <Button
         onClick={onClick}
         className={`flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-[11px] transition-colors ${isDaylight ? 'hover:bg-black/[0.06]' : 'hover:bg-white/[0.08]'} ${isOn ? '' : 'opacity-45'}`}
     >
         <span aria-hidden="true" className="w-3 shrink-0 text-center">{isOn ? '✓' : ''}</span>
         <span className="min-w-0 flex-1 truncate">{label}</span>
         {count !== undefined && <span className="shrink-0 tabular-nums opacity-50">{count}</span>}
-    </button>
+    </Button>
 );
 
 /**
@@ -145,9 +144,8 @@ const FilterMenu: React.FC<{
 
     return (
         <div className="min-w-0 flex-1">
-            <button
+            <Button
                 ref={buttonRef}
-                type="button"
                 onClick={() => (at ? setAt(null) : place())}
                 aria-haspopup="menu"
                 aria-expanded={at !== null}
@@ -158,7 +156,7 @@ const FilterMenu: React.FC<{
                     {summary}
                     <span aria-hidden="true">{at ? '▴' : '▾'}</span>
                 </span>
-            </button>
+            </Button>
             {at && createPortal(
                 <>
                     {/* Takes the next click wherever it lands, so the menu closes the way every
@@ -332,7 +330,7 @@ export const ConsoleLogPanel: React.FC<ConsoleLogPanelProps> = ({
             </div>
 
             <div className="flex flex-col gap-2 px-3 pt-2">
-                <input
+                <TextField
                     type="search"
                     value={query}
                     onChange={event => setQuery(event.target.value)}
@@ -368,20 +366,18 @@ export const ConsoleLogPanel: React.FC<ConsoleLogPanelProps> = ({
                         {/* All and None first: narrowing to one module out of a dozen is the common
                             move, and doing it by unpicking the other eleven is not a filter. */}
                         <div className="flex gap-1 px-1 pb-1">
-                            <button
-                                type="button"
+                            <Button
                                 onClick={() => setHiddenScopes(new Set())}
                                 className={`flex-1 rounded px-2 py-1 text-[10px] uppercase tracking-[0.14em] ${isDaylight ? 'bg-black/[0.05] hover:bg-black/[0.09]' : 'bg-white/[0.07] hover:bg-white/[0.12]'}`}
                             >
                                 All
-                            </button>
-                            <button
-                                type="button"
+                            </Button>
+                            <Button
                                 onClick={() => setHiddenScopes(new Set(scopeCounts.map(([scope]) => scope)))}
                                 className={`flex-1 rounded px-2 py-1 text-[10px] uppercase tracking-[0.14em] ${isDaylight ? 'bg-black/[0.05] hover:bg-black/[0.09]' : 'bg-white/[0.07] hover:bg-white/[0.12]'}`}
                             >
                                 None
-                            </button>
+                            </Button>
                         </div>
                         {scopeCounts.map(([scope, count]) => (
                             <MenuRow

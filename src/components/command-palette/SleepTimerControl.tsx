@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { Theme } from '../../types';
 import { DioramaSettingsToggle } from '../visualizer/diorama/DioramaSettingsToggle';
 import type { SleepTimerEndAction } from '../../services/sleepTimerPlan';
+import { TextField } from '../ui';
 
 // src/components/command-palette/SleepTimerControl.tsx
 
@@ -55,7 +56,7 @@ const SleepTimerNumberField: React.FC<NumberFieldProps> = ({ isDaylight, label, 
     };
 
     return (
-        <input
+        <TextField
             type="text"
             inputMode="numeric"
             maxLength={max > 99 ? 3 : 2}

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { LibraryAccountSurfaceProps } from '../../core/account/account.contract';
 import { useLibraryAccountPendingSwitch, type LibraryProviderSwitchView } from '../../core/account/useLibraryAccount';
 import { useLibraryTuiAccountKeys } from './useLibraryTuiAccountKeys';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/tui/LibraryTuiAccount.tsx
 // TUI 的 account surface（Library v2 · A6，开发版）：平台切换确认，叠在 TUI 首页（以及集合层）之上。登录不在这里：
@@ -51,12 +52,12 @@ const LibraryTuiAccountConfirm: React.FC<{
             </h3>
             <p data-tui-confirm-message>{view.description}</p>
             <div className="mt-2 flex flex-wrap items-center gap-x-3">
-                <button type="button" data-tui-confirm-answer="confirm" onClick={onConfirm} className="hover:underline" style={{ color: accentColor }}>
+                <Button data-tui-confirm-answer="confirm" onClick={onConfirm} className="hover:underline" style={{ color: accentColor }}>
                     {`[${t('libraryTui.confirm')}]`}
-                </button>
-                <button type="button" data-tui-confirm-answer="cancel" onClick={onCancel} className="opacity-70 hover:opacity-100">
+                </Button>
+                <Button data-tui-confirm-answer="cancel" onClick={onCancel} className="opacity-70 hover:opacity-100">
                     {`[${t('libraryTui.cancel')}]`}
-                </button>
+                </Button>
                 <span className="text-[11px] opacity-50">{t('libraryTui.promptHint')}</span>
             </div>
         </section>

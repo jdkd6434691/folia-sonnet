@@ -7,6 +7,7 @@ import type { ModRuntimeInfo } from '../types';
 import type { FoliumPermissionId } from '../folium/shared';
 import type { ModManagerClasses } from './modManagerClasses';
 import { translateModError } from './modErrors';
+import { Button } from '../../components/ui';
 
 // src/mods/manager/ModStorageUsage.tsx
 // The expanded mod row's file section: how much the mod keeps on disk (its data directory and its
@@ -116,8 +117,7 @@ export const ModStorageUsage: React.FC<ModStorageUsageProps> = ({ mod, isDayligh
                     </>
                 )}
             </div>
-            <button
-                type="button"
+            <Button
                 onClick={() => { void handleClearCache(); }}
                 disabled={clearing || !usage || (usage.cache === 0 && !usage.cacheBroken)}
                 className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${classes.ghostButton}`}
@@ -125,7 +125,7 @@ export const ModStorageUsage: React.FC<ModStorageUsageProps> = ({ mod, isDayligh
             >
                 <Eraser size={12} />
                 {clearing ? t('mods.clearingCache') : t('mods.clearCache')}
-            </button>
+            </Button>
         </div>
     );
 };

@@ -12,6 +12,7 @@ import type { LibraryLoginSelfCheckView } from '../../../library/core/account/us
 import { retryWaitEndsAt, secondsLeft } from '../../../library/core/account/accountRules';
 import { LOGIN_KIND_TEXTS, loginStepText } from './loginCaseTexts';
 import type { StepMark } from './loginView';
+import { Button as UiButton } from '../../ui';
 
 // src/components/login/window/LoginMessage.tsx
 // 那一块画的右边：一句标题说现在怎么了，一行说要做的那一件事，平台说了话就把它的原话放在一个安静的
@@ -145,15 +146,14 @@ export const LoginMessage: React.FC<LoginMessageProps> = ({ sceneKey, headline, 
                     <Button key={action.label} variant={action.primary ? 'primary' : undefined} onClick={action.onClick} disabled={action.busy}>{action.label}</Button>
                 ))}
                 {details && (
-                    <button
-                        type="button"
+                    <UiButton
                         aria-expanded={details.open}
                         onClick={details.onToggle}
                         className="st-t-fast inline-flex h-8 items-center gap-1 rounded-lg px-2 text-[13px] text-[color:var(--st-t2)] transition-colors hover:bg-[var(--st-fill)] hover:text-[color:var(--st-t1)]"
                     >
                         {t('login.details')}
                         <ChevronDown size={14} className={`st-t-move transition-transform ${details.open ? 'rotate-180' : ''}`} />
-                    </button>
+                    </UiButton>
                 )}
                 {steps && <StepMarks marks={steps.marks} current={steps.current} />}
             </div>

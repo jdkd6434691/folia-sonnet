@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { listLibrarySuites } from '../registry';
 import { useActiveLibrarySuiteId } from './librarySuiteChoice';
 import { switchLibrarySuite } from './switchLibrarySuite';
+import { Button } from '../../components/ui';
 
 // src/library/app/DevLibraryRendererSwitch.tsx
 // 开发验证浮层：在各套 UI suite 之间切换当前打开的集合，
@@ -39,9 +40,8 @@ const DevLibraryRendererSwitch: React.FC<{ sessionKey: string; placement?: keyof
         >
             <span className="px-1 opacity-50">{`DEV · ${t('libraryTui.rendererSwitch')}`}</span>
             {listLibrarySuites().map(suite => (
-                <button
+                <Button
                     key={suite.id}
-                    type="button"
                     data-renderer={suite.id}
                     data-suite={suite.id}
                     aria-pressed={activeSuite === suite.id}
@@ -49,7 +49,7 @@ const DevLibraryRendererSwitch: React.FC<{ sessionKey: string; placement?: keyof
                     className={`rounded-full px-2 py-0.5 ${activeSuite === suite.id ? 'bg-current/15 font-bold' : 'opacity-60 hover:opacity-100'}`}
                 >
                     {t(suite.labelKey)}
-                </button>
+                </Button>
             ))}
         </div>
     );

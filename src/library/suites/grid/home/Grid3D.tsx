@@ -37,6 +37,7 @@ import { useLibraryAccountProviders } from '../../../core/account/useLibraryAcco
 import { resolveProviderSelectLabel } from '../../../core/account/accountRules';
 import { translateHomeMessage } from '../../../core/home/homeSources';
 import { useUpdateIndicator } from '../../../../hooks/useUpdateIndicator';
+import { Button, TextField } from '../../../../components/ui';
 
 // src/library/suites/grid/home/Grid3D.tsx
 // Glassmorphic interactive desktop home view replacing the legacy 3D carousel.
@@ -321,7 +322,7 @@ export const Grid3D: React.FC<Grid3DProps> = (props) => {
                         <h1 className="text-2xl font-bold tracking-tight opacity-90 flex items-center gap-3">
                             Folia
                         </h1>
-                        <button
+                        <Button
                             onClick={() => onOpenSettings?.('help')}
                             className={`relative flex items-center gap-1.5 p-2 rounded-full hover:bg-white/10 transition-all ml-4 ${showUpdateIndicator
                                     ? 'opacity-90 hover:opacity-100'
@@ -335,14 +336,14 @@ export const Grid3D: React.FC<Grid3DProps> = (props) => {
                                     {t('options.updateAvailable')}
                                 </span>
                             )}
-                        </button>
+                        </Button>
                         {scanProgress?.active && (
                             <div
                                 className="relative ml-3"
                                 onMouseEnter={() => setScanDetailsExpanded(true)}
                                 onMouseLeave={() => setScanDetailsExpanded(false)}
                             >
-                                <button
+                                <Button
                                     onClick={() => setScanDetailsExpanded(prev => !prev)}
                                     className="relative rounded-full p-px transition-all"
                                     style={{
@@ -359,7 +360,7 @@ export const Grid3D: React.FC<Grid3DProps> = (props) => {
                                             {scanProgressPercent}%
                                         </span>
                                     </div>
-                                </button>
+                                </Button>
                                 <AnimatePresence>
                                     {scanDetailsExpanded && (
                                         <motion.div
@@ -407,7 +408,7 @@ export const Grid3D: React.FC<Grid3DProps> = (props) => {
                                             title={tab.disabledReason || tab.label}
                                             className="inline-flex"
                                         >
-                                            <button
+                                            <Button
                                                 disabled={Boolean(tab.disabledReason)}
                                                 aria-label={tab.disabledReason || tab.label}
                                                 onClick={() => {
@@ -424,24 +425,24 @@ export const Grid3D: React.FC<Grid3DProps> = (props) => {
                                                     />
                                                 )}
                                                 <span className="relative z-10">{tab.label}</span>
-                                            </button>
+                                            </Button>
                                         </span>
                                     );
                                 })}
                                 {props.extraTabs?.map(tab => (
-                                    <button key={tab.id} type="button" onClick={tab.select}
+                                    <Button key={tab.id} type="button" onClick={tab.select}
                                         className={`relative inline-flex items-center justify-center px-4 py-1.5 rounded-full text-xs md:text-sm font-medium whitespace-nowrap ${navPillInactiveText}`}>
                                         {tab.label}
-                                    </button>
+                                    </Button>
                                 ))}
                                 {stageEnabled && (
-                                    <button
+                                    <Button
                                         onClick={() => onOpenStagePlayer?.()}
                                         data-stage-active={stageIsActive ? 'true' : 'false'}
                                         className={`relative inline-flex items-center justify-center px-4 py-1.5 rounded-full text-xs md:text-sm font-medium transition-colors duration-300 whitespace-nowrap ${navPillInactiveText}`}
                                     >
                                         <span className="relative z-10">{t('home.stage')}</span>
-                                    </button>
+                                    </Button>
                                 )}
                                 {/* 播放队列的海报视图和 Stage 一样属于「去哪儿」，所以它在这一排，
                                     而不是标题旁的工具图标。没有在播歌曲时队列也是空的，直接不出现。
@@ -450,7 +451,7 @@ export const Grid3D: React.FC<Grid3DProps> = (props) => {
                                     在「探索」页签上它打开的是同一面墙，铺的是探索页的条目（探索拼贴）：
                                     探索页有条目可铺时出现，不看有没有在播歌曲。 */}
                                 {onOpenLattice && (opensExploreWall ? hasExploreWall : currentTrack) && (
-                                    <button
+                                    <Button
                                         onClick={() => onOpenLattice(opensExploreWall ? 'explore' : 'queue')}
                                         data-testid="home-lattice-pill"
                                         title={t(opensExploreWall ? 'home.latticeExplore' : 'home.lattice')}
@@ -464,7 +465,7 @@ export const Grid3D: React.FC<Grid3DProps> = (props) => {
                                         >
                                             {t(opensExploreWall ? 'home.latticeExplore' : 'home.latticeLabel')}
                                         </span>
-                                    </button>
+                                    </Button>
                                 )}
                             </div>
                         </div>
@@ -481,7 +482,7 @@ export const Grid3D: React.FC<Grid3DProps> = (props) => {
                                     onClick={() => handleSearch()}
                                 />
                             )}
-                            <input
+                            <TextField
                                 ref={searchInputRef}
                                 type="text"
                                 placeholder={homeViewTab === 'local' ? t('home.searchLocal') : homeViewTab === 'navidrome' ? t('home.searchNavidrome') : t('home.searchDatabase')}

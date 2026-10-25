@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisSeamBlurb.tsx
 // 完整信息条里的一段说明文字：歌手页的简介、集合页的描述（歌单简介、专辑介绍）共用。默认收成 4 行，点一下展开 /
@@ -19,8 +20,7 @@ const BlurbButton: React.FC<BravaisSeamBlurbProps> = ({ text, className, dataAtt
     const [isOpen, setIsOpen] = useState(false);
     const state = isOpen ? 'expanded' : 'collapsed';
     return (
-        <button
-            type="button"
+        <Button
             className={`bravais-seam-blurb${className ? ` ${className}` : ''}${isOpen ? ' is-open' : ''}`}
             {...{ [dataAttribute]: state }}
             aria-expanded={isOpen}
@@ -28,7 +28,7 @@ const BlurbButton: React.FC<BravaisSeamBlurbProps> = ({ text, className, dataAtt
             onClick={() => setIsOpen(open => !open)}
         >
             {text}
-        </button>
+        </Button>
     );
 };
 

@@ -9,6 +9,7 @@ import {
     type CoverSizeSample,
 } from '../../services/debug/coverSizeSamples';
 import { copyText } from '../../utils/system/clipboard';
+import { Button, Checkbox } from '../ui';
 
 // src/components/shared/CoverSizeAuditPanel.tsx
 // Requested cover size against delivered cover size, on whatever the session actually loaded.
@@ -145,10 +146,10 @@ const CoverSizeAuditPanel: React.FC<{ isDaylight: boolean; panelClass: string }>
                 <div className="text-[10px] uppercase tracking-[0.16em] opacity-60">Cover Sizes</div>
                 <div className="flex items-center gap-2 text-[10px]">
                     <label className="flex items-center gap-1 opacity-70">
-                        <input type="checkbox" checked={onlyNetease} onChange={event => setOnlyNetease(event.target.checked)} />
+                        <Checkbox checked={onlyNetease} onChange={event => setOnlyNetease(event.target.checked)} />
                         netease only
                     </label>
-                    <button type="button" className="underline opacity-70" onClick={clearCoverSizeSamples}>reset</button>
+                    <Button className="underline opacity-70" onClick={clearCoverSizeSamples}>reset</Button>
                 </div>
             </div>
 
@@ -211,13 +212,12 @@ const CoverSizeAuditPanel: React.FC<{ isDaylight: boolean; panelClass: string }>
                                     </li>
                                 ))}
                             </ul>
-                            <button
-                                type="button"
+                            <Button
                                 className="mt-1 text-[10px] underline opacity-60"
                                 onClick={() => { void copyText(ignored.map(sample => sample.url).join('\n')); }}
                             >
                                 copy all {ignored.length}
-                            </button>
+                            </Button>
                         </div>
                     )}
 

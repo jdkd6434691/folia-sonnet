@@ -18,6 +18,7 @@ import {
 } from '../../../services/appUpdateCenter';
 import { useUpdateCenter } from '../../../hooks/useUpdateCenter';
 import { openExternalUrl } from '../../../utils/openExternalUrl';
+import { Button } from '@/components/ui';
 
 // src/components/modal/settings/AndroidUpdatePanel.tsx
 // 安卓「版本更新」这一块：状态、下载进度、下载 / 安装都在一处，但自己不带框 ——
@@ -193,8 +194,7 @@ const AndroidUpdatePanel: React.FC<AndroidUpdatePanelProps> = ({
             </div>
 
             {/* 一个框里那颗唯一的按钮：检查 → 下载 → 进度 → 安装，全部长在同一个位置。 */}
-            <button
-                type="button"
+            <Button
                 onClick={handlePrimary}
                 disabled={action === 'checking' || action === 'downloading'}
                 data-folia-update-primary={action}
@@ -233,7 +233,7 @@ const AndroidUpdatePanel: React.FC<AndroidUpdatePanelProps> = ({
                     {action === 'install' && t('options.androidUpdateInstall')}
                     {action === 'check' && (result ? t('options.androidUpdateRecheck') : t('options.androidUpdateCheck'))}
                 </span>
-            </button>
+            </Button>
 
             {phase.kind === 'failed' && (
                 <p
@@ -282,15 +282,14 @@ const AndroidUpdatePanel: React.FC<AndroidUpdatePanelProps> = ({
             )}
 
             <div className="mt-2.5 flex flex-wrap items-center justify-center gap-1">
-                <button
-                    type="button"
+                <Button
                     onClick={handleOpenPage}
                     className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] opacity-65 transition-colors hover:bg-white/10 hover:opacity-100"
                     style={{ color: 'var(--text-secondary)' }}
                 >
                     <ExternalLink size={11} />
                     {t('options.androidUpdateOpenPage')}
-                </button>
+                </Button>
             </div>
 
             {release?.notes && (

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, type FormEvent, type KeyboardEvent } from 're
 import { Loader2, Plus } from 'lucide-react';
 import type { BravaisSeamForm } from './bravaisSeamModels';
 import { BravaisSeamFlip } from './BravaisSeamFlip';
+import { Button, TextField } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisSeamFormView.tsx
 // 缝的表单态（设计稿 §10.1「表单态」）：缝原地翻成输入框、确认或选择列表，完成或取消后再翻回。不是导航，不写 history。
@@ -41,12 +42,12 @@ const FormInput: React.FC<{
     };
     return (
         <form className="bravais-form-input" onSubmit={submit}>
-            <input ref={inputRef} name={name} defaultValue={initial} placeholder={placeholder} autoComplete="off" spellCheck={false} onKeyDown={onKeyDown} />
+            <TextField ref={inputRef} name={name} defaultValue={initial} placeholder={placeholder} autoComplete="off" spellCheck={false} onKeyDown={onKeyDown} />
             <span className="bravais-form-buttons">
-                <button type="submit" className="bravais-chrome-button is-primary" data-bravais-form-action="submit" disabled={pending}>
+                <Button type="submit" className="bravais-chrome-button is-primary" data-bravais-form-action="submit" disabled={pending}>
                     {pending && <Loader2 aria-hidden className="animate-spin" />}{submitLabel}
-                </button>
-                <button type="button" className="bravais-chrome-button" data-bravais-form-action="cancel" onClick={onCancel}>{cancelLabel}</button>
+                </Button>
+                <Button className="bravais-chrome-button" data-bravais-form-action="cancel" onClick={onCancel}>{cancelLabel}</Button>
             </span>
         </form>
     );
@@ -77,11 +78,11 @@ const BravaisSeamFormView: React.FC<{ form: BravaisSeamForm }> = ({ form }) => {
             )}
             {state.kind === 'confirm-delete' && (
                 <span className="bravais-form-buttons">
-                    <button ref={confirmRef} type="button" className="bravais-chrome-button is-primary is-danger" data-bravais-form-action="confirm"
+                    <Button ref={confirmRef} className="bravais-chrome-button is-primary is-danger" data-bravais-form-action="confirm"
                         disabled={pending} onClick={() => form.onSubmit('')}>
                         {pending && <Loader2 aria-hidden className="animate-spin" />}{labels.submit}
-                    </button>
-                    <button type="button" className="bravais-chrome-button" data-bravais-form-action="cancel" onClick={form.onCancel}>{labels.cancel}</button>
+                    </Button>
+                    <Button className="bravais-chrome-button" data-bravais-form-action="cancel" onClick={form.onCancel}>{labels.cancel}</Button>
                 </span>
             )}
             {state.kind === 'pick-playlist' && (
@@ -99,23 +100,23 @@ const BravaisSeamFormView: React.FC<{ form: BravaisSeamForm }> = ({ form }) => {
                                 onCancel={form.onCancel}
                             />
                         ) : form.onStartCreate && labels.createLabel && (
-                            <button type="button" className="bravais-form-row is-create" data-bravais-form-action="create" onClick={() => form.onStartCreate?.()}>
+                            <Button className="bravais-form-row is-create" data-bravais-form-action="create" onClick={() => form.onStartCreate?.()}>
                                 <Plus aria-hidden />{labels.createLabel}
-                            </button>
+                            </Button>
                         )}
                     </BravaisSeamFlip>}
                     <div className="bravais-form-list" role="listbox" aria-label={labels.title}>
                         {(form.playlists ?? []).map(playlist => (
-                            <button key={playlist.id} type="button" role="option" aria-selected={false} className="bravais-form-row"
+                            <Button key={playlist.id} role="option" aria-selected={false} className="bravais-form-row"
                                 data-bravais-form-playlist={playlist.id} disabled={pending} onClick={() => form.onPick?.(playlist.id)}>
                                 {playlist.name}
-                            </button>
+                            </Button>
                         ))}
                         {(form.playlists ?? []).length === 0 && labels.empty && <p className="bravais-form-message">{labels.empty}</p>}
                     </div>
                     {!state.creating && (
                         <span className="bravais-form-buttons">
-                            <button type="button" className="bravais-chrome-button" data-bravais-form-action="cancel" onClick={form.onCancel}>{labels.cancel}</button>
+                            <Button className="bravais-chrome-button" data-bravais-form-action="cancel" onClick={form.onCancel}>{labels.cancel}</Button>
                         </span>
                     )}
                 </>

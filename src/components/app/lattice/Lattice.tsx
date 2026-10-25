@@ -27,6 +27,7 @@ import { useReducedMotionFor } from '../../../hooks/useReducedMotionFor';
 import { isFlightBackArmed, planPageFromWall } from './wallFlight';
 import { beginWallTrip, WallTripLog } from './wallTripLog';
 import { LATTICE_WALL_ATTR } from '../../collectionFlight';
+import { Button } from '@/components/ui';
 
 // The wall's display layer. It renders the play queue and never mutates it; opened from the
 // explore tab (`latticeSource` in useAppViewStore) it renders the explore page's entries in the
@@ -227,12 +228,12 @@ export default function Lattice({
                 // are handled on .lattice-field, and reach it only while the focus is inside it. From
                 // the keyboard the button is reached and pressed as any other, and holds the focus
                 // then: so `aria-disabled` and not `disabled` (a disabled button cannot hold the focus).
-                <button type="button" className="lattice-back lattice-refresh" aria-disabled={!explore.canRefresh}
+                <Button className="lattice-back lattice-refresh" aria-disabled={!explore.canRefresh}
                     onMouseDown={event => event.preventDefault()}
                     onClick={() => { if (explore.canRefresh) explore.refresh(); }}
-                    aria-label={t('home.exploreRefresh')} title={t('home.exploreRefresh')}>
+                    aria-label={t('home.exploreRefresh')} tip={t('home.exploreRefresh')}>
                     <RefreshCw size={18} className={explore.isRefreshing ? 'animate-spin' : ''} />
-                </button>
+                </Button>
             )}
             {tiles.length === 0 && (isExplore ? explore.emptyText && (
                 <div className="lattice-empty">

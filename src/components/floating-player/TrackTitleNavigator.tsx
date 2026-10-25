@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTrackTitlePreview, type TrackNavSide } from '../../hooks/useTrackTitlePreview';
 import { usePlayerChromeSettingsStore } from '../../stores/usePlayerChromeSettingsStore';
+import { Button } from '../ui';
 // src/components/floating-player/TrackTitleNavigator.tsx
 
 const PREVIEW_OPACITY = 0.55;
@@ -79,11 +80,10 @@ const TrackTitleNavigator: React.FC<TrackTitleNavigatorProps> = ({
         const Icon = side === 'prev' ? ChevronLeft : ChevronRight;
 
         return (
-            <button
-                type="button"
+            <Button
                 data-folia-track-title-arrow={side}
                 aria-label={label}
-                title={target || label}
+                tip={target || label}
                 className={arrowClass}
                 style={{ color }}
                 onClick={(e) => {
@@ -94,7 +94,7 @@ const TrackTitleNavigator: React.FC<TrackTitleNavigatorProps> = ({
                 }}
             >
                 <Icon size={16} strokeWidth={2.4} />
-            </button>
+            </Button>
         );
     };
 

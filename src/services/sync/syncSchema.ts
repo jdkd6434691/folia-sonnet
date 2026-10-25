@@ -24,7 +24,8 @@ const isIsoDateString = (value: unknown): value is string => (
     typeof value === 'string' && !Number.isNaN(Date.parse(value))
 );
 
-const isSchemaCompatible = (value: unknown) => value === SYNC_SCHEMA_VERSION;
+// The server advertises wire v2; visual settings and library exports also exist as v1.
+const isSchemaCompatible = (value: unknown) => value === SYNC_SCHEMA_VERSION || value === 2;
 
 const isFiniteNumber = (value: unknown): value is number => (
     typeof value === 'number' && Number.isFinite(value)
@@ -90,6 +91,7 @@ const parseSyncedVisualSettings = (value: Record<string, unknown>): SyncedVisual
     if (value.monetTuning !== undefined) settings.monetTuning = value.monetTuning;
     if (value.pendoloTuning !== undefined) settings.pendoloTuning = value.pendoloTuning;
     if (value.sonnetTuning !== undefined) settings.sonnetTuning = value.sonnetTuning;
+    if (value.smartBeat !== undefined) settings.smartBeat = value.smartBeat;
     if (value.temperaTuning !== undefined) settings.temperaTuning = value.temperaTuning;
     if (value.lumiereTuning !== undefined) settings.lumiereTuning = value.lumiereTuning;
     if (Array.isArray(value.urlBackgroundList)) settings.urlBackgroundList = value.urlBackgroundList;

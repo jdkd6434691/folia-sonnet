@@ -146,7 +146,10 @@ export const getFeiniuServerUrl = (): string => (
 /** 登录成功（或用户改地址）后记下来。登出不清：下次登录少填一项。 */
 export const setFeiniuServerUrl = (value: string): void => {
     const normalized = normalizeFeiniuServerUrl(value);
-    if (normalized) writeProviderSessionValue('feiniu', 'server', normalized);
+    if (!normalized || normalized === getFeiniuServerUrl()) return;
+    clearFeiniuSession();
+    writeProviderSessionValue('feiniu', 'server', normalized);
+    getFeiniuResourceSession();
 };
 
 const randomHex = (bytes: number): string => {
@@ -181,6 +184,7 @@ export const isFeiniuRelayMode = (): boolean => readProviderSessionValue('feiniu
 export const setFeiniuRelayMode = (relay: boolean): void => {
     writeProviderSessionValue('feiniu', 'relay', relay ? '1' : '0');
     syncFeiniuCookieJarForRelay(relay);
+    getFeiniuResourceSession();
 };
 
 /** Cookie 的值：登录态全靠它，图片与音频流也要带同一个头。 */
@@ -198,6 +202,49 @@ export const feiniuResourceHeaders = (): Record<string, string> | null => {
 const assetBase = (): string => {
     const base = getFeiniuServerUrl();
     return base ? withSchemeAndPort(base) : '';
+};
+
+export type FeiniuResourceSession = {
+    origin: string;
+    headers: Record<string, string>;
+};
+let resourceSessionKey = '';
+let resourceSession: FeiniuResourceSession | null = null;
+const resourceSessionListeners = new Set<() => void>();
+
+/** 会话对象只在地址、账号或凭据变化时替换；凭据不放进缓存键或代理 URL。 */
+export const getFeiniuResourceSession = (): FeiniuResourceSession | null => {
+    const base = assetBase();
+    const headers = feiniuResourceHeaders();
+    const key = JSON.stringify([base, headers, readProviderSessionValue('feiniu', 'user')]);
+    if (key !== resourceSessionKey) {
+        resourceSessionKey = key;
+        resourceSession = null;
+        try {
+            const parsed = new URL(base);
+            if (headers && /^https?:$/.test(parsed.protocol) && !parsed.username && !parsed.password) {
+                resourceSession = { origin: parsed.origin, headers };
+            }
+        } catch { /* 未配置或地址无效时不代理带凭据的资源。 */ }
+        resourceSessionListeners.forEach(listener => listener());
+    }
+    return resourceSession;
+};
+
+export const onFeiniuResourceSessionChange = (listener: () => void): (() => void) => {
+    resourceSessionListeners.add(listener);
+    return () => { resourceSessionListeners.delete(listener); };
+};
+
+/** 只接受当前 NAS 同源的静态资源，不把 URL 路径当作来源身份。 */
+export const isFeiniuCoverUrl = (value: string, session: FeiniuResourceSession): boolean => {
+    try {
+        const url = new URL(value);
+        return url.origin === session.origin && !url.username && !url.password
+            && url.pathname.startsWith(`${API_PREFIX}/static/`);
+    } catch {
+        return false;
+    }
 };
 
 /**
@@ -532,6 +579,7 @@ export const clearFeiniuSession = (): void => {
     removeProviderSessionValue('feiniu', 'token');
     removeProviderSessionValue('feiniu', 'relay');
     removeProviderSessionValue('feiniu', 'user');
+    getFeiniuResourceSession();
 };
 
 /**
@@ -540,6 +588,7 @@ export const clearFeiniuSession = (): void => {
  */
 export const rememberFeiniuUser = (user: { id: string | number; nickname: string; avatarUrl?: string }): void => {
     writeProviderSessionValue('feiniu', 'user', JSON.stringify(user));
+    getFeiniuResourceSession();
 };
 
 export const readFeiniuUser = (): { id: string | number; nickname: string; avatarUrl?: string } | null => {

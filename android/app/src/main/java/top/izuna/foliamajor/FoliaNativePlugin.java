@@ -1790,7 +1790,10 @@ public class FoliaNativePlugin extends Plugin {
         boolean allowAnyHost = Boolean.TRUE.equals(call.getBoolean("allowAnyHost", false));
         try {
             if (localAudioServer == null) localAudioServer = new LocalAudioServer(getContext());
-            String proxied = localAudioServer.registerRemoteAudio(url, headers, allowAnyHost);
+            String credentialOrigin = call.getString("credentialOrigin");
+            String proxied = credentialOrigin != null
+                ? localAudioServer.registerScopedRemoteAudio(url, headers, credentialOrigin)
+                : localAudioServer.registerRemoteAudio(url, headers, allowAnyHost);
             JSObject result = new JSObject();
             result.put("url", proxied);
             result.put("proxied", true);
@@ -1801,6 +1804,26 @@ public class FoliaNativePlugin extends Plugin {
             result.put("proxied", false);
             result.put("error", String.valueOf(error.getMessage()));
             call.resolve(result);
+        }
+    }
+
+    @PluginMethod
+    public void registerScopedRemoteAudio(PluginCall call) {
+        if (call.getString("credentialOrigin") == null) {
+            call.reject("Credential origin is required");
+            return;
+        }
+        registerRemoteAudio(call);
+    }
+
+    @PluginMethod
+    public void unregisterRemoteAudio(PluginCall call) {
+        try {
+            String url = call.getString("url");
+            if (localAudioServer != null && url != null) localAudioServer.unregisterRemoteAudio(url);
+            call.resolve();
+        } catch (Exception error) {
+            call.reject("Could not unregister remote resource");
         }
     }
 

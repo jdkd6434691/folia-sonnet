@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { getSizedCoverUrl } from '../../utils/coverUrl';
 import { getSongArtistLabel, getSongCoverUrl } from '../../services/onlineMusic/songMetadata';
 import { useSidePanelBottomPx } from '../../hooks/usePlayerBottomBarBottomPx';
+import { Button } from '../ui';
 
 export interface SidePanelListProps<T> {
     isOpen: boolean;
@@ -125,12 +126,12 @@ export function SidePanelList<T>({
                         </div>
                         <div className="flex items-center gap-1 shrink-0">
                             {headerActions}
-                            <button
+                            <Button
                                 onClick={onClose}
                                 className="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
                             >
                                 <X size={18} />
-                            </button>
+                            </Button>
                         </div>
                     </div>
 
@@ -215,17 +216,17 @@ export const TrackListItem = React.memo<{
                     <div className="text-[10px] opacity-60 truncate leading-tight mt-0.5">{artistName}</div>
                 </div>
                 {!isUnavailable && onAddToQueue && (
-                    <button
+                    <Button
                         onClick={(e) => {
                             e.stopPropagation();
                             onAddToQueue();
                         }}
                         className="p-2 ml-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10 opacity-0 group-hover:opacity-100 transition-all shrink-0"
-                        title={t('navidrome.addToQueue')}
+                        tip={t('navidrome.addToQueue')}
                         style={{ color: 'var(--text-secondary)' }}
                     >
                         <Plus size={16} />
-                    </button>
+                    </Button>
                 )}
             </div>
         </div>

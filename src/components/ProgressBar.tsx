@@ -1,6 +1,7 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { MotionValue, useMotionValueEvent } from 'framer-motion';
 import { FoliumProgressButtons, FoliumProgressLayers, useFoliumProgressContext } from '../mods/folium/registries/progress';
+import { TextField } from './ui';
 
 // Folium public parts (mods/README.md): `data-folium-part` marks what mod CSS may
 // restyle — progress.root / track / fill / thumb / time / duration. Colors come
@@ -222,7 +223,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
                         data-scrubbing={isScrubbing ? 'true' : undefined}
                     />
                 </div>
-                <input
+                <TextField
                     ref={inputRef}
                     type="range"
                     min={0} max={duration || 100}

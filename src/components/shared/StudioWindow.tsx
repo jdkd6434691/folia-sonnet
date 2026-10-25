@@ -7,6 +7,7 @@ import { SettingsKitThemeContext, settingsTokens } from '../modal/settings/kit/k
 import { kitMotionTokens, kitTransition, useKitReducedMotion } from '../modal/settings/kit/motion';
 import { tabStops } from './Sheet';
 import { tabTarget } from './sheetKeys';
+import { Button } from '../ui';
 
 // src/components/shared/StudioWindow.tsx
 // The frame of a work window that shows what it edits: a header (back, title, a slot, actions), a
@@ -192,14 +193,13 @@ export const StudioWindow: React.FC<StudioWindowProps> = ({
                 <SettingsKitThemeContext.Provider value={kitTheme}>
                     <header inert={hasOver} className="flex min-w-0 items-center gap-2 pl-4 pr-5">
                         <Tooltip text={backLabel} className="inline-flex shrink-0">
-                            <button
-                                type="button"
+                            <Button
                                 onClick={onBack}
                                 aria-label={backLabel}
                                 className="st-t-fast grid h-8 w-8 place-items-center rounded-lg text-[color:var(--st-t2)] transition-colors hover:bg-[var(--st-fill)] hover:text-[color:var(--st-t1)]"
                             >
                                 <ChevronLeft size={18} />
-                            </button>
+                            </Button>
                         </Tooltip>
                         <h2 id={titleId} className="ml-1 mr-2 shrink-0 whitespace-nowrap text-xl font-semibold leading-8">{title}</h2>
                         <div className="flex min-w-0 flex-1 items-center gap-2">{slot}</div>

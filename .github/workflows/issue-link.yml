@@ -1,0 +1,37 @@
+name: Issue link
+
+# PR 正文必须写 Closes / Fixes / Resolves / Refs + #编号，说明这次改动对应哪个 issue。
+# 检查逻辑在 ci/checkIssueLink.ts，这个文件只做触发；规则与流程见 docs/issue-workflow.md。
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+    # 只要求发向 dev / main 的 PR，别处的 PR 不跑。
+    branches:
+      - dev
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  issue-link:
+    name: Pull request links an issue
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v6
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      # 不需要 npm ci：脚本只用 Node 内置模块，直接读 GITHUB_EVENT_PATH 里的 PR 正文。
+      - name: Check pull request body
+        run: node ci/checkIssueLink.ts

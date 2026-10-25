@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SheetButton } from './Sheet';
 import ThemedDialog from './ThemedDialog';
+import { TextField } from '../ui';
 
 interface TextInputDialogProps {
     isOpen: boolean;
@@ -70,7 +71,7 @@ const TextInputDialog: React.FC<TextInputDialogProps> = ({
                 </>
             )}
         >
-            <input
+            <TextField
                 // The sheet puts focus here when it opens.
                 data-autofocus
                 type="text"

@@ -1,0 +1,12 @@
+{
+  "providers": [
+    "bodian",
+    "feiniu",
+    "kugou",
+    "netease",
+    "qishui",
+    "qq",
+    "spotify",
+    "ytm"
+  ]
+}

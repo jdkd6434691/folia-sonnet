@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { Reveal, Row, Toggle } from '../../modal/settings/kit';
+import { Button } from '../../ui';
 
 // src/components/visualizer/diorama/DioramaFoldRow.tsx
 // The head of one of Diorama's option groups: a row of the settings kit whose label opens and
@@ -20,8 +21,7 @@ export const DioramaFoldRow: React.FC<DioramaFoldRowProps> = ({ label, checked, 
         <>
             <Row
                 label={(
-                    <button
-                        type="button"
+                    <Button
                         aria-expanded={isExpanded}
                         onClick={() => setIsExpanded(expanded => !expanded)}
                         className="-ml-1 flex items-center gap-1 rounded text-left"
@@ -32,7 +32,7 @@ export const DioramaFoldRow: React.FC<DioramaFoldRowProps> = ({ label, checked, 
                             className={`st-t-unfold shrink-0 text-[color:var(--st-t2)] transition-transform${isExpanded ? ' rotate-90' : ''}`}
                         />
                         {label}
-                    </button>
+                    </Button>
                 )}
             >
                 <Toggle checked={checked} onChange={onChange} />

@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FIELD_CLASS } from '../settings/kit';
 import { isThemeNameValid, THEME_NAME_MAX_LENGTH } from './themeParkDraft';
+import { TextField } from '@/components/ui';
 
 // src/components/modal/theme-park/ThemeNameField.tsx
 // The name of one side of a theme: a field of one line that holds no more than a name may have and
@@ -19,7 +20,7 @@ export const ThemeNameField: React.FC<ThemeNameFieldProps> = ({ value, onChange,
     const invalid = !isThemeNameValid(value);
 
     return (
-        <input
+        <TextField
             type="text"
             value={value}
             maxLength={THEME_NAME_MAX_LENGTH}

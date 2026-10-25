@@ -4,6 +4,7 @@ import { Loader2, Disc, Map as MapIcon, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getSizedCoverUrl } from '../utils/coverUrl';
 import { hasBlockingWindow } from '../utils/keyboardTargets';
+import { Button } from './ui';
 
 // Convert HTTP to HTTPS only for Netease CDN URLs
 const toSafeUrl = (url?: string): string | undefined => {
@@ -409,12 +410,12 @@ const Carousel3D: React.FC<Carousel3DProps> = ({
                     >
                         <div className="flex justify-between items-center mb-6">
                             <h3 className={`text-xl font-bold ${isDaylight ? 'text-black/90' : 'text-white/90'}`}>{t('home.allAlbums') || 'All Albums'}</h3>
-                            <button
+                            <Button
                                 onClick={() => setShowMap(false)}
                                 className={`p-2 rounded-full transition-colors ${isDaylight ? 'bg-black/10 hover:bg-black/20' : 'bg-white/10 hover:bg-white/20'}`}
                             >
                                 <X className={isDaylight ? 'text-black' : 'text-white'} size={24} />
-                            </button>
+                            </Button>
                         </div>
 
                         <div className="flex-1 overflow-y-auto custom-scrollbar p-4">

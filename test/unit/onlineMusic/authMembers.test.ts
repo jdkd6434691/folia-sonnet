@@ -24,14 +24,15 @@ const AUTH_MEMBERS: Record<string, string[]> = {
     bodian: [
         'cancelLogin', 'checkLogin', 'createQr', 'getLoginStatus', 'getLoginTexts', 'getLoginTtlMs', 'logout', 'startLogin',
     ],
-    // 安卓上登录诊断报告要说出「卡在哪」：这两个平台在安卓没有桌面端那座桥，
+    // 安卓上登录诊断报告要说出「卡在哪」：Spotify 在安卓没有桌面端那座桥，
     // 报告原来那一段是空的（"(none)"），所以补上 getLoginDiagnostics（与汽水 / QQ 同）。
     spotify: [
         'cancelLogin', 'checkLogin', 'describeLoginFailure', 'getLoginDiagnostics', 'getLoginStatus', 'getLoginTexts', 'getLoginTtlMs', 'logout',
         'openLoginPage', 'startLogin',
     ],
+    // YTM 换 v23 原生登录后，诊断段随页内运行时一起拿掉了（035281ce），这里不再有它。
     ytm: [
-        'cancelLogin', 'checkLogin', 'describeLoginFailure', 'getLoginDiagnostics', 'getLoginStatus', 'getLoginTexts', 'getLoginTtlMs', 'logout',
+        'cancelLogin', 'checkLogin', 'describeLoginFailure', 'getLoginStatus', 'getLoginTexts', 'getLoginTtlMs', 'logout',
         'openLoginPage', 'opensLoginPageItself', 'signInRanOut', 'startLogin',
     ],
     // 汽水（扫码）与飞牛（用户名密码 + 自建服务地址）是我们自己接的两个平台。

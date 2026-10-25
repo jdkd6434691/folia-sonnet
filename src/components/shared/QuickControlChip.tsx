@@ -1,5 +1,6 @@
 import React from 'react';
 import { Tooltip } from '../modal/settings/kit/Tooltip';
+import { Button } from '../ui';
 
 // src/components/shared/QuickControlChip.tsx
 // 播放面板里紧凑参数控件的两种形态：短文字胶囊和图标开关。
@@ -35,9 +36,8 @@ export const QuickControlChip: React.FC<QuickControlChipProps> = ({
     expanded,
 }) => (
     <Tooltip text={title} className="flex">
-        <button
+        <Button
             ref={buttonRef}
-            type="button"
             onClick={onClick}
             disabled={disabled}
             className={`${BASE} whitespace-nowrap px-2.5 text-xs enabled:hover:text-[color:var(--st-t1)] ${expanded ? 'bg-[var(--st-fill2)] text-[color:var(--st-t1)]' : 'bg-[var(--st-fill)] text-[color:var(--st-t2)] enabled:hover:bg-[var(--st-fill2)]'}`}
@@ -46,7 +46,7 @@ export const QuickControlChip: React.FC<QuickControlChipProps> = ({
             aria-expanded={expanded}
         >
             {label}
-        </button>
+        </Button>
     </Tooltip>
 );
 
@@ -64,8 +64,7 @@ export const QuickControlToggle: React.FC<QuickControlToggleProps> = ({
     children,
 }) => (
     <Tooltip text={label} className="flex">
-        <button
-            type="button"
+        <Button
             onClick={onToggle}
             className={`${BASE} w-7 ${active
                 ? 'bg-[var(--st-raise)] text-[color:var(--st-accent)] shadow-[0_1px_2px_rgba(0,0,0,0.2)]'
@@ -74,6 +73,6 @@ export const QuickControlToggle: React.FC<QuickControlToggleProps> = ({
             aria-pressed={active}
         >
             {children}
-        </button>
+        </Button>
     </Tooltip>
 );

@@ -6,6 +6,7 @@ import type { PonderTimelinePlan } from '../../types/ponder';
 import { ponderSwapMotion } from './ponderMotion';
 import { ponderModifierLabel } from './PonderKeyCap';
 import type { PonderStageNodes } from './ponderStageNodes';
+import { Button } from '../ui';
 
 // src/components/ponder/PonderCaptionBlock.tsx
 // The words of the stage, in one fixed place under the transport: the chapter line ("1 / 5" and
@@ -78,8 +79,7 @@ const PonderCaptionBlock: React.FC<PonderCaptionBlockProps> = ({
             <div className="flex w-[280px] max-w-full flex-none flex-col items-end gap-2.5">
                 {actionLabel && (
                     // These settings are known for being hard to find; that is why the chapter exists.
-                    <button
-                        type="button"
+                    <Button
                         key={sceneIndex}
                         data-testid="ponder-scene-action"
                         onClick={onRunAction}
@@ -88,7 +88,7 @@ const PonderCaptionBlock: React.FC<PonderCaptionBlockProps> = ({
                         <SlidersHorizontal size={14} className="flex-none text-[color:var(--st-t2)]" />
                         <span className="truncate">{actionLabel}</span>
                         <ChevronRight size={12} className="flex-none text-[color:var(--st-t2)]" />
-                    </button>
+                    </Button>
                 )}
                 {cue}
             </div>

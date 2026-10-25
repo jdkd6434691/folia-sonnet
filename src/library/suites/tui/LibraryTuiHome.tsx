@@ -15,6 +15,7 @@ import { useThemeSettingsStore } from '../../../stores/useThemeSettingsStore';
 import { LibraryTuiLocalList, LibraryTuiNavidromeList, LibraryTuiOnlineList } from './LibraryTuiHomeLists';
 import type { LibraryTuiPromptRequest } from './LibraryTuiPrompt';
 import { useLibraryTuiHomePageKeys } from './useLibraryTuiHomeKeyboard';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/tui/LibraryTuiHome.tsx
 // 首页 surface 的 TUI 实现（开发版）：顶上两行等宽的页签——来源（在线 / 本地 / Navidrome，可用性与不可用原因来自
@@ -195,9 +196,8 @@ const LibraryTuiHome: React.FC<LibraryHomeSurfaceProps> = (props) => {
                     {groups.map(group => {
                         const active = group.source === activeSource;
                         return (
-                            <button
+                            <Button
                                 key={group.source}
-                                type="button"
                                 role="tab"
                                 aria-selected={active}
                                 data-tui-source={group.source}
@@ -208,7 +208,7 @@ const LibraryTuiHome: React.FC<LibraryHomeSurfaceProps> = (props) => {
                                 style={active ? { color: accentColor } : undefined}
                             >
                                 {active ? `[${sourceLabel(group)}]` : ` ${sourceLabel(group)} `}
-                            </button>
+                            </Button>
                         );
                     })}
                     {actionState.scan?.active ? (
@@ -217,9 +217,8 @@ const LibraryTuiHome: React.FC<LibraryHomeSurfaceProps> = (props) => {
                 </div>
                 <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px]" role="tablist">
                     {sections.map(section => (
-                        <button
+                        <Button
                             key={section.key}
-                            type="button"
                             role="tab"
                             aria-selected={section.active}
                             data-tui-section={section.key}
@@ -230,7 +229,7 @@ const LibraryTuiHome: React.FC<LibraryHomeSurfaceProps> = (props) => {
                             style={section.active ? { color: accentColor } : undefined}
                         >
                             {section.active ? `<${section.label}>` : section.label}
-                        </button>
+                        </Button>
                     ))}
                 </div>
             </header>

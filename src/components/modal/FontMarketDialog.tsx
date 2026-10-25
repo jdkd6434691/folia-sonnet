@@ -11,6 +11,7 @@ import {
     type FontMarketFont,
     type FontMarketInstallResult,
 } from '../../services/fontMarket';
+import { Button, TextField } from '@/components/ui';
 
 // src/components/modal/FontMarketDialog.tsx
 // 字体市场：列出后台上架的字体，点一下预览，再点「使用」才去下载。
@@ -335,21 +336,20 @@ const FontMarketDialog: React.FC<FontMarketDialogProps> = ({
                                 : t('options.fontMarketDesc')}
                         </div>
                     </div>
-                    <button
-                        type="button"
+                    <Button
                         onClick={onClose}
                         aria-label={t('ui.close')}
                         className="shrink-0 rounded-full border border-white/10 bg-white/5 p-2 transition-colors hover:bg-white/10"
                         style={{ color: 'var(--text-primary)' }}
                     >
                         <X size={17} />
-                    </button>
+                    </Button>
                 </div>
 
                 <div className={`border-b px-5 py-3 ${dividerClass}`}>
                     <label className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/5 px-3.5 py-2.5">
                         <Search size={15} style={{ color: 'var(--text-secondary)' }} />
-                        <input
+                        <TextField
                             type="text"
                             value={query}
                             onChange={(event) => setQuery(event.target.value)}
@@ -362,9 +362,8 @@ const FontMarketDialog: React.FC<FontMarketDialogProps> = ({
                         {TABS.map((entry) => {
                             const active = tab === entry.id;
                             return (
-                                <button
+                                <Button
                                     key={entry.id}
-                                    type="button"
                                     aria-pressed={active}
                                     onClick={() => setTab(entry.id)}
                                     className={`rounded-full border px-3 py-1 text-xs font-medium transition-opacity ${isDaylight ? 'border-black/15' : 'border-white/15'} ${active ? 'opacity-100' : 'opacity-55 hover:opacity-85'}`}
@@ -376,7 +375,7 @@ const FontMarketDialog: React.FC<FontMarketDialogProps> = ({
                                     }}
                                 >
                                     {t(entry.labelKey) === entry.labelKey ? entry.fallback : t(entry.labelKey)}
-                                </button>
+                                </Button>
                             );
                         })}
                     </div>
@@ -396,18 +395,16 @@ const FontMarketDialog: React.FC<FontMarketDialogProps> = ({
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {onPickLocalFont && (
-                                    <button
-                                        type="button"
+                                    <Button
                                         onClick={onPickLocalFont}
                                         className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2 text-xs font-semibold text-zinc-950 transition hover:bg-white/90"
                                     >
                                         <Upload size={14} />
                                         {t('options.fontMarketPickLocal')}
-                                    </button>
+                                    </Button>
                                 )}
                                 {onClearFont && (
-                                    <button
-                                        type="button"
+                                    <Button
                                         onClick={() => {
                                             writeFontMarketChoice(null);
                                             onClearFont();
@@ -416,7 +413,7 @@ const FontMarketDialog: React.FC<FontMarketDialogProps> = ({
                                         className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-red-500/30 px-3.5 py-2 text-xs font-semibold text-red-400 transition-colors hover:bg-red-500/10"
                                     >
                                         {t('options.fontMarketClear')}
-                                    </button>
+                                    </Button>
                                 )}
                             </div>
                         </div>
@@ -451,8 +448,7 @@ const FontMarketDialog: React.FC<FontMarketDialogProps> = ({
                                             key={font.id}
                                             className={`overflow-hidden rounded-2xl border ${cardClass}`}
                                         >
-                                            <button
-                                                type="button"
+                                            <Button
                                                 onClick={() => setPreview(font)}
                                                 className="block w-full text-left"
                                             >
@@ -462,7 +458,7 @@ const FontMarketDialog: React.FC<FontMarketDialogProps> = ({
                                                     aspect={font.previewAspect}
                                                     barClass={barClass}
                                                 />
-                                            </button>
+                                            </Button>
                                             <div className="flex items-center gap-2 px-3.5 py-2.5">
                                                 <div className="min-w-0 flex-1">
                                                     <div className="truncate text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>
@@ -478,15 +474,14 @@ const FontMarketDialog: React.FC<FontMarketDialogProps> = ({
                                                         {t('options.fontMarketUsing')}
                                                     </span>
                                                 ) : (
-                                                    <button
-                                                        type="button"
+                                                    <Button
                                                         disabled={busyId !== null}
                                                         onClick={() => void applyFont(font)}
                                                         className="inline-flex shrink-0 items-center gap-1 rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-zinc-950 transition hover:bg-white/90 disabled:opacity-45"
                                                     >
                                                         {busyId === font.id ? <Loader2 size={11} className="animate-spin" /> : null}
                                                         {busyId === font.id ? t('options.fontMarketInstalling') : t('options.fontMarketUse')}
-                                                    </button>
+                                                    </Button>
                                                 )}
                                             </div>
                                         </div>
@@ -506,14 +501,13 @@ const FontMarketDialog: React.FC<FontMarketDialogProps> = ({
                                             {t('options.fontMarketLoadingMore')}
                                         </span>
                                     ) : (
-                                        <button
-                                            type="button"
+                                        <Button
                                             onClick={() => void loadMore()}
                                             className={`rounded-full border px-4 py-2 text-xs font-medium transition-colors ${isDaylight ? 'border-black/15 hover:bg-black/5' : 'border-white/15 hover:bg-white/5'}`}
                                             style={{ color: 'var(--text-primary)' }}
                                         >
                                             {moreError ? t('options.fontMarketRetry') : t('options.fontMarketLoadMore')}
-                                        </button>
+                                        </Button>
                                     )}
                                 </div>
                             ) : (
@@ -540,29 +534,28 @@ const FontMarketDialog: React.FC<FontMarketDialogProps> = ({
                     <div className={`w-full max-w-2xl overflow-hidden rounded-2xl border ${surfaceClass}`} onClick={(event) => event.stopPropagation()}>
                         <div className={`flex items-center justify-between gap-3 border-b px-4 py-3 ${dividerClass}`}>
                             <div className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{preview.name}</div>
-                            <button
-                                type="button"
+                            <Button
                                 onClick={() => setPreview(null)}
+                                tip={t('ui.close')}
                                 className="rounded-full border border-white/10 bg-white/5 p-1.5"
                                 style={{ color: 'var(--text-primary)' }}
                             >
                                 <X size={15} />
-                            </button>
+                            </Button>
                         </div>
                         <img src={resolveFontPreviewUrl(preview)} alt={preview.name} className="block w-full" />
                         <div className={`flex flex-wrap items-center justify-between gap-3 border-t px-4 py-3 ${dividerClass}`}>
                             <div className={`text-[11px] ${muted}`}>
                                 {[preview.categoryLabel || preview.category, preview.license].filter(Boolean).join(' · ')}
                             </div>
-                            <button
-                                type="button"
+                            <Button
                                 disabled={busyId !== null}
                                 onClick={() => void applyFont(preview)}
                                 className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-semibold text-zinc-950 transition hover:bg-white/90 disabled:opacity-45"
                             >
                                 {busyId === preview.id ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
                                 {busyId === preview.id ? t('options.fontMarketInstalling') : t('options.fontMarketConfirm')}
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>

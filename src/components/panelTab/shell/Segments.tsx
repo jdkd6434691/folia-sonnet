@@ -2,6 +2,7 @@ import React, { useId } from 'react';
 import { motion } from 'framer-motion';
 import { kitTransition, useKitReducedMotion } from '../../modal/settings/kit/motion';
 import { Tooltip } from '../../modal/settings/kit/Tooltip';
+import { Button } from '../../ui';
 
 // src/components/panelTab/shell/Segments.tsx
 // The panel's choice between a few options that are all in view: the tab row, the theme source,
@@ -71,8 +72,7 @@ export const Segments = <T extends string>({ value, options, onChange, size = 'm
                             : `min-w-0 ${hasIconOnly ? 'flex-[0_1_auto]' : 'flex-[1_1_auto]'}`;
                 return (
                     <Tooltip key={option.value} text={option.tip ?? (option.iconOnly ? option.label : undefined)} className={`flex ${share}`}>
-                        <button
-                            type="button"
+                        <Button
                             {...option.data}
                             aria-pressed={selected}
                             aria-label={option.iconOnly ? option.label : undefined}
@@ -97,7 +97,7 @@ export const Segments = <T extends string>({ value, options, onChange, size = 'm
                                 {option.icon}
                                 {!option.iconOnly && <span className="truncate">{option.label}</span>}
                             </span>
-                        </button>
+                        </Button>
                     </Tooltip>
                 );
             })}

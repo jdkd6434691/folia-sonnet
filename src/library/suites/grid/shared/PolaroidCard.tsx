@@ -6,6 +6,7 @@ import { canResolveSongCatalogRef } from '../../../../services/onlineMusic/catal
 import { resolveTrackAlbumTargetId } from '../../../core/shared/trackLinks';
 import { CARD_TITLE_ATTR, MORPH_FRAME_ATTR } from '../transitions/gridMorphContract';
 import { useCoverDoubleTap } from './coverDoubleTap';
+import { Button } from '../../../../components/ui';
 import {
     formatCardDuration,
     PolaroidCardActions,
@@ -159,8 +160,7 @@ export const PolaroidCard = React.memo<PolaroidCardProps>(
         const doubleTapCover = useCoverDoubleTap(mode === 'tracks' && !isEditMode, onSelect);
 
         const editMetadataButton = isFocused && onEditLocalMetadata ? (
-            <button
-                type="button"
+            <Button
                 // 三重条件才出现（聚焦 + 本地歌曲 + 悬停歌名），思索认它靠这个属性。
                 data-ponder="local-metadata-match"
                 onClick={(event) => {
@@ -172,7 +172,7 @@ export const PolaroidCard = React.memo<PolaroidCardProps>(
                 aria-label={t('localMusic.manualMetadataMatch')}
             >
                 <Pencil size={13} />
-            </button>
+            </Button>
         ) : null;
 
         if (fullBleedCover) {

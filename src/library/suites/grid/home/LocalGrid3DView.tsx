@@ -17,6 +17,7 @@ import { useLibraryHomeLocal, useLocalDirectoryTrees, useLocalHomeBatchConfig } 
 import { useLibraryHomeActions } from '../../../core/home/useLibraryHomeActions';
 import { useLibraryHomeListRegistration } from '../../../core/home/useLibraryHomeSurfaceRegistration';
 import { isAndroidNativeRuntime } from '../../../../services/nativeLocalMusic';
+import { Button, TextField } from '../../../../components/ui';
 
 // src/library/suites/grid/home/LocalGrid3DView.tsx
 // Desktop-only local music Grid3D overview that opens GridView instead of legacy carousel details.
@@ -210,7 +211,7 @@ export const LocalGrid3DView: React.FC<LocalGrid3DViewProps> = ({
                 <p className="text-lg">{t('localMusic.noLocalMusic')}</p>
                 <div className="flex flex-wrap items-center justify-center gap-3">
                     {emptyActions.map(action => (
-                        <button
+                        <Button
                             key={action.id}
                             onClick={() => runAction(action.id)}
                             disabled={action.disabled}
@@ -218,7 +219,7 @@ export const LocalGrid3DView: React.FC<LocalGrid3DViewProps> = ({
                         >
                             {action.pending ? <Loader2 size={16} className="animate-spin" /> : ACTION_ICONS[action.id]}
                             {t(action.labelKey)}
-                        </button>
+                        </Button>
                     ))}
                 </div>
             </div>
@@ -227,7 +228,7 @@ export const LocalGrid3DView: React.FC<LocalGrid3DViewProps> = ({
 
     return (
         <>
-            <input
+            <TextField
                 ref={playlistFileInputRef}
                 type="file"
                 accept=".m3u,.m3u8,audio/x-mpegurl,application/vnd.apple.mpegurl"

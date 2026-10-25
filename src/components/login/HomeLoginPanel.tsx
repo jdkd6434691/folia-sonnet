@@ -8,6 +8,7 @@ import { openLoginWindow } from './loginWindowStore';
 import { PlatformMark } from './PlatformMark';
 import { orderRows, rowStatus } from './platformRows';
 import './login.css';
+import { Button } from '../ui';
 
 // src/components/login/HomeLoginPanel.tsx
 // 主页上没有人登录时的样子：一句标题、一句提示，和一个带着前三个平台记号的「登录」按钮。
@@ -48,8 +49,7 @@ const HomeLoginPanel: React.FC<HomeLoginPanelProps> = ({ account }) => {
                     ? t('home.guestPromptProvider', { provider: active?.shortName || active?.displayName || activeProviderId })
                     : t('home.guestPrompt')}
             </p>
-            <button
-                type="button"
+            <Button
                 data-ponder="sign-in"
                 onClick={event => openLoginWindow(ranOut ? activeProviderId : null, event.currentTarget)}
                 className={`login-rise st-t-fast mt-7 inline-flex h-12 max-w-full items-center gap-2.5 rounded-xl bg-[var(--st-accent)] pl-2.5 pr-[22px] text-[15px] font-semibold text-[color:var(--st-on-accent)] transition-[opacity,transform] hover:opacity-90 active:scale-[0.98] ${nudge ? 'login-cta' : ''}`}
@@ -63,7 +63,7 @@ const HomeLoginPanel: React.FC<HomeLoginPanelProps> = ({ account }) => {
                     ))}
                 </span>
                 <span className="truncate">{ranOut ? t('home.loginBrowserRetry') : t('home.login')}</span>
-            </button>
+            </Button>
             {nudge && (
                 <p
                     className="login-cta-note mt-3 text-[12px] leading-4 text-[color:var(--st-t3)]"

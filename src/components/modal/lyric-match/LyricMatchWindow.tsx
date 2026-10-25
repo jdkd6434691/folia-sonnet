@@ -14,6 +14,7 @@ import { formatSongName } from '../../../utils/songNameFormatter';
 import { DurationMatchBadge } from '../DurationMatchBadge';
 import { LyricPreviewPanel } from './LyricPreviewPanel';
 import type { LyricMatchSearch } from './useLyricMatchSearch';
+import { Button, TextField } from '@/components/ui';
 
 // src/components/modal/lyric-match/LyricMatchWindow.tsx
 // The window for matching lyrics to a song by hand: source tabs, a search box, the results, and
@@ -139,12 +140,13 @@ export const LyricMatchWindow: React.FC<LyricMatchWindowProps> = ({
                             </div>
                         )}
                     </div>
-                    <button
+                    <Button
                         onClick={onClose}
+                        tip={t('ui.close')}
                         className={`p-2 ${closeBtnHover} rounded-lg transition-colors ${textPrimary}`}
                     >
                         <X size={20} />
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Body: Two-panel layout */}
@@ -161,14 +163,13 @@ export const LyricMatchWindow: React.FC<LyricMatchWindowProps> = ({
                                             : 'border-blue-400 text-blue-300 font-semibold'
                                         : 'border-transparent text-zinc-400 hover:text-zinc-200';
                                     return (
-                                        <button
+                                        <Button
                                             key={id}
-                                            type="button"
                                             onClick={() => search.setSource(id)}
                                             className={`pb-2 border-b-2 text-sm transition-all px-1 cursor-pointer ${activeTabClass}`}
                                         >
                                             {getLyricMatchSourceLabel(id)}
-                                        </button>
+                                        </Button>
                                     );
                                 })}
                             </div>
@@ -181,7 +182,7 @@ export const LyricMatchWindow: React.FC<LyricMatchWindowProps> = ({
                             >
                                 <div className={`flex-1 flex items-center gap-3 rounded-2xl border px-4 py-3 ${inputBg}`}>
                                     <Search size={18} className={`opacity-40 ${textSecondary}`} />
-                                    <input
+                                    <TextField
                                         type="text"
                                         value={query}
                                         onChange={(e) => search.setQuery(e.target.value)}
@@ -190,13 +191,13 @@ export const LyricMatchWindow: React.FC<LyricMatchWindowProps> = ({
                                         autoFocus
                                     />
                                 </div>
-                                <button
+                                <Button
                                     type="submit"
                                     disabled={isSearching}
                                     className={`px-4 rounded-2xl text-sm font-medium transition-colors ${searchBtnBg}`}
                                 >
                                     {isSearching ? <Loader2 size={16} className="animate-spin" /> : t('localMusic.search')}
-                                </button>
+                                </Button>
                             </form>
                         </div>
 
@@ -324,23 +325,23 @@ export const LyricMatchWindow: React.FC<LyricMatchWindowProps> = ({
                     {(noMatch || footerActions) && (
                         <div className="mr-auto flex flex-wrap gap-3">
                             {noMatch && (
-                                <button
+                                <Button
                                     onClick={() => void whileSaving(noMatch.run)}
                                     className={`px-5 py-2 ${noMatchBtnBg} text-red-400 border rounded-lg transition-colors text-sm whitespace-nowrap`}
                                 >
                                     {noMatch.label}
-                                </button>
+                                </Button>
                             )}
                             {footerActions}
                         </div>
                     )}
-                    <button
+                    <Button
                         onClick={onClose}
                         className={`px-5 py-2 ${cancelBtnBg} rounded-lg transition-colors ${textPrimary} text-sm whitespace-nowrap`}
                     >
                         {t('localMusic.cancel')}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={() => { if (selectedResult) void whileSaving(() => onSave(selectedResult)); }}
                         disabled={!selectedResult || isSaving}
                         className="px-5 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm text-white whitespace-nowrap"
@@ -353,7 +354,7 @@ export const LyricMatchWindow: React.FC<LyricMatchWindowProps> = ({
                         ) : (
                             t('localMusic.save')
                         )}
-                    </button>
+                    </Button>
                 </div>
             </div>
             {children}

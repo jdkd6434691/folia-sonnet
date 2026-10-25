@@ -35,7 +35,7 @@ describe('lyrics architecture', () => {
             'src/components/modal/lyric-match/navidromeSongMatch.ts',
             'src/components/app/playback/restore/restorePlaybackSource.ts',
             'src/components/app/playback/start/useLibraryPlaybackController.ts',
-            'src/services/localMusicService.ts',
+            'src/services/localMusic/lyricsMatch.ts',
             'src/services/prefetchService.ts',
             'src/services/onlinePlayback.ts',
             'src/utils/lyrics/lyricMatchSources.ts',

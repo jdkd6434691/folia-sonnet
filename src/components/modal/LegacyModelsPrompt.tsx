@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FolderOpen, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ThemedDialog from '../shared/ThemedDialog';
+import { Button } from '@/components/ui';
 
 // src/components/modal/LegacyModelsPrompt.tsx
 // Asks once whether to delete the old automix models in the folder an earlier version (up to 0.7.20)
@@ -78,32 +79,29 @@ const LegacyModelsPrompt: React.FC<{ isDaylight: boolean }> = ({ isDaylight }) =
             )}
             <div className="flex flex-wrap items-center justify-end gap-2">
                 {/* Left and quieter: leaving them is an answer too, and also ends the prompt. */}
-                <button
-                    type="button"
+                <Button
                     disabled={busy}
                     onClick={() => void resolve('dismiss')}
                     className={`mr-auto text-sm underline opacity-50 hover:opacity-80 disabled:opacity-30 ${isDaylight ? 'text-zinc-900' : 'text-white'}`}
                 >
                     {t('options.legacyModelsKeep')}
-                </button>
-                <button
-                    type="button"
+                </Button>
+                <Button
                     disabled={busy}
                     onClick={() => void window.electron?.openLegacyModelsFolder?.()}
                     className={buttonClass}
                 >
                     <FolderOpen size={14} />
                     {t('options.legacyModelsOpen')}
-                </button>
-                <button
-                    type="button"
+                </Button>
+                <Button
                     disabled={busy}
                     onClick={() => void resolve('delete')}
                     className="rounded-xl bg-white px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-white/90 flex items-center gap-1.5 disabled:opacity-50"
                 >
                     <Trash2 size={14} />
                     {t('options.legacyModelsDelete')}
-                </button>
+                </Button>
             </div>
         </ThemedDialog>
     );

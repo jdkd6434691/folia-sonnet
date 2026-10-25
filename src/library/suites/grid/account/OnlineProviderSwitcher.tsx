@@ -13,6 +13,7 @@ import {
     useLibraryOnlineProviderScopeStore,
 } from '../../../core/directory/useLibraryOnlineProviderScopeStore';
 import { playerBottomBarLiveOffset } from '../../../../stores/motionSignals';
+import { Button } from '../../../../components/ui';
 import {
     PLAYER_BOTTOM_BAR_BASE_OFFSET_PX,
     resolvePlayerBottomComponentBottomPx,
@@ -170,7 +171,7 @@ const OnlineProviderSwitcher: React.FC<OnlineProviderSwitcherProps> = ({
             className="pointer-events-auto absolute bottom-4 right-4 z-[100] md:bottom-6 md:right-6"
         >
             <div className={`flex items-center rounded-full p-0.5 shadow-lg md:p-1.5 ${surfaceClass}`}>
-                <button
+                <Button
                     type="button"
                     onClick={() => setOpen(value => !value)}
                     className={`flex items-center rounded-full gap-0 py-1 pl-1 pr-1 transition-all ${showProviderLabel ? 'md:gap-2 md:pr-3' : 'md:gap-0 md:pr-1'} ${isDaylight ? 'hover:bg-black/5' : 'hover:bg-white/10'}`}
@@ -203,9 +204,9 @@ const OnlineProviderSwitcher: React.FC<OnlineProviderSwitcherProps> = ({
                             </motion.span>
                         )}
                     </AnimatePresence>
-                </button>
+                </Button>
                 <span className={`mx-1 hidden h-6 w-px md:block ${isDaylight ? 'bg-black/10' : 'bg-white/15'}`} aria-hidden="true" />
-                <button
+                <Button
                     type="button"
                     onClick={onBackToPlayer}
                     className={`hidden h-10 w-10 items-center justify-center rounded-full transition-colors md:flex ${isDaylight ? 'hover:bg-black/5' : 'hover:bg-white/10'}`}
@@ -213,7 +214,7 @@ const OnlineProviderSwitcher: React.FC<OnlineProviderSwitcherProps> = ({
                     aria-label={t('home.backToPlayer')}
                 >
                     <ChevronRight size={21} />
-                </button>
+                </Button>
             </div>
 
             <AnimatePresence>
@@ -227,7 +228,7 @@ const OnlineProviderSwitcher: React.FC<OnlineProviderSwitcherProps> = ({
                         className={`absolute bottom-[calc(100%+0.75rem)] right-0 w-72 max-w-[calc(100vw-2rem)] origin-bottom-right rounded-3xl p-3 shadow-2xl md:w-80 ${surfaceClass}`}
                     >
                         <div className="px-3 pb-3 pt-1 text-xs font-medium opacity-50">{t('home.onlineProvider')}</div>
-                        <button
+                        <Button
                             type="button"
                             role="menuitem"
                             onClick={() => {
@@ -238,9 +239,9 @@ const OnlineProviderSwitcher: React.FC<OnlineProviderSwitcherProps> = ({
                         >
                             <ChevronRight size={19} />
                             <span className="text-sm font-semibold">{t('home.backToPlayer')}</span>
-                        </button>
+                        </Button>
                         {mergeableCount >= 2 && (
-                            <button
+                            <Button
                                 type="button"
                                 role="menuitemradio"
                                 aria-checked={allScope}
@@ -264,7 +265,7 @@ const OnlineProviderSwitcher: React.FC<OnlineProviderSwitcherProps> = ({
                                     </span>
                                     <span className="mt-1 block truncate text-xs opacity-65">{t('home.allProvidersAction')}</span>
                                 </span>
-                            </button>
+                            </Button>
                         )}
                         {visibleProviders.map(provider => {
                             const active = provider.providerId === activeProviderId;
@@ -275,7 +276,7 @@ const OnlineProviderSwitcher: React.FC<OnlineProviderSwitcherProps> = ({
                                     key={provider.providerId}
                                     className={`mb-1 flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left transition-colors last:mb-0 ${active ? (isDaylight ? 'bg-black/5' : 'bg-white/8') : ''} ${configured ? (isDaylight ? 'hover:bg-black/8' : 'hover:bg-white/12') : 'cursor-not-allowed opacity-40'}`}
                                 >
-                                    <button
+                                    <Button
                                         type="button"
                                         role="menuitemradio"
                                         aria-checked={active}
@@ -307,9 +308,9 @@ const OnlineProviderSwitcher: React.FC<OnlineProviderSwitcherProps> = ({
                                             </span>
                                         </span>
                                         {!active && !canSwitchToProviderDirectly(provider) ? <LogIn size={16} className="opacity-55" /> : null}
-                                    </button>
+                                    </Button>
                                     {canLogoutProvider(provider) && (
-                                        <button
+                                        <Button
                                             type="button"
                                             onClick={() => {
                                                 setOpen(false);
@@ -320,7 +321,7 @@ const OnlineProviderSwitcher: React.FC<OnlineProviderSwitcherProps> = ({
                                             aria-label={t('account.logout')}
                                         >
                                             <LogOut size={17} />
-                                        </button>
+                                        </Button>
                                     )}
                                 </div>
                             );

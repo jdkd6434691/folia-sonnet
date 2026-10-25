@@ -6,6 +6,7 @@ import { SongResult, LyricData, Line } from '../../../types';
 import { findLatestActiveLineIndex } from '../../../utils/appPlaybackHelpers';
 import { fetchLyricsForMatchSource } from '../../../utils/lyrics/lyricMatchSources';
 import type { LyricMatchSource } from '../../../utils/lyrics/matchResult';
+import { Button } from '@/components/ui';
 
 // src/components/modal/lyric-match/LyricPreviewPanel.tsx
 // 歌词预览面板组件：支持逐字高亮与自适应水平滚动，切换行带平滑淡入淡出动画，右上角绝对定位状态标签。
@@ -346,12 +347,12 @@ export const LyricPreviewPanel: React.FC<LyricPreviewPanelProps> = ({
         return (
             <div className={`w-full flex-1 flex flex-col items-center justify-center p-4 border rounded-xl ${previewBoxBg} ${textSecondary}`}>
                 <span className="text-xs mb-2">{error}</span>
-                <button
+                <Button
                     onClick={() => setRetryTrigger(prev => prev + 1)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${btnBg}`}
                 >
                     {t('localMusic.reload')}
-                </button>
+                </Button>
             </div>
         );
     }

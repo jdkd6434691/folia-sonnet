@@ -11,6 +11,7 @@ import { openOutsideLink, opensThroughDesktopApp } from '../../utils/system/outs
 import { ModListItem, translateModError } from './ModListItem';
 import { useModCosts } from './modCost';
 import type { ModManagerClasses } from './modManagerClasses';
+import { Button } from '../../components/ui';
 
 // src/mods/manager/ModManager.tsx
 // The mod list and everything that acts on it: toolbar, zip drop install, batch selection, ffmpeg
@@ -241,17 +242,15 @@ export const ModManager: React.FC<ModManagerProps> = ({ classes, isDaylight, the
                 </span>
                 <div className="flex flex-wrap items-center gap-1.5">
                     {marketLink}
-                    <button
-                        type="button"
+                    <Button
                         onClick={() => { void handleOpenDirectory(); }}
                         className={`${toolbarButtonClass} ${classes.ghostButton}`}
                         style={{ color: 'var(--text-primary)' }}
                     >
                         <FolderOpen size={12} />
                         {t('mods.openDirectory')}
-                    </button>
-                    <button
-                        type="button"
+                    </Button>
+                    <Button
                         onClick={() => (selectionMode ? exitSelectionMode() : setSelectionMode(true))}
                         disabled={mods.length === 0}
                         className={`${toolbarButtonClass} ${selectionMode ? classes.activeButton : classes.ghostButton}`}
@@ -259,16 +258,15 @@ export const ModManager: React.FC<ModManagerProps> = ({ classes, isDaylight, the
                     >
                         {selectionMode ? <X size={12} /> : <CheckSquare size={12} />}
                         {selectionMode ? t('mods.selectionCancel') : t('mods.selectionMode')}
-                    </button>
-                    <button
-                        type="button"
+                    </Button>
+                    <Button
                         onClick={() => { void reloadAll(); }}
                         className={`${toolbarButtonClass} ${classes.ghostButton}`}
                         style={{ color: 'var(--text-primary)' }}
                     >
                         <RefreshCw size={12} />
                         {t('mods.reload')}
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -290,15 +288,14 @@ export const ModManager: React.FC<ModManagerProps> = ({ classes, isDaylight, the
                 <div className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs text-left ${notice.kind === 'ok' ? classes.success : classes.danger}`}>
                     {notice.kind === 'ok' ? <CircleCheck size={14} className="shrink-0" /> : <AlertCircle size={14} className="shrink-0" />}
                     <span className="break-all flex-1">{notice.text}</span>
-                    <button type="button" onClick={() => setNotice(null)} className="shrink-0 opacity-60 hover:opacity-100" aria-label={t('mods.selectionCancel')}>
+                    <Button onClick={() => setNotice(null)} className="shrink-0 opacity-60 hover:opacity-100" aria-label={t('mods.selectionCancel')}>
                         <X size={13} />
-                    </button>
+                    </Button>
                 </div>
             ) : null}
 
             {!ffmpeg.available ? (
-                <button
-                    type="button"
+                <Button
                     onClick={() => { void refreshFfmpeg(); }}
                     className={`flex flex-col gap-1 rounded-xl border px-3 py-2.5 text-left transition-opacity hover:opacity-90 ${classes.danger}`}
                 >
@@ -307,7 +304,7 @@ export const ModManager: React.FC<ModManagerProps> = ({ classes, isDaylight, the
                         {t('mods.ffmpegMissing')}
                     </span>
                     <span className="text-[11px] opacity-75 break-all">{t('mods.ffmpegMissingHint')}</span>
-                </button>
+                </Button>
             ) : null}
 
             <AnimatePresence initial={false}>
@@ -324,24 +321,22 @@ export const ModManager: React.FC<ModManagerProps> = ({ classes, isDaylight, the
                                 {t('mods.selectionCount', { count: selectedIds.size })}
                             </span>
                             <div className="flex items-center gap-1.5">
-                                <button
-                                    type="button"
+                                <Button
                                     disabled={batchPending || selectedIds.size === 0}
                                     onClick={() => { void applyBatch(true); }}
                                     className={`${toolbarButtonClass} ${classes.ghostButton}`}
                                     style={{ color: 'var(--text-primary)' }}
                                 >
                                     {t('mods.batchEnable')}
-                                </button>
-                                <button
-                                    type="button"
+                                </Button>
+                                <Button
                                     disabled={batchPending || selectedIds.size === 0}
                                     onClick={() => { void applyBatch(false); }}
                                     className={`${toolbarButtonClass} ${classes.ghostButton}`}
                                     style={{ color: 'var(--text-primary)' }}
                                 >
                                     {t('mods.batchDisable')}
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </motion.div>

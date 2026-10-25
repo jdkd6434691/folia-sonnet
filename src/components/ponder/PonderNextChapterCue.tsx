@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '../ui';
 
 // src/components/ponder/PonderNextChapterCue.tsx
 // 一章播完后，文字那一块右边出现的「下一章」按钮：写着下一章的名字，点它就过去。
@@ -40,8 +41,7 @@ const PonderNextChapterCue: React.FC<PonderNextChapterCueProps> = ({
     }
 
     return (
-        <button
-            type="button"
+        <Button
             data-testid="ponder-next-chapter"
             onClick={onNextScene}
             onPointerEnter={onCancelAutoAdvance}
@@ -61,7 +61,7 @@ const PonderNextChapterCue: React.FC<PonderNextChapterCueProps> = ({
                     style={{ animationDuration: `${autoAdvanceMs}ms` }}
                 />
             )}
-        </button>
+        </Button>
     );
 };
 

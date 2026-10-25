@@ -12,6 +12,7 @@ import {
     subscribeDisplayBoostResult,
     subscribeHdrProjectionCountdown,
 } from '../../../services/hdrProjection';
+import { Button } from '../../ui';
 
 // src/components/panelTab/controls/HdrProjectionRow.tsx
 // 控制面板里的「HDR 投影」：锁横屏 + 亮度顶满 + 整屏左右镜像，为的是把手机躺在
@@ -77,8 +78,7 @@ const HdrProjectionRow: React.FC<HdrProjectionRowProps> = ({ theme }) => {
                         : t('ui.hdrProjectionHint', '横屏 · 最亮 · 镜像')}
                 </span>
                 {remaining > 0 && (
-                    <button
-                        type="button"
+                    <Button
                         onClick={() => {
                             disableHdrProjection();
                             setEnabled(false);
@@ -88,7 +88,7 @@ const HdrProjectionRow: React.FC<HdrProjectionRowProps> = ({ theme }) => {
                     >
                         <X size={11} />
                         {t('ui.hdrProjectionCancel', '取消')}
-                    </button>
+                    </Button>
                 )}
                 <Toggle
                     checked={on}

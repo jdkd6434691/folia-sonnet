@@ -8,6 +8,7 @@ import BravaisSeamFilterField from './BravaisSeamFilterField';
 import { setBravaisLinkedKey, useBravaisUiStore } from './bravaisUiStore';
 import BravaisSeamCrumbs from './BravaisSeamCrumbs';
 import { TrackSortDirectionButton, TrackSortMenu } from '../../../components/shared/TrackSortMenu';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisListPanel.tsx
 // 列表面板（设计稿 §5「面板」「歌曲列表」）：缝加宽到 min(420, 视口 − 52)，标题横排压在顶部，下面是工具行（本地文件夹的
@@ -98,14 +99,14 @@ const BravaisListPanel: React.FC<{ layer: BravaisLayer; depth: number; actions: 
     return (
         <div className="bravais-seam-panel" data-bravais-list={layer.key}>
             <div className="bravais-seam-crumbs">
-                <button type="button" className="bravais-seam-back" data-bravais-seam-action="close-list" onClick={actions.close}
+                <Button className="bravais-seam-back" data-bravais-seam-action="close-list" onClick={actions.close}
                     aria-label={t('libraryBravais.seamBack')} title={t('libraryBravais.seamBack')}>
                     <ChevronLeft aria-hidden />
-                </button>
+                </Button>
                 <BravaisSeamCrumbs layer={layer} panelLabel={entries?.listCrumb ?? ''} onClosePanel={actions.close} />
-                <button type="button" className="bravais-seam-level" data-bravais-seam-action="hide" onClick={actions.fold}>
+                <Button className="bravais-seam-level" data-bravais-seam-action="hide" onClick={actions.fold}>
                     {t('libraryBravais.seamFold')}
-                </button>
+                </Button>
             </div>
             {layer.seam.filter && <BravaisSeamFilterField filter={layer.seam.filter} variant="panel" />}
             <h2 className="bravais-panel-title" data-bravais-seam-title>{seam.title}</h2>
@@ -147,14 +148,14 @@ const BravaisListPanel: React.FC<{ layer: BravaisLayer; depth: number; actions: 
             </div>
             <div className="bravais-seam-actions">
                 {seam.onPlayScope && (
-                    <button type="button" className="bravais-chrome-button is-primary" data-bravais-seam-action="play-scope" onClick={seam.onPlayScope}>
+                    <Button className="bravais-chrome-button is-primary" data-bravais-seam-action="play-scope" onClick={seam.onPlayScope}>
                         <Play aria-hidden />{seam.scopeLabels?.play ?? t('libraryBravais.playAll')}
-                    </button>
+                    </Button>
                 )}
                 {seam.onEnqueueScope && (
-                    <button type="button" className="bravais-chrome-button" data-bravais-seam-action="enqueue-scope" onClick={seam.onEnqueueScope}>
+                    <Button className="bravais-chrome-button" data-bravais-seam-action="enqueue-scope" onClick={seam.onEnqueueScope}>
                         <ListPlus aria-hidden />{seam.scopeLabels?.enqueue ?? t('libraryBravais.enqueueAll')}
-                    </button>
+                    </Button>
                 )}
             </div>
         </div>

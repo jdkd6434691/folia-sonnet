@@ -6,6 +6,7 @@ import { createPortal } from 'react-dom';
 import ConfirmDialog from '../../../../components/shared/ConfirmDialog';
 import TextInputDialog from '../../../../components/shared/TextInputDialog';
 import GridMapBatchItemList from './GridMapBatchItemList';
+import { Button } from '../../../../components/ui';
 import type { GridMapBatchConfig, GridMapBatchContext, GridMapItem } from './GridMap';
 import type { LibraryDirectoryBatchActionId, LibraryDirectoryNode } from '../../../core/directory/directory.contract';
 import { compactDirectoryTrees, filterDirectoryTreesByItems, flattenExpandedDirectoryNodes, resolveDirectoryNodeSelection, resolveNextDirectoryNodeSelectionTarget } from '../../../core/directory/directoryBatch';
@@ -84,17 +85,15 @@ const DirectoryRow = ({
     return (
         <div {...ariaAttributes} style={style} className="px-1 py-0.5">
             <div className="flex h-full items-center gap-1 rounded-xl px-1.5 hover:bg-black/5 dark:hover:bg-white/5">
-                <button
-                    type="button"
+                <Button
                     onClick={() => hasChildren && onToggleExpanded(node.id)}
                     className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg opacity-55"
                     style={{ marginLeft: Math.min(node.depth, 4) * 12 }}
                     aria-label={t('home.gridFolderTreeToggle')}
                 >
                     {hasChildren ? (expandedIds.has(node.id) ? <ChevronDown size={14} /> : <ChevronRight size={14} />) : null}
-                </button>
-                <button
-                    type="button"
+                </Button>
+                <Button
                     disabled={isSelectionDisabled}
                     onClick={cycleSelection}
                     role="checkbox"
@@ -125,10 +124,9 @@ const DirectoryRow = ({
                                     : t('home.gridFolderTrackCount', { count: node.totalTrackCount })}
                         </span>
                     </span>
-                </button>
+                </Button>
                 {node.ignored && onClearFolderIgnore && (
-                    <button
-                        type="button"
+                    <Button
                         disabled={isBusy}
                         onClick={() => onClearFolderIgnore(node.path)}
                         className="rounded-lg p-1.5 opacity-55 transition hover:opacity-100 disabled:opacity-20"
@@ -136,29 +134,27 @@ const DirectoryRow = ({
                         aria-label={t('home.gridFolderClearIgnore')}
                     >
                         <RefreshCw size={13} className={isBusy ? 'animate-spin' : ''} />
-                    </button>
+                    </Button>
                 )}
                 {isRoot && onRescanRoot && (
-                    <button
-                        type="button"
+                    <Button
                         disabled={isBusy}
                         onClick={() => onRescanRoot(node.rootPath)}
                         className="rounded-lg p-1.5 opacity-45 transition hover:opacity-100 disabled:opacity-20"
-                        title={t('home.gridFolderRescanRoot')}
+                        tip={t('home.gridFolderRescanRoot')}
                     >
                         <RefreshCw size={13} className={isBusy ? 'animate-spin' : ''} />
-                    </button>
+                    </Button>
                 )}
                 {isRoot && onRequestRemoveRoot && (
-                    <button
-                        type="button"
+                    <Button
                         disabled={isBusy}
                         onClick={() => onRequestRemoveRoot(node.rootPath)}
                         className="rounded-lg p-1.5 text-red-500 opacity-55 transition hover:opacity-100 disabled:opacity-20"
-                        title={t('home.gridFolderRemoveRoot')}
+                        tip={t('home.gridFolderRemoveRoot')}
                     >
                         <X size={13} />
-                    </button>
+                    </Button>
                 )}
             </div>
         </div>
@@ -251,8 +247,7 @@ export const GridMapBatchPanel = ({
                 }`}
             >
                 <div className="flex h-9 items-center justify-between border-b border-black/5 px-3 dark:border-white/10">
-                    <button
-                        type="button"
+                    <Button
                         role="checkbox"
                         aria-checked={allSelectionState === 'partial' ? 'mixed' : allSelectionState === 'all'}
                         onClick={() => onToggleSelectAll(allSelectionState !== 'all')}
@@ -269,10 +264,9 @@ export const GridMapBatchPanel = ({
                             {allSelectionState === 'partial' && <Minus size={12} strokeWidth={3} />}
                         </span>
                         {t('home.gridFolderSelectAll')}
-                    </button>
+                    </Button>
                     {usesDirectoryTree && (
-                        <button
-                            type="button"
+                        <Button
                             onClick={() => setIsTreeExpanded(value => !value)}
                             className="flex h-7 items-center gap-1 rounded-lg px-2 text-[10px] font-semibold opacity-55 transition hover:bg-black/5 hover:opacity-100 dark:hover:bg-white/10"
                             title={t(isTreeExpanded ? 'home.gridFolderCollapseTreePanel' : 'home.gridFolderExpandTreePanel')}
@@ -280,7 +274,7 @@ export const GridMapBatchPanel = ({
                         >
                             {isTreeExpanded ? <ChevronsLeft size={14} /> : <ChevronsRight size={14} />}
                             {t(isTreeExpanded ? 'home.gridFolderCollapseTreePanel' : 'home.gridFolderExpandTreePanel')}
-                        </button>
+                        </Button>
                     )}
                 </div>
                 <div className="h-[calc(100%-2.25rem)] min-h-0">
@@ -334,8 +328,7 @@ export const GridMapBatchPanel = ({
                 className="mt-3 space-y-2 border-t pt-4"
                 style={{ borderTopColor: 'color-mix(in srgb, var(--text-primary) 12%, transparent)' }}
             >
-                <button
-                    type="button"
+                <Button
                     disabled={!canUseTracks}
                     onClick={() => runAction('play')}
                     className={primaryActionClass}
@@ -343,18 +336,18 @@ export const GridMapBatchPanel = ({
                 >
                     <Play size={14} fill="currentColor" />
                     {t('playlist.playFilteredTracks', { count: context.trackIds.length })}
-                </button>
-                <button type="button" disabled={!canUseTracks} onClick={() => runAction('enqueue')} className={actionClass}>
+                </Button>
+                <Button disabled={!canUseTracks} onClick={() => runAction('enqueue')} className={actionClass}>
                     <ListPlus size={14} />
                     {t('playlist.addFilteredTracksToQueue', { count: context.trackIds.length })}
-                </button>
-                <button type="button" disabled={!canUseTracks} onClick={() => setShowPlaylistDialog(true)} className={actionClass}>
+                </Button>
+                <Button disabled={!canUseTracks} onClick={() => setShowPlaylistDialog(true)} className={actionClass}>
                     <Plus size={14} />{t('localMusic.createPlaylist')}
-                </button>
+                </Button>
                 {actions.includes('remove') && (
-                    <button type="button" disabled={!canUseTracks} onClick={() => setConfirmRemove(true)} className={`${actionClass} !text-red-500 hover:!bg-red-500 hover:!text-white`}>
+                    <Button disabled={!canUseTracks} onClick={() => setConfirmRemove(true)} className={`${actionClass} !text-red-500 hover:!bg-red-500 hover:!text-white`}>
                         <Trash2 size={14} />{t('home.gridFolderRemoveSelected')}
-                    </button>
+                    </Button>
                 )}
             </div>
 

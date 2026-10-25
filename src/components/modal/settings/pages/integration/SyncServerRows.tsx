@@ -1,9 +1,12 @@
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ConfirmDialog from '../../../../shared/ConfirmDialog';
+import { SheetButton } from '../../../../shared/Sheet';
+import ThemedDialog from '../../../../shared/ThemedDialog';
 import { Button, Link, Reveal, Row, Status, TextField, Toggle, useSettingsKitTheme } from '../../kit';
 import { O } from './options';
 import { useSyncServer } from './useSyncServer';
+import { TextField as UiTextField } from '@/components/ui';
 
 // src/components/modal/settings/pages/integration/SyncServerRows.tsx
 // The sync server rows of the 连接与集成 page: the switch, the server's address and token under it,
@@ -67,7 +70,7 @@ export const SyncServerRows: React.FC = () => {
                     <Button variant="primary" onClick={sync.save} disabled={!sync.dirty}>
                         {t('options.r2SyncSave')}
                     </Button>
-                    <input
+                    <UiTextField
                         ref={importInputRef}
                         type="file"
                         accept="application/zip,.zip,application/json,.json"
@@ -89,6 +92,27 @@ export const SyncServerRows: React.FC = () => {
                 isDaylight={isDaylight}
                 onConfirm={() => void sync.confirmImport()}
                 onClose={sync.cancelImport}
+            />
+            {/* Both sides changed since the last sync: nothing is overwritten until a side is picked. */}
+            <ThemedDialog
+                isOpen={sync.hasSettingsConflict}
+                onClose={sync.cancelSettingsConflict}
+                isDaylight={isDaylight}
+                title={t('options.syncSettingsConflictTitle')}
+                description={t('options.syncSettingsConflictDesc')}
+                footer={(
+                    <>
+                        <SheetButton data-autofocus onClick={sync.cancelSettingsConflict}>
+                            {t('ui.cancel')}
+                        </SheetButton>
+                        <SheetButton onClick={() => void sync.syncSettings('remote')}>
+                            {t('options.syncSettingsKeepRemote')}
+                        </SheetButton>
+                        <SheetButton variant="primary" onClick={() => void sync.syncSettings('local')}>
+                            {t('options.syncSettingsKeepLocal')}
+                        </SheetButton>
+                    </>
+                )}
             />
         </>
     );

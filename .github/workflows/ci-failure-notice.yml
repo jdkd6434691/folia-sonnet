@@ -1,0 +1,60 @@
+name: CI failure notice
+
+# CI 跑红后，在它对应的 PR 上维护一条指引评论：先提 issue 再修。
+# 用 gh 直接调 API，不 checkout：workflow_run 的 job 有写权限，不能执行 PR 里的任何文件。
+# 规则见 docs/issue-workflow.md。
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+# 找这次运行对应的 PR 要读 actions，发/改评论要写 pull-requests；别的都不给。
+permissions:
+  actions: read
+  pull-requests: write
+
+jobs:
+  notice:
+    name: Comment on the failing pull request
+    if: github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      RUN_ID: ${{ github.event.workflow_run.id }}
+      RUN_URL: ${{ github.event.workflow_run.html_url }}
+
+    steps:
+      - name: Comment on the pull request
+        run: |
+          set -euo pipefail
+
+          # 运行对象里就带着关联的 PR；没有（push 运行、fork PR 偶发为空）就安静跳过。
+          prs=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID" --jq '.pull_requests[].number')
+          if [ -z "$prs" ]; then
+            echo '这次运行没有关联的 PR，跳过。'
+            exit 0
+          fi
+
+          body=$(printf '%s\n' \
+            '<!-- ci-failure-notice -->' \
+            "CI 红了：$RUN_URL" \
+            '' \
+            '若这是 bug：先 `gh issue create` 提 issue，再修复，PR 里写 `Closes #N`；动手前先读 AGENTS.md。' \
+            '' \
+            '> 这条评论由 ci-failure-notice 维护，同一个 PR 只保留一条；下次 CI 再红会更新它。')
+
+          for pr in $prs; do
+            # 固定标记找回自己发过的那条：只更新不追加，避免同一个 PR 越堆越多。
+            found=$(gh api --paginate "repos/$GITHUB_REPOSITORY/issues/$pr/comments?per_page=100" \
+              --jq '.[] | select(.body | contains("<!-- ci-failure-notice -->")) | .id')
+            existing=${found%%$'\n'*}
+            if [ -n "$existing" ]; then
+              gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$existing" -f body="$body" --silent
+              echo "PR #$pr：已更新 CI 失败提示。"
+            else
+              gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$pr/comments" -f body="$body" --silent
+              echo "PR #$pr：已新建 CI 失败提示。"
+            fi
+          done

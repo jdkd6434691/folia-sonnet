@@ -10,6 +10,7 @@ import { openCurrentPagePonder } from '../../services/ponder/pagePonderTarget';
 import type { Theme } from '../../types';
 import { ponderMotionTokens } from './ponderMotion';
 import { ponderLayerTokens, ponderWindowTokens } from './ponderTheme';
+import { Button } from '../ui';
 
 // src/components/ponder/PagePonderTouchButton.tsx
 // 触屏上代替 Ctrl+G 的入口。
@@ -118,8 +119,7 @@ const PagePonderTouchButton: React.FC<PagePonderTouchButtonProps> = ({ theme, is
     }
 
     return (
-        <button
-            type="button"
+        <Button
             data-testid="page-ponder-touch-button"
             data-ponder-touch-revealed={isRevealed || undefined}
             onClick={() => {
@@ -143,7 +143,7 @@ const PagePonderTouchButton: React.FC<PagePonderTouchButtonProps> = ({ theme, is
             >
                 <Lightbulb size={20} aria-hidden="true" />
             </span>
-        </button>
+        </Button>
     );
 };
 

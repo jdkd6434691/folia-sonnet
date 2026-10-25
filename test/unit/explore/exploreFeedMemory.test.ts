@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { OmniExploreItem, OmniExploreSection } from '@/types/onlineMusic';
-import { inKeptOrder, noteCollectionSaved, resetExploreMemory, withoutTakenOut } from '@/components/app/home/explore/exploreFeedMemory';
+import { inKeptOrder, noteCollectionSaved, resetExploreMemory, withoutTakenOut } from '@/utils/exploreFeedMemory';
 
 // test/unit/explore/exploreFeedMemory.test.ts — what the explore tab remembers between sessions:
 // the order of a page's sections, and the collections taken out of the library.

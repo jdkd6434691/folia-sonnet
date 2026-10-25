@@ -4,6 +4,7 @@ import type { DualTheme } from '../../../types';
 import { sanitizeDualTheme } from '../../../services/themeSanitizer';
 import { THEME_GENERATION_PROMPT_PREFIX, buildThemeSourcePrompt, parseAiThemeJsonInput } from '../../../utils/aiThemePrompts';
 import { FIELD_SURFACE_CLASS } from '../settings/kit';
+import { TextArea } from '@/components/ui';
 
 // src/components/modal/theme-park/aiThemeTransfer.tsx
 // The manual round trip of an AI theme, as both theme editors offer it: the prompt to copy into
@@ -78,7 +79,7 @@ export const AiThemeJsonBox: React.FC<AiThemeJsonBoxProps> = ({ importer, classN
 
     return (
         <>
-            <textarea
+            <TextArea
                 value={importer.text}
                 onChange={(event) => importer.change(event.target.value)}
                 placeholder={t('options.pasteJsonHere')}

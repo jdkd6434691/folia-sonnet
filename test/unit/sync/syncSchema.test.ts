@@ -13,6 +13,16 @@ import {
 // Guards sync schema parsing against malformed sync server responses.
 
 describe('sync schema parsing', () => {
+    it('preserves existing smartBeat settings across wire v1/v2 and library roundtrips', () => {
+        const smartBeat = { enabled: true, sensitivity: 0.75 };
+        for (const schemaVersion of [1, 2]) {
+            const settings = { schemaVersion, updatedAt: '2026-01-01T00:00:00Z', data: { smartBeat } };
+            expect(parseSyncedSettingsRecord(settings)?.data.smartBeat).toEqual(smartBeat);
+            const bundle = parseSyncLibraryExportBundle({ kind: 'folia-sync-export', schemaVersion, exportedAt: settings.updatedAt, settings, themes: [] });
+            expect(bundle?.settings?.data.smartBeat).toEqual(smartBeat);
+        }
+    });
+
     it('keeps only valid synced visual settings fields', () => {
         const record = parseSyncedSettingsRecord({
             schemaVersion: 1,

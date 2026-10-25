@@ -7,6 +7,7 @@ import { useBravaisReducedTransitions } from './bravaisMotion';
 import { bravaisRevealMotion } from './bravaisSeamMotion';
 import { registerBravaisFilterInput, setBravaisFilterComposing, setBravaisFilterEditing, useBravaisUiStore } from './bravaisUiStore';
 import { focusBravaisFilterInput } from './useBravaisSeamFilter';
+import { Button, TextField } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisSeamFilterField.tsx
 // 缝里的「过滤当前页」输入位（设计稿 §7.6）：缝自己的样式（缝的字体与墨色、一道下划线，聚焦时下划线换强调色），不是
@@ -86,7 +87,7 @@ const BravaisSeamFilterField: React.FC<{ filter: BravaisSeamFilter; variant?: 's
         >
             <label className="bravais-seam-filter-line">
                 <ListFilter aria-hidden className="bravais-seam-filter-icon" />
-                <input
+                <TextField
                     ref={inputRef}
                     type="text"
                     data-bravais-filter-input
@@ -116,8 +117,7 @@ const BravaisSeamFilterField: React.FC<{ filter: BravaisSeamFilter; variant?: 's
                     </BravaisSeamFlipText>
                 )}
                 {value && (
-                    <button
-                        type="button"
+                    <Button
                         className="bravais-seam-filter-clear"
                         data-bravais-seam-action="clear-filter"
                         aria-label={filter.clearLabel}
@@ -127,7 +127,7 @@ const BravaisSeamFilterField: React.FC<{ filter: BravaisSeamFilter; variant?: 's
                         onClick={() => write('')}
                     >
                         <X aria-hidden />
-                    </button>
+                    </Button>
                 )}
             </label>
             <AnimatePresence initial={false}>

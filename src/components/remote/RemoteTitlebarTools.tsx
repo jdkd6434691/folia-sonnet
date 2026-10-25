@@ -3,6 +3,7 @@ import { Palette, Pin, PinOff, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { REMOTE_DRAG_STYLE, REMOTE_NO_DRAG_STYLE } from './remoteWindowBridge';
 import type { RemoteBackgroundMode } from './RemoteCardSurface';
+import { Button } from '../ui';
 
 // src/components/remote/RemoteTitlebarTools.tsx
 // 卡片右上那三颗窗口工具：背景模式、置顶、关闭。连同外面那层拖拽区一起 —— 拖拽区
@@ -74,9 +75,8 @@ const RemoteTitlebarTools: React.FC<RemoteTitlebarToolsProps> = ({
                 onFocus={onKeepRevealed}
                 onMouseEnter={onKeepRevealed}
             >
-                <button
-                    type="button"
-                    title={
+                <Button
+                    tip={
                         backgroundMode === 'default' ? t('remote.backgroundDefault') :
                             backgroundMode === 'cover' ? t('remote.backgroundCover') :
                                 t('remote.backgroundTransparent')
@@ -89,26 +89,24 @@ const RemoteTitlebarTools: React.FC<RemoteTitlebarToolsProps> = ({
                     className={toolClass}
                 >
                     <Palette size={13} />
-                </button>
-                <button
-                    type="button"
-                    title={alwaysOnTop ? t('remote.unpin') : t('remote.pinToFront')}
+                </Button>
+                <Button
+                    tip={alwaysOnTop ? t('remote.unpin') : t('remote.pinToFront')}
                     aria-pressed={alwaysOnTop}
                     tabIndex={revealed ? 0 : -1}
                     onClick={handleToggleAlwaysOnTop}
                     className={toolClass}
                 >
                     {alwaysOnTop ? <Pin size={13} /> : <PinOff size={13} />}
-                </button>
-                <button
-                    type="button"
-                    title={t('remote.close')}
+                </Button>
+                <Button
+                    tip={t('remote.close')}
                     tabIndex={revealed ? 0 : -1}
                     onClick={() => void window.electron?.closeRemoteControl?.()}
                     className={toolClass}
                 >
                     <X size={13} />
-                </button>
+                </Button>
             </div>
         </div>
     );

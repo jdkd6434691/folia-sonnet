@@ -10,6 +10,7 @@ import type { LibraryDeclaredActions } from '../../../core/suite/suite.contract'
 import { isNavidromeHomeSection, resolveNavidromeCollectionType, type NavidromeHomeSection } from '../../../core/home/navidrome/navidromeHomeModel';
 import { useLibraryHomeNavidrome } from '../../../core/home/navidrome/useLibraryHomeNavidrome';
 import { useLibraryHomeListRegistration } from '../../../core/home/useLibraryHomeSurfaceRegistration';
+import { Button } from '../../../../components/ui';
 
 // src/library/suites/grid/home/NavidromeGrid3DView.tsx
 // Desktop-only Navidrome Grid3D overview that opens GridView instead of legacy collection views.
@@ -123,12 +124,12 @@ export const NavidromeGrid3DView: React.FC<NavidromeGrid3DViewProps> = ({
             <div className="w-full h-full flex flex-col items-center justify-center gap-5 opacity-70">
                 <Settings2 size={56} />
                 <p className="text-sm">{t('navidrome.notConfigured') || 'Navidrome is not configured.'}</p>
-                <button
+                <Button
                     onClick={onOpenSettings}
                     className="px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-sm font-semibold"
                 >
                     {t('navidrome.settings') || 'Navidrome Settings'}
-                </button>
+                </Button>
             </div>
         );
     }

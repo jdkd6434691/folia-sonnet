@@ -4,6 +4,7 @@ import { Plug } from 'lucide-react';
 import type { BravaisHomeAccount } from './bravaisHomeModels';
 import BravaisProviderAvatar from './BravaisProviderAvatar';
 import './bravaisAccount.css';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisSeamAccountSwitcher.tsx
 // 首页在线页签窄缝里的账户入口，和 grid 主页右下角的切换器（SwitcherPill）一样：一个按钮，点了打开共用的登录窗口。
@@ -51,22 +52,22 @@ const BravaisSeamAccountSwitcher: React.FC<{
     if (compact) {
         return (
             <div className={`bravais-account-switcher is-compact${state}`} data-bravais-account={account.guest ? 'guest' : 'signed-in'}>
-                <button type="button" className="bravais-seam-icon bravais-account-spine" data-bravais-account-toggle="compact"
+                <Button className="bravais-seam-icon bravais-account-spine" data-bravais-account-toggle="compact"
                     aria-haspopup="dialog" aria-label={label} title={label} onClick={open}>
                     {picture}
-                </button>
+                </Button>
             </div>
         );
     }
 
     return (
         <div className={`bravais-account-switcher${state}`} data-bravais-account={account.guest ? 'guest' : 'signed-in'}>
-            <button type="button" className={`bravais-account-entry ${account.guest ? 'bravais-account-connect' : 'bravais-account-toggle'}`}
+            <Button className={`bravais-account-entry ${account.guest ? 'bravais-account-connect' : 'bravais-account-toggle'}`}
                 data-bravais-account-toggle={account.guest ? 'connect' : 'strip'} aria-haspopup="dialog" aria-label={label} title={label} onClick={open}>
                 {nudge && <span className="is-nudge">{t('home.guestCta')}</span>}
                 {picture}
                 <span className="is-name">{account.guest ? account.connectLabel : account.nickname ?? account.providerLabel}</span>
-            </button>
+            </Button>
         </div>
     );
 };

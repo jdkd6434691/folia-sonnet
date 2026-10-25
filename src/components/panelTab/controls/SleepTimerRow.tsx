@@ -18,6 +18,7 @@ import {
     type SleepTimerMode,
     type SleepTimerPlan,
 } from '../../../services/sleepTimerPlan';
+import { Button, TextField } from '../../ui';
 
 // src/components/panelTab/controls/SleepTimerRow.tsx
 // 控制面板里的「定时关闭」：三种定时方式（多少分钟后 / 多少小时后 / 到几点）加两种结束方式
@@ -55,7 +56,7 @@ const SleepTimerInput: React.FC<{
     };
 
     return (
-        <input
+        <TextField
             type="text"
             inputMode="numeric"
             maxLength={maxLength}
@@ -83,9 +84,8 @@ const SleepTimerChips: React.FC<{
         {options.map(option => {
             const active = option.id === activeId;
             return (
-                <button
+                <Button
                     key={option.id}
-                    type="button"
                     aria-pressed={active}
                     onClick={() => onSelect(option.id)}
                     className={`min-w-0 flex-1 truncate rounded-md px-1.5 py-1 text-[11px] font-semibold transition-opacity ${active
@@ -94,7 +94,7 @@ const SleepTimerChips: React.FC<{
                     style={active ? { color: accentColor } : undefined}
                 >
                     {option.label}
-                </button>
+                </Button>
             );
         })}
     </div>
@@ -168,8 +168,7 @@ const SleepTimerRow: React.FC<SleepTimerRowProps> = ({ theme, isDaylight }) => {
     return (
         <div>
             <div className="flex min-h-11 items-center gap-3 px-1 py-1.5">
-                <button
-                    type="button"
+                <Button
                     onClick={() => setExpanded(prev => !prev)}
                     className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 text-left"
                     aria-expanded={expanded}
@@ -191,7 +190,7 @@ const SleepTimerRow: React.FC<SleepTimerRowProps> = ({ theme, isDaylight }) => {
                         className={`shrink-0 opacity-40 transition-transform ${expanded ? 'rotate-180' : ''}`}
                         aria-hidden
                     />
-                </button>
+                </Button>
                 <Toggle
                     checked={enabled}
                     disabled={!hasPlan}

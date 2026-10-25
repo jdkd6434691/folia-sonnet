@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { PonderStageNodes } from './ponderStageNodes';
+import { Button } from '../ui';
 
 // src/components/ponder/PonderChapterTimeline.tsx
 // The lesson's one timeline: a bar cut into its chapters. The chapter on screen is the wide
@@ -43,8 +44,7 @@ const PonderChapterTimeline: React.FC<PonderChapterTimelineProps> = ({
                         data-current={isCurrent || undefined}
                         data-past={index < current || undefined}
                     >
-                        <button
-                            type="button"
+                        <Button
                             className="pd-seg-hit"
                             aria-label={label}
                             aria-current={isCurrent ? 'step' : undefined}
@@ -59,9 +59,8 @@ const PonderChapterTimeline: React.FC<PonderChapterTimelineProps> = ({
                         </span>
                         <span aria-hidden="true" className="pd-seg-tip">{label}</span>
                         {isCurrent && ticks.map((fraction, tick) => (
-                            <button
+                            <Button
                                 key={tick}
-                                type="button"
                                 ref={node => { nodes.ticks[tick] = node; }}
                                 data-testid="ponder-keyframe-tick"
                                 className="pd-tick"

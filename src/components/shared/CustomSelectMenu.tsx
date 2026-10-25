@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 import { List, useListRef, type RowComponentProps } from 'react-window';
 import { useReducedMotionFor } from '../../hooks/useReducedMotionFor';
+import { Button } from '../ui';
 
 // CustomSelectMenu.tsx
 // Renders the viewport-anchored option menu used by CustomSelect.
@@ -124,8 +125,7 @@ const OptionButton: React.FC<Pick<OptionRowProps, 'compact' | 'reducedMotion' | 
     isActive: boolean;
     fixedHeight?: number;
 }> = ({ id, option, index, setSize, isSelected, isActive, compact, reducedMotion, isDaylight, accentColor, textColor, fixedHeight, onActivate, onSelect }) => (
-    <button
-        type="button"
+    <Button
         id={id}
         role="option"
         aria-selected={isSelected}
@@ -154,7 +154,7 @@ const OptionButton: React.FC<Pick<OptionRowProps, 'compact' | 'reducedMotion' | 
                 style={{ color: accentColor }}
             />
         )}
-    </button>
+    </Button>
 );
 
 const CustomSelectMenuRow = ({

@@ -38,6 +38,7 @@ import LibraryTuiHomeRow, {
 } from './LibraryTuiHomeRow';
 import LibraryTuiPrompt, { type LibraryTuiPromptRequest } from './LibraryTuiPrompt';
 import { useLibraryTuiDirectoryKeys } from './useLibraryTuiHomeKeyboard';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/tui/LibraryTuiDirectory.tsx
 // TUI 首页的目录列表（网格的 GridMap 在 TUI 里的对应物）：当前页签 / section 的条目排成等宽列表，本地文件夹排成
@@ -410,23 +411,23 @@ const LibraryTuiDirectory: React.FC<LibraryTuiDirectoryProps> = ({
                     </span>
                 ) : null}
                 {batchConfig && context.items.length > 0 ? (
-                    <button type="button" data-tui-create-playlist onClick={requestCreatePlaylist} disabled={!capabilities?.canUseTracks} className="opacity-60 hover:opacity-100 disabled:opacity-30">
+                    <Button data-tui-create-playlist onClick={requestCreatePlaylist} disabled={!capabilities?.canUseTracks} className="opacity-60 hover:opacity-100 disabled:opacity-30">
                         {`[${t('localMusic.createPlaylist')}]`}
-                    </button>
+                    </Button>
                 ) : null}
                 {pending ? <span className="opacity-60" data-tui-busy>{t('libraryTui.homeBusy')}</span> : null}
                 {isManaging ? (
                     <span className="flex items-center gap-x-2" data-tui-manage-hidden={visibilityMode}>
                         <span style={{ color: accentColor }}>{t('libraryTui.manageHidden')}:</span>
-                        <button type="button" aria-pressed={visibilityMode === 'manage'} onClick={() => setVisibilityMode('manage')} className={visibilityMode === 'manage' ? 'font-bold' : 'opacity-60 hover:opacity-100'}>
+                        <Button aria-pressed={visibilityMode === 'manage'} onClick={() => setVisibilityMode('manage')} className={visibilityMode === 'manage' ? 'font-bold' : 'opacity-60 hover:opacity-100'}>
                             {`[${t('libraryTui.manageShowAll')}]`}
-                        </button>
-                        <button type="button" aria-pressed={visibilityMode === 'manage-hidden-only'} onClick={() => setVisibilityMode('manage-hidden-only')} className={visibilityMode === 'manage-hidden-only' ? 'font-bold' : 'opacity-60 hover:opacity-100'}>
+                        </Button>
+                        <Button aria-pressed={visibilityMode === 'manage-hidden-only'} onClick={() => setVisibilityMode('manage-hidden-only')} className={visibilityMode === 'manage-hidden-only' ? 'font-bold' : 'opacity-60 hover:opacity-100'}>
                             {`[${t('libraryTui.manageHiddenOnly')}]`}
-                        </button>
-                        <button type="button" onClick={() => setVisibilityMode('browse')} className="opacity-60 hover:opacity-100">
+                        </Button>
+                        <Button onClick={() => setVisibilityMode('browse')} className="opacity-60 hover:opacity-100">
                             {`[${t('libraryTui.manageDone')}]`}
-                        </button>
+                        </Button>
                     </span>
                 ) : null}
             </div>

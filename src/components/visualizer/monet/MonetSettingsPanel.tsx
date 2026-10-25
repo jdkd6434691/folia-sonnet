@@ -3,6 +3,7 @@ import { ImagePlus, Trash2 } from 'lucide-react';
 import { useVisualizerAssetStore } from '../../../stores/useVisualizerAssetStore';
 import { DEFAULT_MONET_TUNING, type MonetPortraitSource, type MonetTuning } from '../../../types';
 import { Button, Group, PictureGrid, Row, Segmented, type SettingsGroupDef } from '../../modal/settings/kit';
+import { TextField } from '../../ui';
 import { type VisualizerSettingsPanelProps } from '../definition';
 import { SliderRow, times, ToggleRow } from '../panelRows';
 
@@ -128,7 +129,7 @@ export const MonetSettingsPanel: React.FC<VisualizerSettingsPanelProps<MonetTuni
                     >
                         {t('options.monetClearPortrait')}
                     </Button>
-                    <input
+                    <TextField
                         ref={fileInputRef}
                         type="file"
                         accept=".png,.jpg,.jpeg,.gif,.webp,.svg,image/*"

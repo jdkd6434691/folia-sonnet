@@ -1047,7 +1047,8 @@ export default {
       "syncAppliedRemote": "已拉取并应用云端设置",
       "syncPushedLocal": "已向云端推送本地最新设置",
       "syncSettingsComplete": "视觉设置同步完成。{{details}}",
-      "syncSettingsNoChange": "视觉设置与云端一致，无需同步。"
+      "syncSettingsNoChange": "视觉设置与云端一致，无需同步。",
+      "syncSettingsConflictPending": "设置不同或在同步期间发生变化，尚未覆盖任何一边，请选择保留哪一边。"
     },
     "unsupportedFontFormat": "仅支持 woff2、woff、ttf、otf 字体文件。",
     "cloudDrive": "音乐云盘",
@@ -2273,6 +2274,10 @@ export default {
     "r2SyncTesting": "测试中...",
     "r2SyncNow": "同步 AI 主题",
     "syncVisualSettings": "同步视觉设置",
+    "syncSettingsConflictTitle": "视觉设置有冲突",
+    "syncSettingsConflictDesc": "设置不同且尚无已确认的共同基准，或设置在同步期间发生变化。请选择保留哪一边：保留本地会覆盖云端设置；使用云端会覆盖本机设置。若云端同时又有修改，需要重新选择。",
+    "syncSettingsKeepLocal": "保留本地",
+    "syncSettingsKeepRemote": "使用云端",
     "r2SyncSyncing": "同步中...",
     "r2SyncExportLibrary": "导出 zip",
     "r2SyncExporting": "导出中...",

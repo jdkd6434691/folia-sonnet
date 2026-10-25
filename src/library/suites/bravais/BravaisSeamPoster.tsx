@@ -11,6 +11,7 @@ import BravaisSeamCrumbs from './BravaisSeamCrumbs';
 import { openBravaisFilter } from './useBravaisSeamFilter';
 import { BRAVAIS_POSTER_SCRAP_COUNT, BRAVAIS_POSTER_SHAPE_RISE, posterShapeClipPath, resolvePosterComposition, risePosterPoints } from './bravaisPosterComposition';
 import './bravaisPoster.css';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisSeamPoster.tsx
 // 歌手页的海报（完整等级下的歌手页缝，仍是墙上裂开的一列、相机把它带到视口最左边，见 bravaisSeamTarget 的 'poster' 与 bravaisFrame 的 poster）：
@@ -58,7 +59,7 @@ const PosterSong: React.FC<{ item: BravaisItem; index: number; onPlay?: (key: st
     const play = useCallback(() => onPlay?.(item.key), [item.key, onPlay]);
     return (
         <li>
-            <button type="button" className="bravais-poster-song" onClick={play} disabled={!onPlay || item.unavailable}
+            <Button className="bravais-poster-song" onClick={play} disabled={!onPlay || item.unavailable}
                 data-bravais-poster-song={item.key} aria-label={item.subtitle ? `${item.title} · ${item.subtitle}` : item.title}>
                 <span className="bravais-poster-song-index" aria-hidden>{String(index + 1).padStart(2, '0')}</span>
                 <span className="bravais-poster-song-title" aria-hidden>
@@ -66,7 +67,7 @@ const PosterSong: React.FC<{ item: BravaisItem; index: number; onPlay?: (key: st
                         <span key={wordIndex} className={word.hero ? 'is-hero' : undefined}>{word.text}</span>
                     ))}
                 </span>
-            </button>
+            </Button>
         </li>
     );
 };
@@ -190,18 +191,18 @@ const BravaisSeamPoster: React.FC<{ layer: BravaisLayer; actions: BravaisSeamAct
                 <div className="bravais-poster-top">
                     <div className="bravais-seam-crumbs">
                         {layer.onDone && (
-                            <button type="button" className="bravais-seam-back" data-bravais-seam-action="back" onClick={layer.onDone}
+                            <Button className="bravais-seam-back" data-bravais-seam-action="back" onClick={layer.onDone}
                                 aria-label={t('libraryBravais.seamBack')} title={t('libraryBravais.seamBack')}>
                                 <ChevronLeft aria-hidden />
-                            </button>
+                            </Button>
                         )}
                         <BravaisSeamCrumbs layer={layer} />
                     </div>
                     {seam.filter && (
-                        <button type="button" className="bravais-poster-filter" data-bravais-seam-action="filter" onClick={openBravaisFilter}
+                        <Button className="bravais-poster-filter" data-bravais-seam-action="filter" onClick={openBravaisFilter}
                             title={seam.filter.placeholder}>
                             <ListFilter aria-hidden />{seam.filter.placeholder}
-                        </button>
+                        </Button>
                     )}
                 </div>
 
@@ -230,14 +231,14 @@ const BravaisSeamPoster: React.FC<{ layer: BravaisLayer; actions: BravaisSeamAct
                     )}
                     <div className="bravais-poster-actions">
                         {seam.onPlayScope && (
-                            <button type="button" className="bravais-poster-button is-primary" data-bravais-seam-action="play-scope" onClick={seam.onPlayScope}>
+                            <Button className="bravais-poster-button is-primary" data-bravais-seam-action="play-scope" onClick={seam.onPlayScope}>
                                 <Play aria-hidden />{seam.scopeLabels?.play ?? t('libraryBravais.playAll')}
-                            </button>
+                            </Button>
                         )}
                         {seam.onEnqueueScope && (
-                            <button type="button" className="bravais-poster-button" data-bravais-seam-action="enqueue-scope" onClick={seam.onEnqueueScope}>
+                            <Button className="bravais-poster-button" data-bravais-seam-action="enqueue-scope" onClick={seam.onEnqueueScope}>
                                 <ListPlus aria-hidden />{seam.scopeLabels?.enqueue ?? t('libraryBravais.enqueueAll')}
-                            </button>
+                            </Button>
                         )}
                         <BravaisSeamCollectionMenu collection={seam.collection} onOpenList={actions.openList} fold={fold} />
                     </div>

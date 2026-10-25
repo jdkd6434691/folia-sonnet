@@ -46,7 +46,9 @@
 
 ### 界面
 
-- 用项目自己的控件：设置页用 `src/components/modal/settings/kit/`（`Select`、`Slider`、`Toggle` 等），别处的下拉框用 `src/components/shared/CustomSelect.tsx`，不用系统自带的 `<select>`。图标只用 `lucide-react`。弹窗、文字测量等现成工具见 `reuse-project-utilities`。
+- 用项目自己的控件：设置页用 `src/components/modal/settings/kit/`（`Select`、`Slider`、`Toggle` 等），其余一律用 `src/components/ui`（`Button`、`TextField`、`TextArea`、`Checkbox`、`Select`）。**任何地方都不许手写 `<button>`、`<input>`、`<select>`、`<textarea>`**，唯一的实现处是 `src/components/ui/`（和设置页 kit）。`npm run check:ui` 会拦，基线只许变小。图标只用 `lucide-react`。弹窗、文字测量等现成工具见 `reuse-project-utilities`。
+- 单个文件不超过 800 行（含注释）。超了就按功能拆，`npm run check:size` 会拦；基线里的 11 个文件只许变短。
+- **改界面必须看真实渲染，不能只读代码就交。** 流程：`node test/render/preview.mjs --page <页面> --out preview/` 出 PNG → **用图片工具真的打开看** → `node test/render/layoutCheck.mjs` 量溢出/重叠/零尺寸/文本裁切 → 把截图和量化结论贴进 PR → 在 PR 里明确请求人工确认「布局是否符合预期」。**人工确认同意之前不许合并界面改动。** 细节见 `docs/preview-rendering.md`。
 - 样式用 Tailwind；只属于一个功能的 CSS 文件放在那个功能的目录里（如 `src/components/app/lattice/Lattice.css`）。
 - 界面上的文字都走 i18n（`t()`），三份语言文件 `src/i18n/locales/en.ts`、`zh-CN.ts`、`in.ts` 一起加。繁体中文不用写：构建时由 `dev/i18n/traditionalLocalePlugin.mjs` 从 zh-CN 转出来。主进程（`electron/*.cjs`）自己的文案表也有 zh-TW，要手写成 zh-CN 的转换结果，`test/unit/i18n/traditionalMainProcessText.test.ts` 会核对。
 - 新设置：外观类的进配置导入导出（`src/components/modal/settings/pages/storage/visualConfigTransfer.ts`、`src/utils/appearanceCodec.ts`）；功能类的设置和可执行动作进命令面板。细则见 `settings-feature-integration`。
@@ -68,14 +70,41 @@
 - 逻辑的单元测试放 `test/unit/<区域>/*.test.ts`，用 Vitest 跑：`npm run test:unit`。
 - 只有真浏览器里才看得到的问题放 `test/component/*.spec.ts`（`npm run test:component`）；整页的界面测试在 `test/ui/`；`npm run test:ui` 两种都跑。手动跑的脚本在 `test/manual/`。
 - `src/` 里不放测试。该跑哪一种、什么时候不要跑构建，见 `testing-strategy`。
+- 契约漂移测试在 `test/unit/contracts/`；脱敏/密钥泄漏测试在 `test/unit/security/`；渲染自检的纯判定在 `test/unit/render/`。动手前先看这些是不是已经覆盖了你要加的东西。
+
+### Bug 与 issue（先提 issue 再修）
+
+- **发现 bug（包括 CI 红掉时暴露的行为问题）先提 issue，再修。** 不许没有 issue 直接改代码：事后无从追溯「为什么改这里」。
+- issue 写清：现象、复现步骤、期望行为、影响范围；用 `gh issue create` 提。修完在 PR 正文里关联：`Closes #<编号>`（不是修 bug 的改动也至少写 `Refs #<编号>` 关联到相关 issue/任务）。
+- CI 门禁：`.github/workflows/issue-link.yml` 检查 PR 正文有没有 `Closes/Fixes/Resolves/Refs + #编号`，没有就红（job 名 `Pull request links an issue`）；PR 模板里有对应勾选项。
+- CI 红掉时，`.github/workflows/ci-failure-notice.yml` 会在 PR 上自动留一条指引评论（附运行链接）——先按它确认是不是 bug，是就先提 issue，并重读本文件再动手。
+- 流程细节见 `docs/issue-workflow.md`。
+
+### 前后端契约
+
+- 前后端契约只有一处：`docs/contracts/`（`sync-server-api.md` HTTP、`electron-ipc.md` preload、`online-music-omni.md` 平台聚合、`secrets.md` 凭据边界）。
+- 契约同时被 `docs/contracts/manifest/*.json` 与 `test/unit/contracts/contractsDrift.test.ts` 钉住：**改契约 = 改实现 + 改文档 + 跑 `node ci/contracts/extract.ts --update` 更新 manifest**，三样少一样 CI 就红。
+- 渲染进程只能经 `electron/preload.cjs` 暴露的接口找主进程；不许绕过 preload 直接碰 Node/Electron API。
+
+### 分支与发版
+
+- 四种分支：`main`（只接受发版合并）、`dev`（日常开发，所有 PR 的目标）、`feat/*` 与 `fix/*`（源分支，合并后删）、`release/x.y.z`（出包，从 main 切）。
+- **main 和 dev 都不直接 push**，一律走 PR。这条靠 GitHub 分支保护落实：Settings → Branches 给 `main`、`dev` 开保护，勾「Require a pull request before merging」与「Do not allow bypassing」。owner 在网页上配一次；CI 用的账号不是 admin，脚本改不了。
+- 日常：从 `dev` 切 `feat/*` 或 `fix/*` → 改 → 本地门禁 → PR 到 `dev` → 远端 CI 全绿 → 合并。不熟 GitHub 的用一条命令跑完推分支和建 PR：`npm run pr -- "fix: 标题"`（只是 `ci/openPr.ts` 的包装，细节见 `ci/README.md`）。
+- 发版：先在 `dev` 上把 `package.json` 版本改好（走 PR），再 `dev` → PR → `main`；然后从 `main` 切 `release/<package.json 的 version>`（如 `release/0.7.22`）推上去。推这个分支会触发 `android-release.yml`：校验分支名与版本一致 → 出 APK/AAB → 打 `v<版本>` 标签 → 发 Release。release 分支上不再改版本号。
 
 ### CI
 
-- 新 CI 的检查逻辑都放 `ci/`，`.github/workflows/` 只留入口；沿用的旧 workflow 之后逐个替换，新流程不要再直接往 `.github/workflows/` 里加。
-- `.github/workflows/ci.yml`：PR 与 main 上并行跑类型检查、单测、`vite build` 打包冒烟、版本约束。出包不在这里。
-- 版本约束实现在 `ci/checkVersionPolicy.ts`，本地跑 `npm run check:versions`：平台依赖钉死且根目录与 `deploy/docker/<平台>-api/package.json` 同版本；`.nvmrc`、`engines.node` 与各 workflow 的 Node 版本一致；版本号满足 `android/app/build.gradle` 的 versionCode 推导；锁文件版本与 `package.json` 同步。
-- `.github/workflows/android-release.yml`：推 `v*` 标签或手动 `workflow_dispatch` 出签名 APK/AAB；手动那条可以涨版本、打标签、发 Release，标签必须与 `package.json` 的版本一致。签名要 `ANDROID_KEYSTORE_BASE64`、`ANDROID_KEYSTORE_PASSWORD`、`ANDROID_KEY_ALIAS`、`ANDROID_KEY_PASSWORD` 四个 secrets，缺了只出未签名包。
-- 本地跑一遍与 CI 相同的门禁：`npm run typecheck && npm run test:unit && npm run check:versions`。
+- **开 PR 之前**跑 `npm run ci:local`（typecheck + 单测 + `vite build` + 版本约束，与 `.github/workflows/ci.yml` 同一套），红了不许开 PR。Windows 上 `test/unit/mod-system/modSignature.test.ts` 的符号链接用例会因权限失败（要开发者模式/管理员），这是环境限制：其余全绿照常开 PR，这一项以 Linux 的 CI 为准。
+- **开 PR 之后**盯 CI，全绿才合并：有 gh 用 `gh pr checks <编号> --watch`；没有 gh（或走 SSH 认证）就开 PR 页面的 **Checks** 标签。红了当场修，不要交给别人。
+- **合并前必须 review，至少一次 AI review**，而且报告要发在 GitHub 上：有 gh 用 `gh pr review <编号> --comment --body-file review.md`；没有 gh 就在 **Files changed → Review changes → Comment** 里写。只在聊天里说「看过了」不算，PR 的 Reviews 里能查到才算。有未处理的 CHANGES_REQUESTED 不许合。
+- **`gh` 只是便利工具，不是硬依赖。** 走 SSH 认证、没装 gh、或不想在本机登录 gh 的人都照常提 PR：`npm run pr -- "标题"` 会先跑本地门禁再 push（SSH 用自己的 key），检测不到可用的 gh 时打印 compare 链接，浏览器里点 Create pull request；之后的盯 CI 与写 review 都在网页完成。
+- GitHub 的原生 approval 只能由别人给，AI review 是评论、不会变成 approval：要硬拦就由 owner 在分支保护里开 Require a pull request before merging；要把 AI review 也变成硬门禁，需要给审查账号单独一个 GitHub 身份，或加一个「review 是否存在」的 required check（还没做）。
+- 检查逻辑都放 `ci/`，`.github/workflows/` 只留入口；沿用的旧 workflow 之后逐个替换，新流程不要再直接往 `.github/workflows/` 里加。
+- `.github/workflows/ci.yml`：PR 到 `dev` / `main`，以及这两个分支的 push 都会跑。出包不在这里。现在的 job：`test-unit`（typecheck+单测）、`typecheck-sync-server`、`build-web`（含产物密钥扫描）、`version-policy`、`ui-gates`（手写控件/800 行）、`secret-guard`（源码密钥泄漏）。
+- 密钥泄漏门禁：`node ci/checkSecrets.ts` 扫源码、`node ci/checkSecrets.ts --dist dist` 扫构建产物；`VITE_` 变量名带 KEY/TOKEN/SECRET/PASSWORD/CREDENTIAL/AUTH 一律失败（会被内联进前端包）。误报写进 `ci/secretsAllowlist.json` 并写理由。规则细节见 `docs/contracts/secrets-guard.md` 与 `docs/contracts/secrets.md`。
+- 版本约束实现在 `ci/checkVersionPolicy.ts`，单独跑 `npm run check:versions`：平台依赖钉死且根目录与 `deploy/docker/<平台>-api/package.json` 同版本；`.nvmrc`、`engines.node` 与各 workflow 的 Node 版本一致；版本号满足 `android/app/build.gradle` 的 versionCode 推导；锁文件版本与 `package.json` 同步。
+- `.github/workflows/android-release.yml`：推 `release/*` 分支、`v*` 标签或手动 `workflow_dispatch` 出签名 APK/AAB；标签与分支名都必须与 `package.json` 的版本一致。签名要 `ANDROID_KEYSTORE_BASE64`、`ANDROID_KEYSTORE_PASSWORD`、`ANDROID_KEY_ALIAS`、`ANDROID_KEY_PASSWORD` 四个 secrets，缺了只出未签名包。配了 secrets 时 CI 会当场校验 keystore 的口令/alias，并对产物 APK 验签、比对证书指纹；换 keystore 必须同时更新那 4 个 secrets 和 workflow 里的 `EXPECTED_CERT_SHA256`（当前证书 `BC:10:0C:6E:…:50:DA`，`keytool -list -v` 可查）。
 
 ### 生成的文件不手改
 

@@ -7,6 +7,7 @@ import type { SyntaxSuggestion } from './syntax/suggest';
 import type { GridFilterAction } from './gridFilterQuery';
 import CommandPaletteSyntaxHints from './CommandPaletteSyntaxHints';
 import { gridSearchPanelMotion } from '../shared/gridSearchPanelMotion';
+import { Button } from '../ui';
 
 // src/components/command-palette/CommandPaletteInlineFrame.tsx
 // The palette wearing a surface's own filter box instead of its overlay.
@@ -64,8 +65,7 @@ const CommandPaletteInlineFrame: React.FC<CommandPaletteInlineFrameProps> = ({
                 <div className="relative rounded-full border shadow-2xl backdrop-blur-2xl theme-glass-panel">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 opacity-40 w-4 h-4" />
                     {renderInput('w-full rounded-full bg-transparent py-3 pl-11 pr-11 text-sm font-medium outline-none placeholder:text-current placeholder:opacity-40')}
-                    <button
-                        type="button"
+                    <Button
                         onClick={() => {
                             // Clear first, close second — the grids' own button did the
                             // same, and it is the only way to undo a filter with the mouse.
@@ -80,7 +80,7 @@ const CommandPaletteInlineFrame: React.FC<CommandPaletteInlineFrameProps> = ({
                         aria-label={query ? t('ui.clear') : t('ui.close')}
                     >
                         <X size={15} />
-                    </button>
+                    </Button>
                 </div>
 
                 {(suggestions.length > 0 || pendingAction !== null) && (

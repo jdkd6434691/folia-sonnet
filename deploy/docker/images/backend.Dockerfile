@@ -2,6 +2,9 @@ FROM node:24-alpine AS api-builder
 
 WORKDIR /app
 
+# 根 devDependencies 里有需编译的原生模块（better-sqlite3，供根目录单测用）：alpine 上先装构建工具。
+RUN apk add --no-cache python3 make g++
+
 COPY package.json package-lock.json .npmrc ./
 RUN npm ci
 

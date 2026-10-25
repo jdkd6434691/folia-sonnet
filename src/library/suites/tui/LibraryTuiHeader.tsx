@@ -5,6 +5,7 @@ import type { CollectionResourceSnapshot } from '../../core/shared/resource.cont
 import type { LibraryCapability } from '../../core/shared/capability.contract';
 import type { CollectionMutationSnapshot } from '../../core/collection/mutations/mutations.contract';
 import { resolveCollectionSyncCounts } from '../../core/collection/collectionProgress';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/tui/LibraryTuiHeader.tsx
 // TUI 的状态栏：返回、集合名（改名后显示新名字）、订阅星标、来源、加载进度（中断时可续传）、重新拉取、
@@ -74,13 +75,12 @@ const LibraryTuiHeader: React.FC<LibraryTuiHeaderProps> = ({
     return (
         <header className="shrink-0 border-b border-current/15 px-4 py-2 text-[13px]">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                <button type="button" onClick={onBack} className="opacity-70 hover:opacity-100" data-tui-back>
+                <Button onClick={onBack} className="opacity-70 hover:opacity-100" data-tui-back>
                     {`[← ${t('libraryTui.back')}]`}
-                </button>
+                </Button>
                 <span className="font-bold" style={{ color: accentColor }} data-tui-title>{title}</span>
                 {mutations.showSubscribe && (
-                    <button
-                        type="button"
+                    <Button
                         data-tui-subscribe={mutation.subscribing ? 'pending' : mutation.subscribed ? 'on' : 'off'}
                         onClick={mutations.onToggleSubscribe}
                         disabled={mutation.subscribing}
@@ -91,7 +91,7 @@ const LibraryTuiHeader: React.FC<LibraryTuiHeaderProps> = ({
                         style={{ color: mutation.subscribed ? accentColor : undefined, opacity: mutation.subscribed ? 1 : 0.7 }}
                     >
                         {mutation.subscribing ? '[…]' : mutation.subscribed ? '[★]' : '[☆]'}
-                    </button>
+                    </Button>
                 )}
                 <span className="opacity-50">{sourceLabel(collection, t)}</span>
                 <span className="tabular-nums opacity-70">
@@ -103,47 +103,43 @@ const LibraryTuiHeader: React.FC<LibraryTuiHeaderProps> = ({
                     </span>
                 )}
                 {sync.status === 'interrupted' && (
-                    <button
-                        type="button"
+                    <Button
                         data-tui-sync="interrupted"
                         onClick={onResumeSync}
                         title={t('playlist.syncFailedHint', { error: sync.message })}
                         className="underline decoration-dotted"
                     >
                         {`${counts ? t('playlist.syncInterruptedProgress', counts) : t('playlist.syncInterrupted')} · ${t('ui.retry')}`}
-                    </button>
+                    </Button>
                 )}
                 {reload.supported && (
-                    <button
-                        type="button"
+                    <Button
                         onClick={onReload}
                         disabled={!reload.enabled}
                         className="opacity-70 hover:opacity-100 disabled:opacity-30"
                     >
                         {`[${t('playlist.reload')}]`}
-                    </button>
+                    </Button>
                 )}
                 {mutations.showRename && (
-                    <button
-                        type="button"
+                    <Button
                         data-tui-action="rename"
                         onClick={mutations.onRename}
                         disabled={mutation.sourceActionPending}
                         className="opacity-70 hover:opacity-100 disabled:opacity-30"
                     >
                         {`[${t('libraryTui.rename')}]`}
-                    </button>
+                    </Button>
                 )}
                 {mutations.showDelete && (
-                    <button
-                        type="button"
+                    <Button
                         data-tui-action="delete-collection"
                         onClick={mutations.onDelete}
                         disabled={mutation.sourceActionPending}
                         className="text-red-500 opacity-80 hover:opacity-100 disabled:opacity-30"
                     >
                         {`[${deleteLabel}]`}
-                    </button>
+                    </Button>
                 )}
                 {isLoading && <span className="opacity-50">{t('playlist.loading')}</span>}
             </div>
@@ -153,9 +149,8 @@ const LibraryTuiHeader: React.FC<LibraryTuiHeaderProps> = ({
                     {['', ...mutation.dailyHistoryDates].map(date => {
                         const isCurrent = date === mutation.dailyDate;
                         return (
-                            <button
+                            <Button
                                 key={date || 'today'}
-                                type="button"
                                 aria-pressed={isCurrent}
                                 disabled={isLoading || isCurrent}
                                 onClick={() => mutations.onDailyDate(date)}
@@ -163,11 +158,10 @@ const LibraryTuiHeader: React.FC<LibraryTuiHeaderProps> = ({
                                 style={{ color: isCurrent ? accentColor : undefined, opacity: isCurrent ? 1 : 0.6 }}
                             >
                                 {`[${date || t('home.todayRecommendations')}]`}
-                            </button>
+                            </Button>
                         );
                     })}
-                    <button
-                        type="button"
+                    <Button
                         onClick={() => mutations.onDailyDate('', true)}
                         disabled={isLoading || Boolean(mutation.dailyDate)}
                         title={t('home.refreshRecommendations')}
@@ -175,7 +169,7 @@ const LibraryTuiHeader: React.FC<LibraryTuiHeaderProps> = ({
                         className="opacity-70 hover:opacity-100 disabled:opacity-30"
                     >
                         [↻]
-                    </button>
+                    </Button>
                 </div>
             )}
             <div className="mt-1 flex items-center gap-3 opacity-70">

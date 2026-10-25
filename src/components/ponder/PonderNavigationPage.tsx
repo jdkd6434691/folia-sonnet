@@ -16,6 +16,7 @@ import { PONDER_ICON_BUTTON_CLASS, ponderLayerTokens, ponderWindowTokens } from 
 import { PONDER_QUIET_CAP, PonderKeyCombo, ponderModifierLabel } from './PonderKeyCap';
 import PonderLessonRow from './PonderLessonRow';
 import type { Theme } from '../../types';
+import { Button, TextField } from '../ui';
 
 // src/components/ponder/PonderNavigationPage.tsx
 // 思索的全部教程：一个和设置窗口同一家的窗口。左边是搜索框和筛选（全部、未看过、各个分类，
@@ -172,7 +173,7 @@ const PonderNavigationPage: React.FC<PonderNavigationPageProps> = ({ theme, isDa
                             <aside className="flex min-h-0 shrink-0 flex-col border-b border-[var(--st-line)] bg-[var(--st-side)] px-3 pb-2 pt-3 md:border-b-0 md:border-r md:pb-3.5 md:pt-4">
                                 <label className="flex h-8 shrink-0 items-center gap-2 rounded-lg border border-transparent bg-[var(--st-fill)] px-2.5 text-[color:var(--st-t3)] pd-t-quick transition-colors focus-within:border-[var(--st-line2)]">
                                     <Search size={14} className="shrink-0" />
-                                    <input
+                                    <TextField
                                         type="search"
                                         value={query}
                                         onChange={event => handleQueryChange(event.target.value)}
@@ -189,14 +190,13 @@ const PonderNavigationPage: React.FC<PonderNavigationPageProps> = ({ theme, isDa
                                         className="min-w-0 flex-1 bg-transparent text-[13px] text-[color:var(--st-t1)] outline-none placeholder:text-[color:var(--st-t3)] [&::-webkit-search-cancel-button]:hidden"
                                     />
                                     {query && (
-                                        <button
-                                            type="button"
+                                        <Button
                                             onClick={() => setQuery('')}
                                             aria-label={t('options.settingsSearchClear')}
                                             className="pd-t-quick shrink-0 transition-colors hover:text-[color:var(--st-t1)]"
                                         >
                                             <X size={14} />
-                                        </button>
+                                        </Button>
                                     )}
                                 </label>
                                 {/* 窄窗口下这一列排成一条能横向滑的带子。 */}
@@ -206,8 +206,7 @@ const PonderNavigationPage: React.FC<PonderNavigationPageProps> = ({ theme, isDa
                                         return (
                                             <React.Fragment key={entry.id}>
                                                 {entry.divided && <hr className="mx-2.5 my-2.5 hidden h-px shrink-0 border-0 bg-[var(--st-line)] md:block" />}
-                                                <button
-                                                    type="button"
+                                                <Button
                                                     aria-current={isActive ? 'true' : undefined}
                                                     onClick={() => selectFilter(entry.id)}
                                                     className={`st-focus-inside pd-t-quick relative flex h-[34px] shrink-0 items-center justify-between gap-2 whitespace-nowrap rounded-lg px-2.5 text-left text-[13px] transition-colors hover:text-[color:var(--st-t1)] md:w-full ${isActive ? 'text-[color:var(--st-t1)]' : 'text-[color:var(--st-t2)]'}`}
@@ -222,7 +221,7 @@ const PonderNavigationPage: React.FC<PonderNavigationPageProps> = ({ theme, isDa
                                                     )}
                                                     <span className="relative min-w-0 truncate">{entry.label}</span>
                                                     <span className="relative flex-none text-xs tabular-nums text-[color:var(--st-t3)]">{entry.count}</span>
-                                                </button>
+                                                </Button>
                                             </React.Fragment>
                                         );
                                     })}
@@ -247,15 +246,14 @@ const PonderNavigationPage: React.FC<PonderNavigationPageProps> = ({ theme, isDa
                                         <h2 className="text-xl font-semibold leading-8">{t('ponder.title')}</h2>
                                         <span className="truncate text-[13px] text-[color:var(--st-t2)]">{filterLabel}</span>
                                     </div>
-                                    <button
-                                        type="button"
+                                    <Button
                                         data-testid="ponder-navigation-close"
                                         onClick={closeNavigation}
                                         aria-label={t('ui.close')}
                                         className={PONDER_ICON_BUTTON_CLASS}
                                     >
                                         <X size={16} aria-hidden="true" />
-                                    </button>
+                                    </Button>
                                 </header>
                                 <div
                                     ref={scrollRef}

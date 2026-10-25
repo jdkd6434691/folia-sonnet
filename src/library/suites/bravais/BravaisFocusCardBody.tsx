@@ -7,6 +7,7 @@ import { selectDisplayPlayerState, usePlaybackStore } from '../../../stores/useP
 import { resolvePlaybackSurface, usePlaybackEntryViewStore } from '../../../stores/usePlaybackEntryViewStore';
 import type { BravaisItem } from './bravaisLayer';
 import type { BravaisEntryMenuItem } from './bravaisSeamModels';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisFocusCardBody.tsx
 // 聚焦卡（6×6 就地展开的歌曲卡，设计稿 §7「聚焦卡」）的文字区：大标题，可点的歌手 / 专辑链接与时长，底部两个按钮
@@ -71,8 +72,7 @@ const BravaisFocusCardBody: React.FC<BravaisFocusCardBodyProps> = ({ slotKey, it
         <>
         {menu.length > 0 && (
             <span className="bravais-focus-more">
-                <button
-                    type="button"
+                <Button
                     className="bravais-chrome-button bravais-focus-more-toggle"
                     data-bravais-action="more"
                     aria-expanded={isMenuOpen}
@@ -81,13 +81,12 @@ const BravaisFocusCardBody: React.FC<BravaisFocusCardBodyProps> = ({ slotKey, it
                     onClick={handled(() => setIsMenuOpen(open => !open))}
                 >
                     <MoreHorizontal aria-hidden />
-                </button>
+                </Button>
                 {isMenuOpen && (
                     <span className="bravais-focus-menu" role="menu" data-bravais-focus-menu={item.key}>
                         {menu.map(entry => (
-                            <button
+                            <Button
                                 key={entry.id}
-                                type="button"
                                 role="menuitem"
                                 className={entry.danger ? 'is-danger' : undefined}
                                 data-bravais-action={entry.id}
@@ -97,7 +96,7 @@ const BravaisFocusCardBody: React.FC<BravaisFocusCardBodyProps> = ({ slotKey, it
                                 })}
                             >
                                 {entry.label}
-                            </button>
+                            </Button>
                         ))}
                     </span>
                 )}
@@ -110,9 +109,9 @@ const BravaisFocusCardBody: React.FC<BravaisFocusCardBodyProps> = ({ slotKey, it
                     <React.Fragment key={`${index}:${name}`}>
                         {index > 0 && <i>,</i>}
                         {actions.canOpenArtist(item.key, index) ? (
-                            <button type="button" data-bravais-action="open-artist" onClick={handled(() => actions.openArtist(slotKey, index))}>
+                            <Button data-bravais-action="open-artist" onClick={handled(() => actions.openArtist(slotKey, index))}>
                                 {name}
-                            </button>
+                            </Button>
                         ) : <span>{name}</span>}
                     </React.Fragment>
                 ))}
@@ -120,9 +119,9 @@ const BravaisFocusCardBody: React.FC<BravaisFocusCardBodyProps> = ({ slotKey, it
                     <>
                         {artists.length > 0 && <i>·</i>}
                         {canOpenAlbum ? (
-                            <button type="button" data-bravais-action="open-album" onClick={handled(() => actions.openAlbum(slotKey))}>
+                            <Button data-bravais-action="open-album" onClick={handled(() => actions.openAlbum(slotKey))}>
                                 {item.album}
-                            </button>
+                            </Button>
                         ) : <span>{item.album}</span>}
                     </>
                 )}
@@ -134,8 +133,7 @@ const BravaisFocusCardBody: React.FC<BravaisFocusCardBodyProps> = ({ slotKey, it
                 )}
             </span>
             <span className="bravais-focus-actions">
-                <button
-                    type="button"
+                <Button
                     className="bravais-chrome-button is-icon"
                     data-bravais-action="play"
                     data-bravais-playback={toggles ? (isPlaying ? 'playing' : 'paused') : undefined}
@@ -145,10 +143,9 @@ const BravaisFocusCardBody: React.FC<BravaisFocusCardBodyProps> = ({ slotKey, it
                     onClick={handled(() => actions.play(slotKey))}
                 >
                     {toggles && isPlaying ? <Pause fill="currentColor" aria-hidden /> : <Play fill="currentColor" aria-hidden />}
-                </button>
+                </Button>
                 {current && actions.enterPlayback && (
-                    <button
-                        type="button"
+                    <Button
                         className="bravais-chrome-button is-icon"
                         data-bravais-action="enter"
                         data-bravais-enter={entersLattice ? 'lattice' : 'player'}
@@ -157,10 +154,9 @@ const BravaisFocusCardBody: React.FC<BravaisFocusCardBodyProps> = ({ slotKey, it
                         onClick={handled(() => actions.enterPlayback?.())}
                     >
                         <Maximize2 aria-hidden />
-                    </button>
+                    </Button>
                 )}
-                <button
-                    type="button"
+                <Button
                     className={`bravais-chrome-button${queued && !current ? ' has-hover-label' : ''}`}
                     data-bravais-action="enqueue"
                     data-bravais-queued={queued || undefined}
@@ -179,7 +175,7 @@ const BravaisFocusCardBody: React.FC<BravaisFocusCardBodyProps> = ({ slotKey, it
                             {queued ? t('libraryBravais.inQueue') : t('libraryBravais.addToQueue')}
                         </>
                     )}
-                </button>
+                </Button>
             </span>
         </span>
         </>

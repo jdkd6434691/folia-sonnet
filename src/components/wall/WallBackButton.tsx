@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import './WallBackButton.css';
+import { Button } from '../ui';
 
 // src/components/wall/WallBackButton.tsx
 // 海报墙左上角的返回按钮（.lattice-back：40px 圆、白 8%、模糊），Lattice 与 bravais 共用。
@@ -51,8 +52,8 @@ export default function WallBackButton({ label, onBack, concealed = false }: Wal
     const revealed = useCornerReveal(concealed);
     const className = concealed ? `lattice-back is-concealed${revealed ? ' is-revealed' : ''}` : 'lattice-back';
     return (
-        <button type="button" className={className} onClick={onBack} aria-label={label} title={label}>
+        <Button className={className} onClick={onBack} aria-label={label} tip={label}>
             <ChevronLeft size={20} />
-        </button>
+        </Button>
     );
 }

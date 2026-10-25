@@ -5,6 +5,7 @@ import { PlatformMark } from '../../login/PlatformMark';
 import { useReducedMotionFor } from '../../../hooks/useReducedMotionFor';
 import { usePlayerOverlayObstacle } from '../../../hooks/usePlayerOverlayLayout';
 import { holdStatusMessage } from '../../../stores/useStatusMessageStore';
+import { Button } from '@/components/ui';
 import type { AppStatusToast } from './buildAppDialogsModel';
 import './statusToast.css';
 
@@ -91,12 +92,12 @@ export const StatusToast: React.FC<{ toast: AppStatusToast }> = ({ toast }) => {
                 {(cancel || action) && (
                     <span className="status-toast-buttons">
                         {cancel && (
-                            <button type="button" onClick={cancel} className="status-toast-button is-ghost">
+                            <Button onClick={cancel} className="status-toast-button is-ghost">
                                 {toast.cancelLabel}
-                            </button>
+                            </Button>
                         )}
                         {action && (countdown ? (
-                            <button type="button" onClick={action} aria-label={`${toast.actionLabel} ${countdown.text}`} className="status-toast-button is-skip">
+                            <Button onClick={action} aria-label={`${toast.actionLabel} ${countdown.text}`} className="status-toast-button is-skip">
                                 <span>
                                     {toast.actionLabel}
                                     <span className="status-toast-seconds">{countdown.seconds}</span>
@@ -104,12 +105,12 @@ export const StatusToast: React.FC<{ toast: AppStatusToast }> = ({ toast }) => {
                                 <span aria-hidden className="status-toast-fill" style={{ animationDuration: `${countdown.totalMs}ms` }}>
                                     {toast.actionLabel}
                                 </span>
-                            </button>
+                            </Button>
                         ) : (
-                            <button type="button" onClick={action} className="status-toast-button is-primary">
+                            <Button onClick={action} className="status-toast-button is-primary">
                                 {toast.actionIcon && <toast.actionIcon size={14} className={isDaylight ? 'text-amber-300' : 'text-amber-500'} />}
                                 {toast.actionLabel}
-                            </button>
+                            </Button>
                         ))}
                     </span>
                 )}

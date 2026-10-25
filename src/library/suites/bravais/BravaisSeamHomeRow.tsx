@@ -18,6 +18,7 @@ import { openBravaisFilter } from './useBravaisSeamFilter';
 import { useBravaisSeamRowFit } from './useBravaisSeamRowFit';
 import './bravaisHome.css';
 import './bravaisSeamRow.css';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisSeamHomeRow.tsx
 // 信息条横向时的首页窄缝 / 首页书脊（横条，见 bravaisSeamRow.css）：一行从左到右是折叠、导航段（「书库」、横排的一级页签、
@@ -48,9 +49,8 @@ const RowTabs: React.FC<{
     return (
         <div className={className} role="tablist" aria-label={label} aria-orientation="horizontal">
             {tabs.map((tab, index) => (
-                <button
+                <Button
                     key={tab.key}
-                    type="button"
                     role="tab"
                     aria-selected={tab.active}
                     aria-label={shorts ? tab.label : undefined}
@@ -62,7 +62,7 @@ const RowTabs: React.FC<{
                     onClick={() => onSelect?.(tab.key)}
                 >
                     {shorts ? shorts[index] : tab.label}
-                </button>
+                </Button>
             ))}
         </div>
     );
@@ -120,10 +120,10 @@ const BravaisSeamHomeRow: React.FC<{
     return (
         <div ref={rowRef} className={`bravais-seam-home-row${compact ? ' is-compact' : ''}${short ? ' has-short-tabs' : ''}`} data-bravais-home-seam
             data-bravais-home-fit={fit.level} data-bravais-home-shortcuts={rowShortcuts ? (shortcutsInRow ? 'column' : 'menu') : undefined}>
-            <button type="button" className="bravais-seam-icon" data-bravais-seam-action="hide" onClick={() => setLevel('hidden')}
+            <Button className="bravais-seam-icon" data-bravais-seam-action="hide" onClick={() => setLevel('hidden')}
                 aria-label={t('libraryBravais.seamFold')} title={t('libraryBravais.seamFold')}>
                 <FoldHorizontal aria-hidden />
-            </button>
+            </Button>
             <div ref={navRef} className={`bravais-seam-home-row-nav${fit.overflowing ? ' is-overflowing' : ''}`}>
                 {/* 「书库」放不下时视觉隐藏（读屏仍读得到，页签列的 aria-label 也是它）。 */}
                 {!compact && (
@@ -151,11 +151,11 @@ const BravaisSeamHomeRow: React.FC<{
                             {home?.manage && (
                                 <motion.div key="manage" className="bravais-seam-manage" data-bravais-manage={home.manage.mode} data-bravais-row-extra {...reveal}>
                                     <span>{home.manage.title}</span>
-                                    <button type="button" aria-pressed={home.manage.mode === 'manage-hidden-only'} data-bravais-seam-action="hidden-only"
+                                    <Button aria-pressed={home.manage.mode === 'manage-hidden-only'} data-bravais-seam-action="hidden-only"
                                         className={home.manage.mode === 'manage-hidden-only' ? 'is-active' : undefined} onClick={home.manage.onToggleHiddenOnly}>
                                         {home.manage.mode === 'manage-hidden-only' && <Check aria-hidden />}{home.manage.hiddenOnlyLabel}
-                                    </button>
-                                    <button type="button" data-bravais-seam-action="manage-done" onClick={home.manage.onDone}>{home.manage.doneLabel}</button>
+                                    </Button>
+                                    <Button data-bravais-seam-action="manage-done" onClick={home.manage.onDone}>{home.manage.doneLabel}</Button>
                                 </motion.div>
                             )}
                         </AnimatePresence>
@@ -175,10 +175,10 @@ const BravaisSeamHomeRow: React.FC<{
                 )}
             </AnimatePresence>
             {seam.filter?.query && compact && (
-                <button type="button" className="bravais-seam-icon is-filtering" data-bravais-seam-action="filter" onClick={openBravaisFilter}
+                <Button className="bravais-seam-icon is-filtering" data-bravais-seam-action="filter" onClick={openBravaisFilter}
                     aria-label={seam.filter.placeholder} title={`${seam.filter.placeholder} · ${seam.filter.query}`}>
                     <ListFilter aria-hidden />
-                </button>
+                </Button>
             )}
             {home?.account && (
                 <div ref={accountRef} className="bravais-seam-row-account">
@@ -190,10 +190,10 @@ const BravaisSeamHomeRow: React.FC<{
                     menuShortcuts={rowShortcuts && !shortcutsInRow ? rowShortcuts : null} onOpenShortcut={openShortcut} />
             )}
             {compact && (
-                <button type="button" className="bravais-seam-icon" data-bravais-seam-action="expand" onClick={expand}
+                <Button className="bravais-seam-icon" data-bravais-seam-action="expand" onClick={expand}
                     aria-label={t('libraryBravais.seamExpand')} title={t('libraryBravais.seamExpand')}>
                     <Maximize2 aria-hidden />
-                </button>
+                </Button>
             )}
             {/* 各级导航段与两种账户入口的测量副本：绝对定位、看不见、不占位（useBravaisSeamRowFit 量它们）。 */}
             <div ref={measureRef} className="bravais-seam-home-row-measure" aria-hidden inert>

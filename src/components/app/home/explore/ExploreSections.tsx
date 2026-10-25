@@ -10,6 +10,7 @@ import { EXPLORE_PILL, EXPLORE_SERIF, keysOf } from './ExploreParts';
 import { RowBody, SoloBody } from './ExploreRow';
 import { RULE, SECTION, TITLE, sectionBase, sectionLeave, type Arrival } from './exploreMotion';
 import { noteLibraryStep } from '../../../../nativeBridge/api/libraryTrace.js';
+import { Button } from '@/components/ui';
 
 // src/components/app/home/explore/ExploreSections.tsx
 // The sections of the explore tab, one under another. The page's first section opens it
@@ -89,23 +90,23 @@ const Shelf: React.FC<ShelfProps> = ({ section, form, batch, arrival, base, leav
                     </h2>
                     <motion.span aria-hidden variants={RULE} custom={arrival} data-explore-rule className="ml-1 h-px min-w-6 flex-1 origin-left bg-[var(--ex-line)]" />
                     {section.moreCursor && (
-                        <button type="button" data-explore-more disabled={isLoadingMore || isStale} onClick={() => onLoadMore(section.id)} className={`flex h-8 shrink-0 items-center gap-1.5 px-3.5 ${EXPLORE_PILL}`}>
+                        <Button data-explore-more disabled={isLoadingMore || isStale} onClick={() => onLoadMore(section.id)} className={`flex h-8 shrink-0 items-center gap-1.5 px-3.5 ${EXPLORE_PILL}`}>
                             {isLoadingMore ? <Loader2 size={13} className="animate-spin" /> : <Plus size={13} />}
                             <span>{t('home.exploreMore')}</span>
-                        </button>
+                        </Button>
                     )}
                     {(hidden.before || hidden.after) && ([-1, 1] as const).map(direction => (
-                        <button
+                        <Button
                             key={direction}
-                            type="button"
                             data-explore-scroll={direction < 0 ? 'left' : 'right'}
                             disabled={direction < 0 ? !hidden.before : !hidden.after}
                             onClick={() => scrollRow(direction)}
                             aria-label={t(direction < 0 ? 'home.exploreScrollLeft' : 'home.exploreScrollRight')}
+                            tip={t(direction < 0 ? 'home.exploreScrollLeft' : 'home.exploreScrollRight')}
                             className={`flex h-8 w-8 shrink-0 items-center justify-center disabled:opacity-30 ${EXPLORE_PILL}`}
                         >
                             {direction < 0 ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
-                        </button>
+                        </Button>
                     ))}
                     {pageControls}
                 </div>

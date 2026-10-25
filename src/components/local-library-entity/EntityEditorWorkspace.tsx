@@ -18,6 +18,7 @@ import {
     filterMergeEntitySuggestions,
     findExactEntitySuggestion,
 } from './entityEditorModel';
+import { Button, TextField } from '../ui';
 
 // src/components/local-library-entity/EntityEditorWorkspace.tsx
 // Adapts one name input and one primary action to rename, merge, or split context.
@@ -197,7 +198,7 @@ export const EntityEditorWorkspace = ({
                 </div>
                 <div className={`flex items-center gap-3 rounded-2xl border px-5 py-4 transition-all duration-200 ${inputTheme}`}>
                     {splitMode ? <Scissors size={20} className="text-blue-500 opacity-80" /> : <Pencil size={20} className="text-blue-500 opacity-80" />}
-                    <input
+                    <TextField
                         value={inputValue}
                         onChange={event => {
                             if (splitMode) {
@@ -221,16 +222,15 @@ export const EntityEditorWorkspace = ({
                         className="min-w-0 flex-1 bg-transparent text-base font-semibold outline-none"
                     />
                     {splitMode && entity.kind === 'artist' && (
-                        <button
-                            type="button"
+                        <Button
                             onClick={() => addArtistSplitTarget()}
                             disabled={!normalizedInput}
                             className="shrink-0 rounded-full bg-blue-500 p-2 text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-40"
                             aria-label={t('localMusic.addArtistSplitTarget')}
-                            title={t('localMusic.addArtistSplitTarget')}
+                            tip={t('localMusic.addArtistSplitTarget')}
                         >
                             <Plus size={16} />
-                        </button>
+                        </Button>
                     )}
                 </div>
 
@@ -309,8 +309,7 @@ export const EntityEditorWorkspace = ({
             )}
 
             <motion.footer className={`-mx-8 -mb-8 mt-2 flex flex-wrap items-center justify-end gap-3 border-t px-8 py-5 ${borderTheme} ${splitMode ? 'lg:col-span-2' : ''}`}>
-                <button
-                    type="button"
+                <Button
                     onClick={() => {
                         setSplitMode(current => !current);
                         setMergeSourceId('');
@@ -321,9 +320,8 @@ export const EntityEditorWorkspace = ({
                 >
                     {splitMode ? <ArrowLeft size={16} /> : <Scissors size={16} />}
                     {splitMode ? t('localMusic.backToEntityEditing') : t('localMusic.chooseSongsToSplit')}
-                </button>
-                <button
-                    type="button"
+                </Button>
+                <Button
                     disabled={!canSubmit || pending}
                     onClick={() => void submit()}
                     className="flex max-w-full items-center justify-center gap-2 rounded-xl bg-blue-500 hover:bg-blue-600 active:bg-blue-700 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-none"
@@ -342,7 +340,7 @@ export const EntityEditorWorkspace = ({
                                 ? t('localMusic.confirmMergeInto', { name: mergeIntoCurrent ? entity.displayName : mergeSource.displayName })
                                 : t('localMusic.confirmRename')}
                     </span>
-                </button>
+                </Button>
             </motion.footer>
         </motion.div>
     );

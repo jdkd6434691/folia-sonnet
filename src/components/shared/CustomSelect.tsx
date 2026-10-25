@@ -14,6 +14,7 @@ import {
     type CustomSelectOption,
 } from './CustomSelectMenu';
 import { useCustomSelectNavigation } from './useCustomSelectNavigation';
+import { Button } from '../ui';
 
 // CustomSelect.tsx
 // A custom dropdown select component designed to replace the browser's default select element.
@@ -248,9 +249,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 
     return (
         <div ref={containerRef} className={compact ? 'relative min-w-[136px] max-w-[240px]' : 'relative w-full'}>
-            <button
+            <Button
                 ref={triggerRef}
-                type="button"
                 role="combobox"
                 onClick={handleTriggerClick}
                 onKeyDown={handleTriggerKeyDown}
@@ -274,7 +274,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                     className={`${reducedMotion ? '' : 'transition-transform duration-200 '}shrink-0 opacity-70 ${isOpen ? 'rotate-180' : ''}`}
                     style={{ color: 'var(--text-secondary)' }}
                 />
-            </button>
+            </Button>
 
             {typeof document !== 'undefined' && createPortal(
                 <AnimatePresence>

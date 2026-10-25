@@ -12,6 +12,7 @@ import { useWallToolsCommonActions } from './useWallToolsCommonActions';
 import { WallToolsQueueIsland } from './WallToolsQueueIsland';
 import { useWallToolsHost } from './wallToolsHost';
 import './WallToolsButton.css';
+import { Button } from '../ui';
 
 // src/components/wall/WallToolsButton.tsx
 // 海报墙右下角的工具按钮（Lattice 与 bravais 共用）：点按打开锚定的玻璃面板，向左滑打开命令面板。
@@ -182,8 +183,7 @@ export function WallToolsSurface({ idPrefix, label, isDaylight, destination, ent
                             {rows.map(entry => <WallToolsRow key={entry.id} entry={entry} onDone={close} />)}
                             <WallToolsRow entry={tintRow} onDone={close} />
                             <div className="lattice-tools-help-section" role="none">
-                                <button
-                                    type="button"
+                                <Button
                                     role="menuitemcheckbox"
                                     aria-checked={lightsOn}
                                     aria-label={t('home.latticeLights')}
@@ -192,19 +192,18 @@ export function WallToolsSurface({ idPrefix, label, isDaylight, destination, ent
                                 >
                                     <span className={lightsOn ? 'is-active' : ''}>{t('home.latticeLightsOn')}</span>
                                     <span className={lightsOn ? '' : 'is-active'}>{t('home.latticeLightsOff')}</span>
-                                </button>
-                                <button
-                                    type="button"
+                                </Button>
+                                <Button
                                     role="menuitem"
                                     className="lattice-tools-action lattice-tools-help-trigger"
                                     aria-label={t('home.latticeHelp')}
-                                    title={t('home.latticeHelp')}
+                                    tip={t('home.latticeHelp')}
                                     aria-expanded={showHelp}
                                     aria-controls={helpId}
                                     onClick={() => setShowHelp(visible => !visible)}
                                 >
                                     <CircleHelp aria-hidden="true" />
-                                </button>
+                                </Button>
                                 <AnimatePresence initial={false}>
                                     {showHelp && (
                                         <motion.div

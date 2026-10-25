@@ -6,6 +6,7 @@ import { getSizedCoverUrl } from '../../../../utils/coverUrl';
 import { canResolveSongCatalogRef } from '../../../../services/onlineMusic/catalogRefs';
 import { resolveTrackArtistTargetId } from '../../../core/shared/trackLinks';
 import type { GridPlaybackMark } from './useGridStayPlayback';
+import { Button } from '../../../../components/ui';
 
 // src/library/suites/grid/shared/polaroidCardParts.tsx
 // The pieces both PolaroidCard layouts share: the cover image with its spinner placeholder, the
@@ -185,7 +186,7 @@ export const PolaroidCardActions: React.FC<{
 }> = ({ mode, isEditMode, isUnavailable, onSelect, onAddQueue, playbackMark = null, t }) => (
     <div className="flex items-center gap-1.5 shrink-0">
         {mode === 'tracks' && !isEditMode && (
-            <button
+            <Button
                 onClick={(e) => {
                     e.stopPropagation();
                     onSelect();
@@ -204,10 +205,10 @@ export const PolaroidCardActions: React.FC<{
                 {playbackMark === 'playing'
                     ? <Pause size={15} fill="currentColor" />
                     : <Play size={15} fill="currentColor" className="ml-0.5" />}
-            </button>
+            </Button>
         )}
         {mode === 'tracks' && onAddQueue && !isUnavailable && !isEditMode && (
-            <button
+            <Button
                 onClick={(e) => {
                     e.stopPropagation();
                     onAddQueue();
@@ -217,7 +218,7 @@ export const PolaroidCardActions: React.FC<{
                 title={t('navidrome.addToQueue')}
             >
                 <Plus size={15} />
-            </button>
+            </Button>
         )}
     </div>
 );

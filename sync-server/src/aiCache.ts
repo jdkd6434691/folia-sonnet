@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { requireAdmin } from './admin.js';
-import type { D1Database, Env } from './app.js';
+import type { D1Database, D1PreparedStatement, Env } from './app.js';
 import { looseSongTitle, rankSongTitleMatch, songTitleLike, songTitleSeed, songTitleSegments, songTitleKey } from './songTitleMatch.js';
 import { readHighlightWords, verifyStageUpload } from './stageVerifier.js';
 
@@ -138,8 +138,9 @@ const readPayload = (value: unknown): { ok: true; payload: unknown; bytes: numbe
   } catch {
     return { ok: false };
   }
-  if (!serialized || serialized.length > MAX_PAYLOAD_BYTES) return { ok: false };
-  return { ok: true, payload: value, bytes: serialized.length };
+  const bytes = new TextEncoder().encode(serialized).byteLength;
+  if (!serialized || bytes > MAX_PAYLOAD_BYTES) return { ok: false };
+  return { ok: true, payload: value, bytes };
 };
 
 const readMetaText = (value: unknown, limit: number): string => (
@@ -209,51 +210,30 @@ const handleGet = async (db: D1Database, kind: string, key: string) => {
  *
  * 每个键最多留 MAX_CACHE_BACKUPS 份 —— 够覆盖常见的反复重生成，又不让同一个键无限长。
  */
-const archiveExistingEntry = async (db: D1Database, kind: string, key: string): Promise<void> => {
-  const row = await db
-    .prepare('SELECT kind, cache_key, payload_json, payload_bytes, song_title, provider, model, platform, hits, created_at FROM ai_cache WHERE kind = ? AND cache_key = ?')
-    .bind(kind, key)
-    .first<AiCacheRow>();
-  if (!row) return;
-
-  const now = new Date().toISOString();
-  await db
-    .prepare(`
-      INSERT INTO ai_cache_backups
-        (kind, cache_key, payload_json, payload_bytes, song_title, provider, model, platform, hits, created_at, archived_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `)
-    .bind(
-      row.kind,
-      row.cache_key,
-      row.payload_json,
-      Number(row.payload_bytes ?? 0),
-      row.song_title ?? '',
-      row.provider ?? '',
-      row.model ?? '',
-      row.platform ?? '',
-      Number(row.hits ?? 0),
-      row.created_at ?? now,
-      now,
-    )
-    .run()
-    .catch(() => undefined);
-
-  await db
-    .prepare(`
-      DELETE FROM ai_cache_backups
-      WHERE kind = ? AND cache_key = ?
-        AND id NOT IN (
-          SELECT id FROM ai_cache_backups
-          WHERE kind = ? AND cache_key = ?
-          ORDER BY archived_at DESC, id DESC
-          LIMIT ?
-        )
-    `)
-    .bind(kind, key, kind, key, MAX_CACHE_BACKUPS)
-    .run()
-    .catch(() => undefined);
-};
+const archiveExistingEntry = (
+  db: D1Database,
+  kind: string,
+  key: string,
+  now: string,
+): D1PreparedStatement[] => [
+  // Read the current version inside the same transaction as its replacement.
+  db.prepare(`
+    INSERT INTO ai_cache_backups
+      (kind, cache_key, payload_json, payload_bytes, song_title, provider, model, platform, hits, created_at, archived_at)
+    SELECT kind, cache_key, payload_json, payload_bytes, song_title, provider, model, platform, hits, created_at, ?
+    FROM ai_cache WHERE kind = ? AND cache_key = ?
+  `).bind(now, kind, key),
+  db.prepare(`
+    DELETE FROM ai_cache_backups
+    WHERE kind = ? AND cache_key = ?
+      AND id NOT IN (
+        SELECT id FROM ai_cache_backups
+        WHERE kind = ? AND cache_key = ?
+        ORDER BY archived_at DESC, id DESC
+        LIMIT ?
+      )
+  `).bind(kind, key, kind, key, MAX_CACHE_BACKUPS),
+];
 
 /*
  * PUT /api/ai-cache/:kind/:key — the push, after a real generation.
@@ -307,10 +287,9 @@ const handlePut = async (
   const model = readMetaText(source.model, 128);
 
   /* 先把旧版存好，再覆盖 —— 顺序反了就什么都没留下。 */
-  await archiveExistingEntry(db, kind, key);
-
-  await db
-    .prepare(`
+  await db.batch([
+    ...archiveExistingEntry(db, kind, key, now),
+    db.prepare(`
       INSERT INTO ai_cache (kind, cache_key, payload_json, payload_bytes, song_title, provider, model, platform, hits, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)
       ON CONFLICT(kind, cache_key) DO UPDATE SET
@@ -322,8 +301,8 @@ const handlePut = async (
         platform = excluded.platform,
         updated_at = excluded.updated_at
     `)
-    .bind(kind, key, JSON.stringify(parsed.payload), parsed.bytes, songTitle, provider, model, platform, now, now)
-    .run();
+    .bind(kind, key, JSON.stringify(parsed.payload), parsed.bytes, songTitle, provider, model, platform, now, now),
+  ]);
 
   return {
     ok: true,
@@ -796,19 +775,36 @@ export const restoreCacheBackup = async (
   if (!Number.isFinite(id) || id <= 0) {
     return { ok: false, error: 'invalid_id', status: 400 };
   }
-  const row = await db
-    .prepare('SELECT id, kind, cache_key, payload_json, payload_bytes, song_title, provider, model, platform, hits, created_at, archived_at FROM ai_cache_backups WHERE id = ?')
-    .bind(id)
-    .first<AiCacheBackupRow>();
-  if (!row) return { ok: false, error: 'not_found', status: 404 };
-
-  await archiveExistingEntry(db, row.kind, row.cache_key);
-
   const now = new Date().toISOString();
-  await db
-    .prepare(`
+  // Resolve and consume the target inside one transaction; a missing target makes every write a no-op.
+  const results = await db.batch([
+    db.prepare('SELECT kind, cache_key FROM ai_cache_backups WHERE id = ?').bind(id),
+    db.prepare(`
+      INSERT INTO ai_cache_backups
+        (kind, cache_key, payload_json, payload_bytes, song_title, provider, model, platform, hits, created_at, archived_at)
+      SELECT current.kind, current.cache_key, current.payload_json, current.payload_bytes,
+        current.song_title, current.provider, current.model, current.platform, current.hits, current.created_at, ?
+      FROM ai_cache AS current
+      JOIN ai_cache_backups AS target ON target.kind = current.kind AND target.cache_key = current.cache_key
+      WHERE target.id = ?
+    `).bind(now, id),
+    db.prepare(`
+      DELETE FROM ai_cache_backups
+      WHERE (kind, cache_key) = (SELECT kind, cache_key FROM ai_cache_backups WHERE id = ?)
+        AND id <> ?
+        AND id NOT IN (
+          SELECT id FROM ai_cache_backups
+          WHERE (kind, cache_key) = (SELECT kind, cache_key FROM ai_cache_backups WHERE id = ?)
+            AND id <> ?
+          ORDER BY archived_at DESC, id DESC
+          LIMIT ?
+        )
+    `).bind(id, id, id, id, MAX_CACHE_BACKUPS),
+    db.prepare(`
       INSERT INTO ai_cache (kind, cache_key, payload_json, payload_bytes, song_title, provider, model, platform, hits, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      SELECT kind, cache_key, payload_json, COALESCE(payload_bytes, 0), COALESCE(song_title, ''),
+        COALESCE(provider, ''), COALESCE(model, ''), COALESCE(platform, ''), COALESCE(hits, 0), COALESCE(created_at, ?), ?
+      FROM ai_cache_backups WHERE id = ?
       ON CONFLICT(kind, cache_key) DO UPDATE SET
         payload_json = excluded.payload_json,
         payload_bytes = excluded.payload_bytes,
@@ -817,27 +813,11 @@ export const restoreCacheBackup = async (
         model = excluded.model,
         platform = excluded.platform,
         updated_at = excluded.updated_at
-    `)
-    .bind(
-      row.kind,
-      row.cache_key,
-      row.payload_json,
-      Number(row.payload_bytes ?? 0),
-      row.song_title ?? '',
-      row.provider ?? '',
-      row.model ?? '',
-      row.platform ?? '',
-      Number(row.hits ?? 0),
-      row.created_at ?? now,
-      now,
-    )
-    .run();
-
-  await db
-    .prepare('DELETE FROM ai_cache_backups WHERE id = ?')
-    .bind(id)
-    .run();
-
+    `).bind(now, now, id),
+    db.prepare('DELETE FROM ai_cache_backups WHERE id = ?').bind(id),
+  ]);
+  const row = (results[0] as { results?: { kind: string; cache_key: string }[] }).results?.[0];
+  if (!row) return { ok: false, error: 'not_found', status: 404 };
   return { ok: true, kind: row.kind, key: row.cache_key };
 };
 

@@ -8,6 +8,7 @@ import { PONDER_ICON_BUTTON_CLASS, PONDER_TEXT_BUTTON_CLASS } from './ponderThem
 import PonderChapterTimeline from './PonderChapterTimeline';
 import { PONDER_QUIET_CAP, PonderKeyCombo } from './PonderKeyCap';
 import type { PonderStageNodes } from './ponderStageNodes';
+import { Button } from '../ui';
 
 // src/components/ponder/PonderChrome.tsx
 // 教程层的外框，三处：顶上一条标题栏（思索 + 这一课的名字，右边是退出）；画面正下方一行
@@ -86,10 +87,10 @@ const PonderChrome: React.FC<PonderChromeProps> = ({
                     <b className="truncate font-semibold text-[color:var(--st-t1)]">{title}</b>
                 </div>
                 {/* 触屏没有 Esc，所以它是一颗看得出能点的按钮，键帽只是顺带说明。 */}
-                <button type="button" data-testid="ponder-exit" onClick={onExit} className={PONDER_TEXT_BUTTON_CLASS}>
+                <Button data-testid="ponder-exit" onClick={onExit} className={PONDER_TEXT_BUTTON_CLASS}>
                     <PonderKeyCombo combo="Esc" {...PONDER_QUIET_CAP} />
                     {t('ponder.legend.exit')}
-                </button>
+                </Button>
             </div>
 
             <div
@@ -98,8 +99,7 @@ const PonderChrome: React.FC<PonderChromeProps> = ({
             >
                 <div className="flex h-10 items-center gap-3.5">
                     <div className="-ml-2 flex flex-none items-center gap-1.5">
-                        <button
-                            type="button"
+                        <Button
                             data-testid="ponder-prev-keyframe"
                             onClick={onPrevKeyframe}
                             disabled={ticks.length === 0}
@@ -107,9 +107,8 @@ const PonderChrome: React.FC<PonderChromeProps> = ({
                             aria-label={t('ponder.prevKeyframe')}
                         >
                             <SkipBack size={16} />
-                        </button>
-                        <button
-                            type="button"
+                        </Button>
+                        <Button
                             onClick={onTogglePlay}
                             className="pd-t-quick grid h-9 w-9 place-items-center rounded-full bg-[var(--st-accent)] text-[color:var(--st-on-accent)] transition-transform active:scale-95"
                             aria-label={t('ponder.playPause')}
@@ -127,9 +126,8 @@ const PonderChrome: React.FC<PonderChromeProps> = ({
                                     <PlayIcon size={16} fill="currentColor" />
                                 </motion.span>
                             </AnimatePresence>
-                        </button>
-                        <button
-                            type="button"
+                        </Button>
+                        <Button
                             data-testid="ponder-next-keyframe"
                             onClick={onNextKeyframe}
                             disabled={ticks.length === 0}
@@ -137,7 +135,7 @@ const PonderChrome: React.FC<PonderChromeProps> = ({
                             aria-label={t('ponder.nextKeyframe')}
                         >
                             <SkipForward size={16} />
-                        </button>
+                        </Button>
                     </div>
                     <PonderChapterTimeline
                         chapters={chapters}
@@ -147,14 +145,13 @@ const PonderChrome: React.FC<PonderChromeProps> = ({
                         onSelectChapter={onSelectChapter}
                         onSeekToTick={onSeekToTick}
                     />
-                    <button
-                        type="button"
+                    <Button
                         onClick={onRestart}
                         className={`${PONDER_ICON_BUTTON_CLASS} -mr-2 flex-none`}
                         aria-label={t('ponder.replay')}
                     >
                         <RotateCcw size={16} />
-                    </button>
+                    </Button>
                 </div>
                 {children}
             </div>

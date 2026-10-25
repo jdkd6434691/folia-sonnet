@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { Theme } from '../../../types';
 import type { CommandPaletteMatch } from '../types';
 import { readLibrarySuitePick } from './librarySuitePickerSurface';
+import { Button } from '../../ui';
 
 // src/components/command-palette/surfaces/LibrarySuitePickerSurfaceView.tsx
 // 资料库界面 picker 的列表：与可视化 / 背景 picker 同一个列表外形（标题栏 + 默认样式的行），
@@ -65,10 +66,9 @@ const LibrarySuitePickerSurfaceView: React.FC<LibrarySuitePickerSurfaceViewProps
                 const suiteId = readLibrarySuitePick(match.command.id);
                 const isSelected = suiteId === activeSuiteId;
                 return (
-                    <button
+                    <Button
                         key={match.command.id}
                         ref={isActive ? activeRowRef : undefined}
-                        type="button"
                         data-library-suite-pick={suiteId}
                         data-picker-active={isActive ? 'true' : 'false'}
                         data-picker-selected={isSelected ? 'true' : 'false'}
@@ -97,7 +97,7 @@ const LibrarySuitePickerSurfaceView: React.FC<LibrarySuitePickerSurfaceViewProps
                                 {t('commandPalette.run', 'Run')}
                             </span>
                         )}
-                    </button>
+                    </Button>
                 );
             })}
         </div>

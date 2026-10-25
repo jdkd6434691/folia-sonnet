@@ -32,6 +32,7 @@ import { availableLocalTabLabel, localWallHint, onlineWallHint } from './bravais
 import { useBravaisHomeAccount } from './useBravaisHomeAccount';
 import { useThemeSettingsStore } from '../../../stores/useThemeSettingsStore';
 import { isAndroidNativeRuntime } from '../../../services/nativeLocalMusic';
+import { TextField } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisHomeSources.tsx
 // bravais 首页三个来源的墙（设计稿 §10.5）：在线（账户歌单 / 电台 / 收藏专辑）、本地（文件夹 / 专辑 / 歌手 / 歌单
@@ -246,7 +247,7 @@ export const BravaisHomeLocal: React.FC<BravaisHomeSourceCommonProps & {
 
     return (
         <>
-            <input
+            <TextField
                 ref={playlistFileInputRef}
                 type="file"
                 accept=".m3u,.m3u8,audio/x-mpegurl,application/vnd.apple.mpegurl"

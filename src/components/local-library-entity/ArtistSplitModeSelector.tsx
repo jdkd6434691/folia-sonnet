@@ -1,6 +1,7 @@
 import { ListPlus, RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { LocalLibraryArtistAssignmentMode } from '../../types/localLibrary';
+import { Button } from '../ui';
 
 // src/components/local-library-entity/ArtistSplitModeSelector.tsx
 // Makes the destructive difference between appending and replacing artist links explicit.
@@ -22,9 +23,8 @@ export const ArtistSplitModeSelector = ({ mode, resultTheme, selectedTheme, onCh
             ]).map(option => {
                 const Icon = option.icon;
                 return (
-                    <button
+                    <Button
                         key={option.value}
-                        type="button"
                         role="radio"
                         aria-checked={mode === option.value}
                         onClick={() => onChange(option.value)}
@@ -35,7 +35,7 @@ export const ArtistSplitModeSelector = ({ mode, resultTheme, selectedTheme, onCh
                             <span className="block text-sm font-semibold">{option.label}</span>
                             <span className="mt-0.5 block text-xs font-normal opacity-60">{option.hint}</span>
                         </span>
-                    </button>
+                    </Button>
                 );
             })}
         </div>

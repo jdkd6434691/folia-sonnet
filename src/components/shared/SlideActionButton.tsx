@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import type { LucideIcon } from 'lucide-react';
+import { Button } from '../ui';
 
 // src/components/shared/SlideActionButton.tsx
 // The player-style round action button with a second action on a leftward slide: tap the button for
@@ -177,9 +178,8 @@ export const SlideActionButton: React.FC<SlideActionButtonProps> = ({
                 </motion.div>
                 <div ref={trackFillRef} style={{ width: '48px' }} className={`absolute right-0 top-0 bottom-0 rounded-full pointer-events-none ${isDaylight ? 'bg-black/10' : 'bg-white/10'}`} />
             </div>
-            <button
+            <Button
                 ref={buttonRef}
-                type="button"
                 disabled={disabled}
                 onPointerDown={(event) => {
                     if (disabled) return;
@@ -219,11 +219,11 @@ export const SlideActionButton: React.FC<SlideActionButtonProps> = ({
                 }}
                 style={{ touchAction: 'none' }}
                 className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg backdrop-blur-md transform border-none absolute right-0 top-0 z-10 disabled:opacity-40 disabled:cursor-default ${isDaylight ? 'bg-white/70 text-zinc-900' : 'bg-black/40 text-white'}`}
-                title={title}
+                tip={title}
                 aria-label={title}
             >
                 <Icon size={20} />
-            </button>
+            </Button>
         </div>
     );
 };

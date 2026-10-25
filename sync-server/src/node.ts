@@ -1,7 +1,7 @@
 import { serve } from '@hono/node-server';
 import { D1Emulator } from './d1-emulator.js';
 import app from './app.js';
-import { isUsingDefaultAdminCredentials, readAdminCredentials } from './admin.js';
+import { readAdminCredentials } from './admin.js';
 import { pruneHitLog } from './aiCache.js';
 import path from 'node:path';
 import fs from 'node:fs';
@@ -34,9 +34,10 @@ try {
 
 const SYNC_TOKEN = process.env.SYNC_TOKEN;
 const DASHBOARD_TOKEN = process.env.DASHBOARD_TOKEN;
-// 不在这里兜底：出厂凭据只在 admin.ts 里定义一份，否则两处各改一处就对不上了。
+// Missing credentials disable the panel without disabling public/sync routes.
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const ADMIN_PUBLIC_ORIGIN = process.env.ADMIN_PUBLIC_ORIGIN;
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const DB_PATH = process.env.DB_PATH || path.resolve(__dirname, '../folia-sync.db');
 // 字体字节默认挨着数据库文件放：整机迁移时只要带着这一个目录，两边都不会散。
@@ -106,11 +107,10 @@ if (DASHBOARD_TOKEN) {
   console.log(`- Dashboard: Disabled (DASHBOARD_TOKEN not set)`);
 }
 const adminCredentials = readAdminCredentials({ ADMIN_USERNAME, ADMIN_PASSWORD });
-console.log(`- Admin panel: \x1b[36mhttp://localhost:${PORT}/admin\x1b[0m (${adminCredentials.username})`);
-if (isUsingDefaultAdminCredentials({ ADMIN_USERNAME, ADMIN_PASSWORD })) {
-  console.warn(
-    '\x1b[33m[WARN]\x1b[0m Admin panel is on the factory credentials — set ADMIN_USERNAME / ADMIN_PASSWORD before exposing this server.',
-  );
+if (adminCredentials) {
+  console.log(`- Admin panel: \x1b[36mhttp://localhost:${PORT}/admin\x1b[0m (${adminCredentials.username})`);
+} else {
+  console.warn('[admin] Panel disabled: set ADMIN_USERNAME and ADMIN_PASSWORD (at least 16 non-padding characters).');
 }
 
 serve({
@@ -120,6 +120,7 @@ serve({
     DASHBOARD_TOKEN,
     ADMIN_USERNAME,
     ADMIN_PASSWORD,
+    ADMIN_PUBLIC_ORIGIN,
     FONT_BLOBS: fontBlobs,
     readDatabaseBytes: () => {
       try {

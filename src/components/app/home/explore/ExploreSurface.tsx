@@ -9,6 +9,7 @@ import { ExploreLight } from './ExploreLight';
 import { EXPLORE_PILL, EXPLORE_TOKENS, ExploreSections } from './ExploreSections';
 import { useExploreTilt } from './exploreTilt';
 import { OWN_SECTION_IDS, listenedSongsOf, useOwnExploreSections } from './ownSections';
+import { Button } from '@/components/ui';
 
 // src/components/app/home/explore/ExploreSurface.tsx
 // The explore tab of the home screen, as sections one under another. A section is the same
@@ -113,7 +114,7 @@ export const ExploreSurface: React.FC<ExploreSurfaceProps> = ({ providerId, acco
     const failed = (
         <div className="flex flex-col items-center gap-4 py-24 text-sm text-[color:var(--ex-soft)]">
             <span>{t('home.exploreFailed')}</span>
-            <button type="button" data-explore-retry-page onClick={readAgain} className={`h-8 px-4 ${EXPLORE_PILL}`}>{t('home.exploreRetry')}</button>
+            <Button data-explore-retry-page onClick={readAgain} className={`h-8 px-4 ${EXPLORE_PILL}`}>{t('home.exploreRetry')}</Button>
         </div>
     );
     // The page's own control: read the provider's page anew. The page shown stays while the next
@@ -135,11 +136,10 @@ export const ExploreSurface: React.FC<ExploreSurfaceProps> = ({ providerId, acco
                     style={{ paddingRight: barWidth }}
                 >
                     <div className="mx-auto flex w-full max-w-7xl justify-end px-4 md:px-8">
-                        <button
-                            type="button"
+                        <Button
                             data-explore-refresh
                             disabled={feed.refreshing}
-                            title={feed.refreshFailed ? t('home.exploreFailed') : refreshLabel}
+                            tip={feed.refreshFailed ? t('home.exploreFailed') : refreshLabel}
                             aria-label={refreshLabel}
                             onClick={readAgain}
                             // In its heading row it is one of the row's buttons; over the list it is a pane of glass.
@@ -148,7 +148,7 @@ export const ExploreSurface: React.FC<ExploreSurfaceProps> = ({ providerId, acco
                         >
                             <RefreshCw size={14} className={feed.refreshing ? 'animate-spin' : ''} />
                             {feed.refreshFailed && <span data-explore-refresh-failed className="absolute right-0 top-0 h-2 w-2 rounded-full bg-amber-400" />}
-                        </button>
+                        </Button>
                     </div>
                 </motion.div>
             )}
@@ -194,7 +194,7 @@ export const ExploreSurface: React.FC<ExploreSurfaceProps> = ({ providerId, acco
                                 <div className={END} aria-busy="true"><Loader2 size={20} className="animate-spin opacity-30" /></div>
                             ) : feed.status === 'error' ? failed : hasMore && (feed.moreFailed ? (
                                 <div className={END}>
-                                    <button type="button" data-explore-retry onClick={() => void loadMore()} className={`h-8 px-4 ${EXPLORE_PILL}`}>{t('home.exploreRetry')}</button>
+                                    <Button data-explore-retry onClick={() => void loadMore()} className={`h-8 px-4 ${EXPLORE_PILL}`}>{t('home.exploreRetry')}</Button>
                                 </div>
                             ) : (
                                 <div ref={end} className={END}><Loader2 size={20} className="animate-spin opacity-30" /></div>

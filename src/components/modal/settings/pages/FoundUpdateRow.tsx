@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Menu, Progress, Reveal, Row } from '../kit';
 import { openOutsideLink } from '../../../../utils/system/outsideLink';
 import { useSettingsPage } from './settingsPageContext';
+import { Button as UiButton } from '@/components/ui';
 
 // src/components/modal/settings/pages/FoundUpdateRow.tsx
 // The row a found update gets, on the 通用 page and on the Help page: the new version, the list of
@@ -71,9 +72,8 @@ export const FoundUpdateRow: React.FC<FoundUpdateRowProps> = ({ sub }) => {
     return (
         <Reveal when={Boolean(version)}>
             <Row sub={sub} notice={t('options.newVersionFound', { version: version ?? '' })}>
-                <button
+                <UiButton
                     ref={sourcesRef}
-                    type="button"
                     aria-haspopup="menu"
                     aria-expanded={sourcesOpen}
                     aria-controls={sourcesOpen ? sourcesId : undefined}
@@ -88,7 +88,7 @@ export const FoundUpdateRow: React.FC<FoundUpdateRowProps> = ({ sub }) => {
                 >
                     {t('options.downloadSources')}
                     <ChevronDown size={14} className={`st-t-move text-[color:var(--st-t2)] transition-transform ${sourcesOpen ? 'rotate-180' : ''}`} />
-                </button>
+                </UiButton>
                 <Menu
                     anchorRef={sourcesRef}
                     open={sourcesOpen}

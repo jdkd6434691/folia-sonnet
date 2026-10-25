@@ -9,6 +9,7 @@ import TitlebarDragZone from '../TitlebarDragZone';
 import WindowControls from '../WindowControls';
 import { usePlayerOverlayRoot, usePlayerOverlayReservation } from '../../hooks/usePlayerOverlayLayout';
 import type { FoliumLayoutRect } from '../../mods/folium/contract';
+import { Button } from '@/components/ui';
 
 // Shared shell for the app container, Electron titlebar, and mounted audio node.
 type AppShellProps = {
@@ -183,10 +184,9 @@ const AppShell: React.FC<AppShellProps> = ({
                             }`}
                             style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
                         >
-                            <button
-                                type="button"
+                            <Button
                                 aria-label={isMainWindowClickThroughEnabled ? 'Disable click-through' : 'Enable click-through'}
-                                title={isMainWindowClickThroughEnabled ? t('remote.disableClickThrough') : t('remote.enableClickThrough')}
+                                tip={isMainWindowClickThroughEnabled ? t('remote.disableClickThrough') : t('remote.enableClickThrough')}
                                 onClick={onToggleMainWindowClickThrough}
                                 className={`flex h-7 w-7 items-center justify-center rounded-full border shadow-[0_8px_24px_rgba(0,0,0,0.28)] backdrop-blur-md transition-all duration-200 ${
                                     showMainWindowClickThroughToggle
@@ -203,7 +203,7 @@ const AppShell: React.FC<AppShellProps> = ({
                                 }`}
                             >
                                 {isMainWindowClickThroughEnabled ? <Lock size={14} /> : <LockOpen size={14} />}
-                            </button>
+                            </Button>
                         </div>
                         <div className="pointer-events-auto absolute top-0 right-0 z-10 h-full">
                             <WindowControls

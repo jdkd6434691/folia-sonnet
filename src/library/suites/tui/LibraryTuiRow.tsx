@@ -6,6 +6,7 @@ import { getSongArtistLabel } from '../../../services/onlineMusic/songMetadata';
 import { formatTime } from '../../../utils/appPlaybackHelpers';
 import { canResolveSongCatalogRef } from '../../../services/onlineMusic/catalogRefs';
 import { resolveTrackAlbumLink, resolveTrackArtistLinks, type TrackArtistLink } from '../../core/shared/trackLinks';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/tui/LibraryTuiRow.tsx
 // TUI 的一行：序号、歌名、歌手、专辑、时长，等宽排列。单击移动焦点，双击播放，[+] 入队；
@@ -105,8 +106,7 @@ const LibraryTuiRow = ({
                     <React.Fragment key={`${link.artist.id ?? 'artist'}-${linkIndex}`}>
                         {linkIndex > 0 ? ', ' : ''}
                         {link.targetId !== undefined ? (
-                            <button
-                                type="button"
+                            <Button
                                 data-tui-link="artist"
                                 onClick={(event) => {
                                     event.stopPropagation();
@@ -115,15 +115,14 @@ const LibraryTuiRow = ({
                                 className={linkClass}
                             >
                                 {link.artist.name}
-                            </button>
+                            </Button>
                         ) : link.artist.name}
                     </React.Fragment>
                 )) : getSongArtistLabel(track)}
             </span>
             <span className={`${cell} opacity-55`}>
                 {canOpenAlbum ? (
-                    <button
-                        type="button"
+                    <Button
                         data-tui-link="album"
                         onClick={(event) => {
                             event.stopPropagation();
@@ -132,14 +131,13 @@ const LibraryTuiRow = ({
                         className={linkClass}
                     >
                         {albumName}
-                    </button>
+                    </Button>
                 ) : albumName}
             </span>
             <span className="tabular-nums opacity-55">{formatTime((track.durationMs || 0) / 1000)}</span>
             <span className="flex gap-x-1">
                 {canMatch ? (
-                    <button
-                        type="button"
+                    <Button
                         title={matchLabel}
                         aria-label={matchLabel}
                         data-tui-match
@@ -150,10 +148,9 @@ const LibraryTuiRow = ({
                         className="opacity-50 hover:opacity-100"
                     >
                         [i]
-                    </button>
+                    </Button>
                 ) : <span className="w-[3ch]" />}
-                <button
-                    type="button"
+                <Button
                     title={enqueueLabel}
                     aria-label={enqueueLabel}
                     onClick={(event) => {
@@ -164,7 +161,7 @@ const LibraryTuiRow = ({
                     disabled={unavailable}
                 >
                     [+]
-                </button>
+                </Button>
             </span>
         </div>
     );

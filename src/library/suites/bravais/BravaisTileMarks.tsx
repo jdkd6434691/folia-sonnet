@@ -3,6 +3,7 @@ import { Check, Eye, EyeOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { BravaisItem } from './bravaisLayer';
 import { BRAVAIS_SPECIAL_ICONS } from './bravaisSpecialIcons';
+import { Button } from '../../../components/ui';
 
 // src/library/suites/bravais/BravaisTileMarks.tsx
 // 首页磁贴右上角的两种记号（B9，设计稿 §10.5）：
@@ -45,8 +46,7 @@ const BravaisTileMarks: React.FC<BravaisTileMarksProps> = ({ item, onToggleHidde
     return (
         <>
             {item.hideable && onToggleHidden && (
-                <button
-                    type="button"
+                <Button
                     className={`bravais-tile-eye${hidden ? ' is-hidden' : ''}`}
                     data-bravais-action="toggle-hidden"
                     aria-pressed={hidden}
@@ -55,7 +55,7 @@ const BravaisTileMarks: React.FC<BravaisTileMarksProps> = ({ item, onToggleHidde
                     onClick={toggle}
                 >
                     {hidden ? <EyeOff aria-hidden /> : <Eye aria-hidden />}
-                </button>
+                </Button>
             )}
             {item.selected && (
                 <span className="bravais-tile-check" data-bravais-selected aria-hidden>

@@ -4,7 +4,7 @@ name: CI
 # 检查逻辑都在仓库根目录的 ci/（见 ci/README.md），这个文件只做组装。
 # APK/AAB 出包在 android-release.yml，不在这里重复跑。
 #
-# main 上也跑一次，唯一目的是把 node_modules 缓存写进 base 分支的 scope。Actions 的缓存
+# dev 和 main 上也跑一次，唯一目的是把 node_modules 缓存写进 base 分支的 scope。Actions 的缓存
 # 作用域规则是「PR 能读 base 分支的缓存，分支之间互相不可见」，而这个 workflow 原本只在
 # pull_request 触发，于是缓存只会写进各个 PR 自己的 scope 并随 PR 合并作废——每个新分支、
 # 每个 fork PR 的首跑都必然冷启动装 1.4GB 依赖。
@@ -16,8 +16,13 @@ on:
       - synchronize
       - reopened
       - ready_for_review
+    # 只有发向 dev / main 的 PR 才算数，别处开的 PR 不跑。
+    branches:
+      - dev
+      - main
   push:
     branches:
+      - dev
       - main
 
 permissions:
@@ -130,6 +135,10 @@ jobs:
       - name: Build web bundle
         run: npm run build
 
+      # 密钥进前端包只有打包之后才看得见（VITE_ 变量被内联、依赖里的字符串被带进来），所以接在 build 后面。
+      - name: Scan web bundle for secrets
+        run: node ci/checkSecrets.ts --dist dist
+
   version-policy:
     name: Version policy
     if: github.event_name == 'push' || github.event.pull_request.draft == false
@@ -148,3 +157,44 @@ jobs:
       # 不需要 npm ci：只读仓库里的 package.json、.nvmrc、workflow 文件。
       - name: Check version policy
         run: npm run check:versions
+
+  secret-guard:
+    name: Secret guard
+    if: github.event_name == 'push' || github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v6
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      # 不需要 npm ci：只读 .env.example 与源码，Node 24 直接跑 ci/checkSecrets.ts。
+      - name: Scan sources for secrets
+        run: node ci/checkSecrets.ts
+
+  ui-gates:
+    name: UI gates
+    if: github.event_name == 'push' || github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v6
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      # 不需要 npm ci：只读 src/ 里的源码。
+      - name: Control library policy
+        run: npm run check:ui
+
+      - name: File size policy
+        run: npm run check:size

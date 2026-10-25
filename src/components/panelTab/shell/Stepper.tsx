@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Minus, Plus } from 'lucide-react';
 import { Tooltip, parseNumberText } from '../../modal/settings/kit';
+import { Button, TextField } from '../../ui';
 
 // src/components/panelTab/shell/Stepper.tsx
 // A number set in steps: a minus button, the number with its unit, a plus button. The number can be
@@ -34,9 +35,9 @@ export const Stepper: React.FC<StepperProps> = ({ value, onChange, step, label, 
         const name = `${direction === 1 ? '+' : '-'}${step}${unit}`;
         return (
             <Tooltip text={name} className="flex h-full">
-                <button type="button" aria-label={name} onClick={() => stepBy(direction)} className={STEP_BUTTON_CLASS}>
+                <Button aria-label={name} onClick={() => stepBy(direction)} className={STEP_BUTTON_CLASS}>
                     {direction === 1 ? <Plus size={14} /> : <Minus size={14} />}
-                </button>
+                </Button>
             </Tooltip>
         );
     };
@@ -44,7 +45,7 @@ export const Stepper: React.FC<StepperProps> = ({ value, onChange, step, label, 
     return (
         <span className="st-t-fast inline-flex h-8 shrink-0 items-center rounded-lg border border-transparent bg-[var(--st-fill)] transition-colors has-[input:focus]:border-[var(--st-accent)]">
             {stepButton(-1)}
-            <input
+            <TextField
                 type="text"
                 inputMode="numeric"
                 role="spinbutton"

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { Theme } from '../../../types';
 import type { CommandPaletteMatch } from '../types';
 import { readLibraryWallPick } from './libraryWallLookSurface';
+import { Button } from '../../ui';
 
 // src/components/command-palette/surfaces/LibraryWallPickerSurfaceView.tsx
 // bravais 透光两个 picker（档位、每块窗数）共用的列表：与资料库界面 picker 同一个外形（标题栏 + 默认样式的行），
@@ -67,10 +68,9 @@ const LibraryWallPickerSurfaceView: React.FC<LibraryWallPickerSurfaceViewProps> 
                 const value = readLibraryWallPick(match.command.id);
                 const isSelected = value === selectedValue;
                 return (
-                    <button
+                    <Button
                         key={match.command.id}
                         ref={isActive ? activeRowRef : undefined}
-                        type="button"
                         data-library-wall-pick={value}
                         data-picker-active={isActive ? 'true' : 'false'}
                         data-picker-selected={isSelected ? 'true' : 'false'}
@@ -99,7 +99,7 @@ const LibraryWallPickerSurfaceView: React.FC<LibraryWallPickerSurfaceViewProps> 
                                 {t('commandPalette.run', 'Run')}
                             </span>
                         )}
-                    </button>
+                    </Button>
                 );
             })}
         </div>

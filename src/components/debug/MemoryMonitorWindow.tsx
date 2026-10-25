@@ -10,6 +10,7 @@ import {
     getDebugModuleSnapshot,
     subscribeToDebugModule,
 } from '../../services/debug/debugModule';
+import { Button } from '../ui';
 
 // src/components/debug/MemoryMonitorWindow.tsx
 // The memory curve, live. Reads the store; owns no timer and no sampling of its own.
@@ -254,11 +255,10 @@ const MemoryMonitorWindow: React.FC<MemoryMonitorWindowProps> = ({ isDaylight, s
                             const isMissing = unavailable.has(series.key);
                             const isOn = !hidden.has(series.key) && !isMissing;
                             return (
-                                <button
+                                <Button
                                     key={series.key}
-                                    type="button"
                                     disabled={isMissing}
-                                    title={isMissing ? (t('options.memorySeriesUnavailable') || 'Not reported on this platform') : undefined}
+                                    tip={isMissing ? (t('options.memorySeriesUnavailable') || 'Not reported on this platform') : undefined}
                                     onClick={() => setHidden(previous => {
                                         const next = new Set(previous);
                                         if (isOn) next.add(series.key); else next.delete(series.key);
@@ -272,7 +272,7 @@ const MemoryMonitorWindow: React.FC<MemoryMonitorWindowProps> = ({ isDaylight, s
                                     />
                                     {series.label}
                                     {isMissing && <span className="opacity-60">·&nbsp;n/a</span>}
-                                </button>
+                                </Button>
                             );
                         })}
                     </div>

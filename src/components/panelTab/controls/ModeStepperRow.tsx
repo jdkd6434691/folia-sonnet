@@ -4,6 +4,7 @@ import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import QuickEffectPicker from '../QuickEffectPicker';
 import type { PictureState } from '../../modal/settings/kit';
 import { kitTransition, useKitReducedMotion } from '../../modal/settings/kit/motion';
+import { Button } from '../../ui';
 
 // src/components/panelTab/controls/ModeStepperRow.tsx
 // 「‹ 字形 说明/当前模式⌄ 主参数 ›」一行，其余参数放在下面一行、靠右和右端箭头对齐。箭头直接换到相邻模式，
@@ -91,9 +92,8 @@ const ModeStepperRow = <Value extends string>({
             <div className="flex items-center gap-1">
                 {renderStepButton(-1)}
 
-                <button
+                <Button
                     ref={triggerRef}
-                    type="button"
                     onClick={() => onOpenChange(!open)}
                     className={`st-t-fast st-focus-inside flex h-12 min-w-0 flex-1 items-center rounded-[10px] pl-1.5 pr-2 text-left transition-colors hover:bg-[var(--st-fill)] ${open ? 'bg-[var(--st-fill)]' : ''}`}
                     aria-label={caption}
@@ -119,7 +119,7 @@ const ModeStepperRow = <Value extends string>({
                             </span>
                         </span>
                     </motion.span>
-                </button>
+                </Button>
 
                 {aside && (
                     <motion.div

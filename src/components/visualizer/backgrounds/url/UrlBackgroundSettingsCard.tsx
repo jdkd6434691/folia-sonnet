@@ -3,6 +3,7 @@ import { Pencil, Plus, Trash2 } from 'lucide-react';
 import type { UrlBackgroundItem } from '../../../../types';
 import { normalizeUrlBackgroundUrl } from '../../../../utils/urlBackground';
 import { Button, Group, Row, Status, TextField, type SettingsGroupDef } from '../../../modal/settings/kit';
+import { Button as UiButton } from '../../../ui';
 
 // src/components/visualizer/backgrounds/url/UrlBackgroundSettingsCard.tsx
 // Manages the URL background list (add/edit/delete/select) as one group of the settings kit: a row
@@ -97,8 +98,7 @@ const UrlBackgroundSettingsCard: React.FC<UrlBackgroundSettingsCardProps> = ({
                 <Row
                     key={item.id}
                     label={(
-                        <button
-                            type="button"
+                        <UiButton
                             role="radio"
                             aria-checked={item.id === urlBackgroundSelectedId}
                             onClick={() => onSetUrlBackgroundSelectedId?.(item.id)}
@@ -112,7 +112,7 @@ const UrlBackgroundSettingsCard: React.FC<UrlBackgroundSettingsCardProps> = ({
                                 <span className="block truncate">{item.note}</span>
                                 <span className="block truncate text-xs leading-[18px] text-[color:var(--st-t2)]">{item.url}</span>
                             </span>
-                        </button>
+                        </UiButton>
                     )}
                 >
                     <Button icon={Pencil} tip={t('options.urlBackgroundEdit')} onClick={() => handleStartEdit(item)} />

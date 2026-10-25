@@ -5,6 +5,7 @@ import type { ModSecretsState } from '../types';
 import { readFoliumSecretsState, subscribeFoliumSecretChanges, writeFoliumSecret } from '../folium/secrets';
 import { resolveFoliumLabel } from './params';
 import type { FoliumParamFieldToken } from './FoliumParamFields';
+import { Button, TextField } from '../../components/ui';
 
 // src/mods/params/FoliumSecretField.tsx
 // The form row of a Folium 1.7 `secret` field in a mod's settings section: a masked input to type a new
@@ -87,7 +88,7 @@ export const FoliumSecretField: React.FC<FoliumSecretFieldProps> = ({ modId, par
                 ) : null}
             </div>
             <div className="flex items-center gap-2 min-w-0">
-                <input
+                <TextField
                     id={inputId}
                     type="password"
                     autoComplete="new-password"
@@ -105,25 +106,23 @@ export const FoliumSecretField: React.FC<FoliumSecretFieldProps> = ({ modId, par
                         }
                     }}
                 />
-                <button
-                    type="button"
+                <Button
                     className={buttonClass}
                     style={token.inputStyle}
                     disabled={disabled || busy || !trimmed}
                     onClick={save}
                 >
                     {t('options.modSecretSave')}
-                </button>
+                </Button>
                 {isSet ? (
-                    <button
-                        type="button"
+                    <Button
                         className={buttonClass}
                         style={token.inputStyle}
                         disabled={disabled || busy}
                         onClick={() => write(null)}
                     >
                         {t('options.modSecretClear')}
-                    </button>
+                    </Button>
                 ) : null}
             </div>
             {state && !state.persistent ? (

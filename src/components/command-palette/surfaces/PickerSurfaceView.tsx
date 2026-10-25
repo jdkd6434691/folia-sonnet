@@ -5,6 +5,7 @@ import type { Theme, VisualizerBackgroundMode, VisualizerMode } from '../../../t
 import { BackgroundModeGlyph, VisualizerModeGlyph } from '../../visualizer/modeGlyphs';
 import { getPickerModeLabel, readPickerMode } from '../commands/pickerOptions';
 import type { CommandPaletteMatch } from '../types';
+import { Button } from '../../ui';
 
 // src/components/command-palette/surfaces/PickerSurfaceView.tsx
 // Visualizer and background pickers. Both are lists, so they wear the palette's own list shape —
@@ -82,10 +83,9 @@ const PickerSurfaceView: React.FC<PickerSurfaceViewProps> = ({
                 const mode = readPickerMode(kind, match.command.id);
                 const isSelected = mode === currentMode;
                 return (
-                    <button
+                    <Button
                         key={match.command.id}
                         ref={isActive ? activeRowRef : undefined}
-                        type="button"
                         data-picker-mode={mode}
                         data-picker-active={isActive ? 'true' : 'false'}
                         data-picker-selected={isSelected ? 'true' : 'false'}
@@ -126,7 +126,7 @@ const PickerSurfaceView: React.FC<PickerSurfaceViewProps> = ({
                                 {t('commandPalette.run', 'Run')}
                             </span>
                         )}
-                    </button>
+                    </Button>
                 );
             })}
         </div>

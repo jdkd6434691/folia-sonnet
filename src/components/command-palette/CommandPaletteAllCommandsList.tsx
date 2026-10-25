@@ -4,6 +4,7 @@ import { List } from 'react-window';
 import type { Theme } from '../../types';
 import type { CommandPaletteCommand } from './types';
 import CommandPaletteAllCommandsRow, { ALL_COMMANDS_ROW_HEIGHT } from './CommandPaletteAllCommandsRow';
+import { Button } from '../ui';
 
 // src/components/command-palette/CommandPaletteAllCommandsList.tsx
 // 「全部命令」浏览列表，虚拟化版本。
@@ -49,14 +50,13 @@ const CommandPaletteAllCommandsList: React.FC<CommandPaletteAllCommandsListProps
     return (
         <div className="flex h-full min-h-0 flex-col">
             <div className="flex items-center gap-2 px-3 py-2 text-xs font-medium opacity-60">
-                <button
-                    type="button"
+                <Button
                     onClick={onBack}
                     className={`rounded-full p-1 transition-colors ${isDaylight ? 'hover:bg-black/10' : 'hover:bg-white/10'}`}
                     aria-label={t('commandPalette.backToSearch') || 'Back to search'}
                 >
                     <ArrowLeft size={14} />
-                </button>
+                </Button>
                 <span>{t('commandPalette.allCommands') || 'All commands'}</span>
                 <span className="ml-auto tabular-nums opacity-60">{commands.length}</span>
             </div>

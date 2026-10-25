@@ -1,0 +1,229 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/",
+      "handlerFile": "sync-server/src/app.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin",
+      "handlerFile": "sync-server/src/app.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/admin/api/ai-cache",
+      "handlerFile": "sync-server/src/aiCache.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/api/ai-cache",
+      "handlerFile": "sync-server/src/aiCache.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/api/ai-cache-backups/:id/restore",
+      "handlerFile": "sync-server/src/aiCache.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/api/ai-cache-backups/:kind/:key",
+      "handlerFile": "sync-server/src/aiCache.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/admin/api/ai-cache/:kind/:key",
+      "handlerFile": "sync-server/src/aiCache.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/api/ai-cache/:kind/:key",
+      "handlerFile": "sync-server/src/aiCache.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/admin/api/ai-cache/:kind/:key",
+      "handlerFile": "sync-server/src/aiCache.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/api/ai-cache/resolve",
+      "handlerFile": "sync-server/src/aiCache.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/api/ai-cache/songs",
+      "handlerFile": "sync-server/src/aiCache.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/api/fonts",
+      "handlerFile": "sync-server/src/fonts.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/api/fonts",
+      "handlerFile": "sync-server/src/fonts.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/admin/api/fonts/:id",
+      "handlerFile": "sync-server/src/fonts.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/admin/api/fonts/:id",
+      "handlerFile": "sync-server/src/fonts.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/api/stats",
+      "handlerFile": "sync-server/src/app.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/api/stats.svg",
+      "handlerFile": "sync-server/src/statsImage.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/cache/:kind/:key",
+      "handlerFile": "sync-server/src/adminCachePages.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/cache/backups/:id",
+      "handlerFile": "sync-server/src/adminCachePages.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/cache/backups/:id/restore",
+      "handlerFile": "sync-server/src/adminCachePages.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/login",
+      "handlerFile": "sync-server/src/admin.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/logout",
+      "handlerFile": "sync-server/src/admin.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/session",
+      "handlerFile": "sync-server/src/admin.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/ai-cache/:kind/:key",
+      "handlerFile": "sync-server/src/aiCache.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/ai-cache/:kind/:key",
+      "handlerFile": "sync-server/src/aiCache.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/ai-cache/resolve",
+      "handlerFile": "sync-server/src/aiCache.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/ai-cache/songs",
+      "handlerFile": "sync-server/src/aiCache.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/fonts",
+      "handlerFile": "sync-server/src/fonts.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/fonts/:id/file",
+      "handlerFile": "sync-server/src/fonts.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/fonts/:id/preview",
+      "handlerFile": "sync-server/src/fonts.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/stage-gallery/search",
+      "handlerFile": "sync-server/src/stageGallery.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/favicon.ico",
+      "handlerFile": "sync-server/src/app.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/favicon.svg",
+      "handlerFile": "sync-server/src/app.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/health",
+      "handlerFile": "sync-server/src/app.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/settings",
+      "handlerFile": "sync-server/src/app.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/settings",
+      "handlerFile": "sync-server/src/app.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/settings/confirmation",
+      "handlerFile": "sync-server/src/app.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/stage",
+      "handlerFile": "sync-server/src/stageGallery.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/stage/entry/:key",
+      "handlerFile": "sync-server/src/stageGallery.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/state",
+      "handlerFile": "sync-server/src/app.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/themes/bucket",
+      "handlerFile": "sync-server/src/app.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/themes/get",
+      "handlerFile": "sync-server/src/app.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/themes/list",
+      "handlerFile": "sync-server/src/app.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/themes/manifest",
+      "handlerFile": "sync-server/src/app.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/themes/put",
+      "handlerFile": "sync-server/src/app.ts"
+    }
+  ]
+}

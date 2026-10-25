@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Volume1, Volume2, VolumeX } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { Theme } from '../../types';
+import { TextField } from '../ui';
 
 // src/components/command-palette/CommandPaletteVolumeControl.tsx
 // Keeps drag previews local and commits the persisted player volume only when interaction finishes.
@@ -95,7 +96,7 @@ const CommandPaletteVolumeControl: React.FC<CommandPaletteVolumeControlProps> = 
                     </div>
                 </div>
 
-                <input
+                <TextField
                     type="range"
                     min="0"
                     max="1"

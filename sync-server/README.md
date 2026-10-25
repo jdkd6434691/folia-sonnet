@@ -235,7 +235,7 @@ SYNC_TOKEN="你的_SYNC_TOKEN"
 # 选填：网页看板访问 Token (至少 16 位)
 DASHBOARD_TOKEN="你的_DASHBOARD_TOKEN"
 
-# 选填：可视化面板 /admin 的登录凭据（不填就用出厂那一组，两个都要给才生效）
+# 选填：显式启用 /admin；两项必填，密码去掉两端空白后至少 16 字符，否则面板关闭
 ADMIN_USERNAME="你的账号"
 ADMIN_PASSWORD="你的密码"
 ```
@@ -275,7 +275,7 @@ PORT=3000
 # 选填：SQLite 数据库保存路径（默认在当前目录生成 folia-sync.db）
 DB_PATH="./folia-sync.db"
 
-# 选填：可视化面板 /admin 的登录凭据（不填就用出厂那一组，两个都要给才生效）
+# 选填：显式启用 /admin；两项必填，密码去掉两端空白后至少 16 字符，否则面板关闭
 ADMIN_USERNAME="你的账号"
 ADMIN_PASSWORD="你的密码"
 ```
@@ -309,7 +309,8 @@ http://127.0.0.1:13000
 | --- | --- | --- | --- |
 | `GET` | `/health` | 无 | 连通性和 schema 版本检查 |
 | `GET` | `/state` | Bearer | 读取设置/主题更新时间和主题数量 |
-| `GET` / `PUT` | `/settings` | Bearer | 读取或按时间戳更新视觉设置快照 |
+| `GET` / `PUT` | `/settings` | Bearer | 读取视觉设置；旧客户端按时间戳写，新客户端按 revision CAS 写 |
+| `GET` | `/settings/confirmation` | Bearer | 读取 `settings-cas-v1` 快照与 opaque revision（禁止缓存） |
 | `GET` | `/themes/manifest` | Bearer | 读取 256 个主题 bucket 摘要 |
 | `POST` | `/themes/get` | Bearer | 按稳定 fingerprint 读取主题 |
 | `POST` | `/themes/put` | Bearer | 批量写入主题，旧时间戳不会覆盖新记录 |
@@ -331,6 +332,14 @@ http://127.0.0.1:13000
 字体文件**只能由后台管理人员上传**，上传时在管理员浏览器里用 canvas 把预览图烤成 PNG 一并存库，所以客户端列目录时只需要几 KB 的预览图，几 MB 的字体本体只有点「使用」那一刻才会下载。
 
 客户端是本地优先的：AI 主题和主题同步 registry 保存在本机 IndexedDB，启动时会自动做主题同步；视觉设置的拉取/推送、完整 sync library 的 zip 导入导出由存储设置页面或命令面板触发。主题 registry 从旧 localStorage 迁移到 IndexedDB 时会执行一次性兼容迁移。
+
+视觉设置确认协议（增量扩展，不降低 `/health`、`/state`、manifest 的 wire version **2**）：
+
+- `/settings/confirmation` 返回 `{ protocol: 'settings-cas-v1', revision, record }`；空库两者为 `null`。revision 为现有行完整 JSON 和时间戳的 SHA-256，不是客户端时钟；同 timestamp 不同内容也会改变 revision。
+- 新客户端向 `PUT /settings` 的原有 record 添加 `expectedRevision`（空库为 `null`）。服务端比较 revision，并以单条 SQLite/D1 `UPDATE ... WHERE value_json = ? AND updated_at = ? RETURNING ...` 或空库 `INSERT ... ON CONFLICT DO NOTHING RETURNING ...` 确认实际写入；竞争返回 **409**，不自动覆盖重试。成功返回 `accepted: true`、本次完整 record、revision；客户端检查 payload 后才保存同步基准。服务端为兼容旧读者生成单调 `updatedAt`，正确性不依赖设备时钟。
+- 无数据库迁移、无新列；要求宿主 SQLite/D1 支持 `RETURNING`。旧客户端不带 `expectedRevision` 时保持原时间戳 LWW 行为和 `{ok:true}` 响应（包括旧请求可能 no-op 的历史行为）；其局限并未被新协议追溯修复；旧 LWW writer 在 CAS 成功之后仍可按它的时间戳覆盖新记录，混用期间不能保证所有客户端都遵守冲突决议。settings payload 接受 **1 / 2**，修复此前客户端导出1、服务端要求2的既有不一致；客户端读 parser 接受两者，导出仍保留1以兼容既有文件。
+- **先升级服务端，再升级客户端**。新客户端连接没有 confirmation 端点的旧服务端会明确失败，不退回盲写/盲 ACK；主题同步仍可单独使用。首次没有已确认基准时保守提示冲突，不用旧 timestamp 猜测本地是否改过；显式保留本地也受 CAS 保护。冲突窗口打开后云端又变更，需要重新选择。
+- 本地仅导入或导入推送失败都保留 dirty 状态；不会把备份文件日期当作云端同步证据。推送期间的本地编辑不会被记为已同步。基准按 `[enabled, URL, token]` 的 SHA-256 隔离（不存明文 token）；切换 URL/凭据后需要建立新基准，旧冲突选择也不能跨配置复用。此修复不包含旧服务端 schema 初始化/batch 的事务缺陷，部署时建议同时合入独立的 P06 修复；本协议的 CAS 写入本身只用单条 SQL，不依赖 batch。
 
 服务端实现位于 `src/app.ts`，Node 入口位于 `src/node.ts`，Cloudflare 入口位于 `src/cloudflare.ts`；`src/d1-emulator.ts` 为 Node 环境提供 D1 兼容实现。三种部署方式共用同一套路由和 D1/SQLite 兼容的数据访问模型。Cloudflare 配置模板是 `wrangler.toml`，安装脚本生成的 `wrangler.local.toml` 不应提交。
 
@@ -371,27 +380,19 @@ http://127.0.0.1:13000
 
 **访问地址**：`http://你的服务域名/admin`
 
-**出厂账号密码**：
+**默认关闭，没有内置账号或密码。** Node 环境变量或 Workers secrets 必须同时配置 `ADMIN_USERNAME` 和 `ADMIN_PASSWORD`；用户名不能为空，密码去掉两端空白后至少 16 字符（实际验证密码仍保留空白）。缺失、空值或不足门槛时，所有 `/admin` 页面/API 返回 `503 admin_not_configured`，同步与公开缓存/字体接口不受此门槛影响。示例密码只是占位，部署时请使用随机长密码。
 
-| 项目 | 默认值 |
-| --- | --- |
-| 账号 | `maimai993` |
-| 密码 | `IgFXYJPHtEB9eog6TqYRhjk6` |
+```env
+ADMIN_USERNAME="你的账号"
+ADMIN_PASSWORD="请换成至少16字符的随机长密码"
+```
+
+升级时自动给 `admin_sessions` 增加可空 `credential_tag` 列，不删除现有数据，也不改变对外 schema version 2。旧版没有标签的 session 无法继续登录，用户需要重新登录。轮换用户名或密码也会使旧 session 失效。先备份数据库再升级，Node 与 Workers 都要更新实际生效的环境配置；多副本需要同步轮换配置并滚动更新，尚未更新的旧进程仍按旧配置运行。
+
+浏览器只持有 HttpOnly、SameSite=Lax cookie，HTTPS 时带 Secure；有效期 12 小时，剩余不足 10 小时且访问面板时续期；退出删除 session。所有管理响应 `Cache-Control: no-store`，不提供跨源 CORS，写操作拒绝不同 Origin 或 cross-site Fetch Metadata。无 Origin 的非浏览器管理脚本仍需正常登录 cookie。
 
 > [!WARNING]
-> 这是**写在源码里的出厂凭据**，仓库公开 = 谁都看得到。它只保证「服务起得来就能登进去」，
-> **部署到公网前必须换成自己的**：
->
-> ```env
-> ADMIN_USERNAME="你的账号"
-> ADMIN_PASSWORD="你的密码"
-> ```
->
-> 环境变量一旦只配了一个（比如只配了账号），另一项仍会回落到出厂值，等于没换 ——
-> 两个都要给。还在用出厂值时，启动日志会打一条黄色警告，登录后的面板顶部也会挂一条提醒。
->
-> 登录态存在服务端的 `admin_sessions` 表里，浏览器只持有一个 httpOnly cookie，有效期 12 小时，
-> 剩余不足 10 小时且仍在活跃使用时自动续期；退出登录即从库中删除该条 session。
+> 公网部署必须使用 HTTPS，并在反向代理/WAF 配置登录限流与访问控制。16 字符门槛不是密码强度检测，本服务没有分布式抗暴力破解保证。HTTPS 反向代理转发到 HTTP Node 时，显式配置 `ADMIN_PUBLIC_ORIGIN="https://你的公开服务域名"`（只允许 HTTP(S) origin，无路径/账号/查询参数），使同源校验与 Secure cookie 使用公开地址。未配置则使用收到请求的 origin；格式错误会关闭管理入口。服务不信任客户端提供的 X-Forwarded-* 头来决定授权 origin。Workers 可在 vars 中配置同名值。
 
 面板有两个页签：
 
@@ -428,6 +429,8 @@ http://127.0.0.1:13000
 **二、盖掉了也能捞回来：覆盖前留旧版**
 
 每次覆盖之前，旧的那版整条存进 `ai_cache_backups`，**每个键最多 10 份**（超了删最旧的）。管理员在 `/admin/api/ai-cache-backups/:kind/:key` 能翻旧版，挑一版 `POST /:id/restore` 捞回来 —— 捞的时候当前那条也会先存进备份，捞错还能再捞。
+
+归档、裁剪旧备份、替换当前值在同一个 D1/SQLite batch 中执行；恢复时读取并删除所选备份也在同一批次中，裁剪不会提前删除所选版本。备份若已被另一次恢复消费或删除，返回 `404 not_found`，不再写入当前值或备份。任一步失败都会回滚整批，不会吞掉备份错误后继续覆盖。单条 payload 的 `64KB` 上限按 JSON 序列化后的 UTF-8 字节数（`65536` bytes）计算，`payloadBytes` 返回同一字节数，不按 JavaScript 字符串长度计数。
 
 **关于平台名字段**
 

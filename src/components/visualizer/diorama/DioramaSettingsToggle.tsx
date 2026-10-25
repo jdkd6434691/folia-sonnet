@@ -1,6 +1,7 @@
 import React from 'react';
 import { type Theme } from '../../../types';
 import { colorWithAlpha } from '../../../utils/visualizer/colorMix';
+import { Button } from '../../ui';
 
 // src/components/visualizer/diorama/DioramaSettingsToggle.tsx
 // Shared accessible switch used by Diorama's collapsible setting groups.
@@ -21,8 +22,7 @@ export const DioramaSettingsToggle: React.FC<DioramaSettingsToggleProps> = ({
     theme,
     isDaylight,
 }) => (
-    <button
-        type="button"
+    <Button
         role="switch"
         aria-checked={checked}
         aria-label={label}
@@ -44,5 +44,5 @@ export const DioramaSettingsToggle: React.FC<DioramaSettingsToggleProps> = ({
                 boxShadow: `0 2px 8px ${colorWithAlpha(theme.backgroundColor, 0.35)}`,
             }}
         />
-    </button>
+    </Button>
 );

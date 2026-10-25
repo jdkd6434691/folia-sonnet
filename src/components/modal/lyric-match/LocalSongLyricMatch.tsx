@@ -18,6 +18,7 @@ import { useConfirmDialog } from '../../shared/useConfirmDialog';
 import { LyricMatchWindow } from './LyricMatchWindow';
 import { getLocalSongMatchFailureKey, saveLocalSongMatch, saveLocalSongNoMatch } from './localSongMatch';
 import { useLyricMatchSearch } from './useLyricMatchSearch';
+import { Button } from '@/components/ui';
 
 // src/components/modal/lyric-match/LocalSongLyricMatch.tsx
 // The lyric match window for a local file. Only a local file has the three switches: a result
@@ -149,17 +150,17 @@ const LocalSongLyricMatch: React.FC<LocalSongLyricMatchProps> = ({ song, onClose
     const switchOff = isDaylight ? 'text-zinc-500' : 'text-zinc-400';
     // One of the three switches: a dot and its name.
     const dotSwitch = (label: string, isOn: boolean, onToggle: () => void, disabled?: boolean) => (
-        <button
+        <Button
             onClick={onToggle}
             disabled={disabled}
             className="flex items-center gap-1.5 group disabled:opacity-40 disabled:cursor-not-allowed"
-            title={label}
+            tip={label}
         >
             <div className={`w-2 h-2 rounded-full transition-all duration-200 ${isOn ? dotActive + ' shadow-sm shadow-blue-400/50' : dotBase} group-hover:scale-150`} />
             <span className={`text-[11px] ${isOn ? switchOn : switchOff} transition-colors`}>
                 {label}
             </span>
-        </button>
+        </Button>
     );
     const resultHasCover = sourceSupportsCover(source, selectedResult);
     // A source with no song metadata of its own (AMLL DB) leaves the song's names as they are.
@@ -200,8 +201,7 @@ const LocalSongLyricMatch: React.FC<LocalSongLyricMatchProps> = ({ song, onClose
             onSave={save}
             noMatch={{ label: t('localMusic.dontUseOnlineMetadata'), run: saveNoMatch }}
             footerActions={(
-                <button
-                    type="button"
+                <Button
                     onClick={() => void togglePureMusicMark()}
                     disabled={isMarkingPureMusic}
                     aria-pressed={Boolean(song.markedPureMusic)}
@@ -210,7 +210,7 @@ const LocalSongLyricMatch: React.FC<LocalSongLyricMatchProps> = ({ song, onClose
                 >
                     {isMarkingPureMusic ? <Loader2 className="animate-spin" size={14} /> : <Piano size={14} />}
                     {t(song.markedPureMusic ? 'localMusic.unmarkPureMusic' : 'localMusic.markPureMusic')}
-                </button>
+                </Button>
             )}
         >
             {confirmDialog}
