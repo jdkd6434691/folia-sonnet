@@ -19,7 +19,7 @@ import { BackgroundModeGlyph } from '../../visualizer/modeGlyphs';
 import { panelMakesImages, panelPictureTheme } from './panelPictures';
 import BackgroundPicture from '../../visualizer/preview/BackgroundPicture';
 import { LyricPreviewProvider, type LyricPreviewLook } from '../../visualizer/preview/LyricPreviewContext';
-import { drawLyricStyleChoice, drawLyricStyleChoiceGlyph, RANDOM_VISUALIZER_CHOICE, selectLyricStyleChoice } from '../../visualizer/random/lyricStyleChoices';
+import { drawLyricStyleChoiceTile, drawLyricStyleChoiceGlyph, RANDOM_VISUALIZER_CHOICE, selectLyricStyleChoice } from '../../visualizer/random/lyricStyleChoices';
 import RandomPoolPicker from '../../visualizer/random/RandomPoolPicker';
 import { useRandomPool } from '../../visualizer/random/useRandomPool';
 import { usePreviewClock } from '../../visualizer/preview/usePreviewClock';
@@ -39,8 +39,11 @@ import { Toggle, type PictureState } from '../../modal/settings/kit';
 // 前两行是「‹ 字形 当前模式 ›」取景器：歌词样式的动画强度在按钮右侧，分词开关和背景参数在按钮下面一行，
 // 没有就收起；背景的模式专属参数由背景注册表自己提供，
 // 面板不再按模式写 if 链，新增背景模式会自带快捷控件。
-// 行里只有字形；点开后的一格一格小图画的是真的样式和背景，用的是当前主题和已保存的设置；
-// 它们共用这里的一个预览时钟，只有某一行的选择器开着时时钟才走。
+// 行里只有字形；点开后的格子：歌词样式那一行画的是样式的字形（一行四张，二十来个样式一屏摆下），
+// 背景那一行画的是真的背景小图（三张一行），用的是当前主题和已保存的设置。
+// 样式格不画实时画面，是因为面板一次要摆二十来个，而小图是全页一张一张做的，二十来个要等十几秒
+// （drawLyricStyleChoiceTile 里写了原委）；要看清效果点底部「更多设置」进歌词样式窗口看大预览。
+// 预览时钟与做图只在背景那一行的选择器开着时才有意义。
 // 歌在放的时候，只有选择器开着才做小图，换歌带来的新主题也要等下一次打开选择器才用上（panelPictures.ts）。
 // 歌词样式选「随机」时，下面一行是这首歌抽到的样式和「选择随机池」：前者点一下从随机池里另抽一种，后者打开随机池的多选层（RandomPoolPicker.tsx），
 // 那里每格只画样式的字形、不画小图，所以它开着时时钟不走，也不做小图。
@@ -111,11 +114,11 @@ const AppearanceSection: React.FC<AppearanceSectionProps> = ({
     );
     const resolvedBackgroundMode = resolveVisualizerBackgroundMode(visualizerBackgroundMode, visualizerMode);
 
-    // Which row's picker is open, if any (the random pool's is the style row's second one). The
-    // pictures' clock runs only while one of the two rows' pictures is open: a picture moves only
-    // while the pointer rests on it in an open picker. The pool's layer draws glyphs, no pictures.
+    // Which row's picker is open, if any (the random pool's is the style row's second one). Only the
+    // background row draws pictures now, so its clock runs only while its own picker is open: a
+    // picture moves only while the pointer rests on it there. The style row and the pool draw glyphs.
     const [openPicker, setOpenPicker] = useState<'style' | 'pool' | 'background' | null>(null);
-    const picturesOpen = openPicker === 'style' || openPicker === 'background';
+    const picturesOpen = openPicker === 'background';
     const poolChipRef = useRef<HTMLButtonElement>(null);
     const isPlaying = usePlaybackStore(state => selectDisplayPlayerState(state) === PlayerState.PLAYING);
     const pageTheme = useMemo<PictureTheme>(() => ({ theme, isDaylight }), [theme, isDaylight]);
@@ -127,7 +130,7 @@ const AppearanceSection: React.FC<AppearanceSectionProps> = ({
     }
     const changeOpenPicker = (next: 'style' | 'pool' | 'background' | null) => {
         setOpenPicker(next);
-        if (next === 'style' || next === 'background') {
+        if (next === 'background') {
             setPictureTheme(held => panelPictureTheme(held, pageTheme, { playing: isPlaying, pickerOpens: true }));
         }
         if (next !== null) {
@@ -214,18 +217,21 @@ const AppearanceSection: React.FC<AppearanceSectionProps> = ({
                     background={pictureBackground}
                     making={panelMakesImages({ playing: isPlaying, pickerOpen: picturesOpen })}
                 >
+                    {/* 歌词样式的格子只画字形：二十来个样式一屏摆下，实时小图要全页排队画十几秒（见 drawLyricStyleChoiceTile）。 */}
                     <ModeStepperRow<VisualizerMode>
                         value={randomEnabled ? RANDOM_VISUALIZER_CHOICE : visualizerMode}
                         options={visualizerOptions}
                         onSelect={mode => selectLyricStyleChoice(mode, onVisualizerModeChange)}
                         onStep={stepVisualizerMode}
                         renderGlyph={drawLyricStyleChoiceGlyph}
-                        renderPicture={drawLyricStyleChoice}
+                        renderPicture={drawLyricStyleChoiceTile}
                         caption={t('ui.animationMode')}
                         moreLabel={t('ui.moreSettings')}
                         onOpenMore={openVisualizerSettings}
                         open={openPicker === 'style'}
                         onOpenChange={open => changeOpenPicker(open ? 'style' : null)}
+                        pictureColumns={4}
+                        pictureMaxHeight={480}
                         aside={(
                             <QuickControlChip
                                 label={t(`animation.${theme.animationIntensity}`)}

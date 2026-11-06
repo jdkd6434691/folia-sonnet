@@ -37,6 +37,9 @@ interface ModeStepperRowProps<Value extends string> {
     /** Whether the row's picker is open; the section keeps it, so one clock serves both rows' pictures. */
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    /** 小图一行放几张、最高多高：样式有二十来个，比背景密一些、高一些。 */
+    pictureColumns?: number;
+    pictureMaxHeight?: number;
 }
 
 const ModeStepperRow = <Value extends string>({
@@ -53,6 +56,8 @@ const ModeStepperRow = <Value extends string>({
     onOpenMore,
     open,
     onOpenChange,
+    pictureColumns,
+    pictureMaxHeight,
 }: ModeStepperRowProps<Value>) => {
     const canStep = options.length > 1;
     const reduced = useKitReducedMotion();
@@ -172,6 +177,8 @@ const ModeStepperRow = <Value extends string>({
                 label={caption}
                 moreLabel={moreLabel}
                 onOpenMore={onOpenMore}
+                columns={pictureColumns}
+                maxHeight={pictureMaxHeight}
             />
         </div>
     );

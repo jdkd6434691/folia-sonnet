@@ -1,15 +1,19 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+    MACHI_GYRO_FLAT,
     MACHI_GYRO_RANGE,
     machiGyroSupported,
     machiScreenAngle,
     machiScreenOffsets,
+    machiTiltDegrees,
+    nextMachiFlat,
     requestMachiGyroPermission,
     subscribeMachiGyro,
 } from '@/components/visualizer/machi/gyro';
 
 // test/unit/visualizer/machi/gyro.test.ts
-// 町景陀螺仪读数：相对按下开关那一刻的偏移、夹在范围内、没有 DeviceOrientationEvent 时静静地什么都不做。
+// 町景陀螺仪读数：相对按下开关那一刻的偏移、夹在范围内、没有 DeviceOrientationEvent 时静静地什么都不做；
+// 手机平放到桌面上时把偏移交回零（镜头回正），搁着不动不跟着桌面上的抖动抽搐，拿起来又从新姿态起算。
 
 /** 造一个假 window，装上 DeviceOrientationEvent 与事件收发。 */
 const fakeWindow = (permission?: () => Promise<string>) => {
@@ -90,14 +94,15 @@ describe('machi gyro', () => {
         const target = fakeWindow();
         const seen: { azimuth: number }[] = [];
         subscribeMachiGyro(offsets => seen.push(offsets));
-        target.dispatch('deviceorientation', { beta: 0, gamma: 0 });
-        target.dispatch('deviceorientation', { beta: 0, gamma: 5 });
+        // 举着看（否则下面这些角度只是「放在桌上」，那是另一条路，见平放的用例）。
+        target.dispatch('deviceorientation', { beta: 60, gamma: 0 });
+        target.dispatch('deviceorientation', { beta: 60, gamma: 5 });
         expect(seen).toHaveLength(1);
         target.dispatch('orientationchange', {});
         // 转屏后第一条读数重新当基准，画面不会跳。
-        target.dispatch('deviceorientation', { beta: 30, gamma: -20 });
+        target.dispatch('deviceorientation', { beta: 60, gamma: -20 });
         expect(seen).toHaveLength(1);
-        target.dispatch('deviceorientation', { beta: 30, gamma: -22 });
+        target.dispatch('deviceorientation', { beta: 60, gamma: -22 });
         expect(seen[1]!.azimuth).toBeCloseTo(-2 * DEGREE, 6);
     });
 
@@ -105,12 +110,12 @@ describe('machi gyro', () => {
         const target = fakeWindow();
         const seen: { azimuth: number; elevation: number }[] = [];
         subscribeMachiGyro(offsets => seen.push(offsets));
-        target.dispatch('deviceorientation', { beta: 0, gamma: 0 });
+        target.dispatch('deviceorientation', { beta: 60, gamma: 0 });
         // 转到远超范围：夹在上限。
-        target.dispatch('deviceorientation', { beta: 0, gamma: 40 });
+        target.dispatch('deviceorientation', { beta: 60, gamma: 40 });
         expect(seen[0]!.azimuth).toBeCloseTo(MACHI_GYRO_RANGE.azimuth, 6);
         // 停在极限上转回来：必须跟着回，不能卡住。
-        target.dispatch('deviceorientation', { beta: 0, gamma: 2 });
+        target.dispatch('deviceorientation', { beta: 60, gamma: 2 });
         expect(seen[1]!.azimuth).toBeCloseTo(2 * DEGREE, 6);
     });
 
@@ -176,14 +181,63 @@ describe('machi gyro', () => {
         (target as unknown as { screen: unknown }).screen = { orientation: { angle: 90 } };
         const seen: { azimuth: number; elevation: number }[] = [];
         subscribeMachiGyro(offsets => seen.push(offsets));
-        target.dispatch('deviceorientation', { beta: 0, gamma: 0 });
+        target.dispatch('deviceorientation', { beta: 60, gamma: 0 });
         // 横屏下左右倾（设备坐标是 beta）：屏幕上是左右转。
-        target.dispatch('deviceorientation', { beta: 5, gamma: 0 });
+        target.dispatch('deviceorientation', { beta: 65, gamma: 0 });
         expect(seen[0]!.azimuth).toBeCloseTo(-5 * DEGREE, 6);
         expect(seen[0]!.elevation).toBeCloseTo(0, 6);
         // 横屏下上下倾（设备坐标是 gamma）：屏幕上是俯仰。
-        target.dispatch('deviceorientation', { beta: 5, gamma: 4 });
+        target.dispatch('deviceorientation', { beta: 65, gamma: 4 });
         expect(seen[1]!.azimuth).toBeCloseTo(-5 * DEGREE, 6);
         expect(seen[1]!.elevation).toBeCloseTo(4 * DEGREE, 6);
+    });
+
+    it('reads the tilt of the screen off the vertical, whichever way it is turned', () => {
+        // 0° 正面朝上平放、180° 正面朝下平放、90° 举着看。
+        expect(machiTiltDegrees(0, 0)).toBeCloseTo(0, 6);
+        expect(machiTiltDegrees(180, 0)).toBeCloseTo(180, 6);
+        expect(machiTiltDegrees(90, 0)).toBeCloseTo(90, 6);
+        expect(machiTiltDegrees(0, 90)).toBeCloseTo(90, 6);
+        expect(machiTiltDegrees(45, 0)).toBeCloseTo(45, 6);
+        // beta / gamma 说的是设备自己的姿态，与屏幕横竖无关。
+        for (const [beta, gamma] of [[0, 0], [90, 0], [30, 20], [-60, 35]]) {
+            const angle = machiTiltDegrees(beta, gamma);
+            expect(angle).toBeGreaterThanOrEqual(0);
+            expect(angle).toBeLessThanOrEqual(180);
+        }
+    });
+
+    it('keeps a band of hysteresis between being set down and being picked up', () => {
+        const between = (MACHI_GYRO_FLAT.enterDeg + MACHI_GYRO_FLAT.leaveDeg) / 2;
+        expect(nextMachiFlat(false, MACHI_GYRO_FLAT.enterDeg - 1)).toBe(true);
+        expect(nextMachiFlat(false, MACHI_GYRO_FLAT.enterDeg + 1)).toBe(false);
+        expect(nextMachiFlat(true, MACHI_GYRO_FLAT.leaveDeg - 1)).toBe(true);
+        expect(nextMachiFlat(true, MACHI_GYRO_FLAT.leaveDeg + 1)).toBe(false);
+        // 两个阈值之间状态不动，手机停在边界上时不会来回翻。
+        expect(nextMachiFlat(false, between)).toBe(false);
+        expect(nextMachiFlat(true, between)).toBe(true);
+    });
+
+    it('hands the shot back to rest when the phone is set down, and stays put while it lies there', () => {
+        const target = fakeWindow();
+        const seen: { azimuth: number; elevation: number }[] = [];
+        subscribeMachiGyro(offsets => seen.push(offsets));
+        // 举着看：基准。
+        target.dispatch('deviceorientation', { beta: 80, gamma: 0 });
+        target.dispatch('deviceorientation', { beta: 80, gamma: 6 });
+        expect(seen.at(-1)!.azimuth).toBeCloseTo(6 * DEGREE, 6);
+        // 放到桌面上：偏移交回零，镜头才回得去（以前这里会被夹成 −6° 的俯视，一直低着头）。
+        target.dispatch('deviceorientation', { beta: 4, gamma: 2 });
+        expect(seen.at(-1)).toEqual({ azimuth: 0, elevation: 0 });
+        // 桌面上的读数本来就乱跳，搁着不动就不再跟着抽搐。
+        for (const [beta, gamma] of [[6, -14], [1, 11], [3, -9]]) {
+            target.dispatch('deviceorientation', { beta, gamma });
+            expect(seen.at(-1)).toEqual({ azimuth: 0, elevation: 0 });
+        }
+        // 拿起来：以这一刻为新基准，镜头不跳，随后照常跟着倾斜。
+        target.dispatch('deviceorientation', { beta: 82, gamma: 3 });
+        expect(seen.at(-1)).toEqual({ azimuth: 0, elevation: 0 });
+        target.dispatch('deviceorientation', { beta: 82, gamma: 5 });
+        expect(seen.at(-1)!.azimuth).toBeCloseTo(2 * DEGREE, 6);
     });
 });

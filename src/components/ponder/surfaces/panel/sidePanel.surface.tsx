@@ -308,7 +308,7 @@ const ControlsPage: React.FC<Paint> = paint => (
 );
 
 /**
- * 点歌词样式那一行中间那颗按钮弹出来的一格图：三列，底下一条是通往完整设置的出口。
+ * 点歌词样式那一行中间那颗按钮弹出来的一格图：四列，底下一条是通往完整设置的出口。
  *
  * 这一层整块替换面板，所以它得先把控制页原样画回来 —— 那一格图是压在这一页上的一块浮层，
  * 不是一页新内容。被点开的那颗按钮留在它上方。
@@ -321,8 +321,9 @@ const ModeListPage: React.FC<Paint> = ({ accent, line, outline }) => (
             className="rounded-xl"
             style={{ ...relativeRectStyle(C.modeList), backgroundColor: 'var(--st-menu)', boxShadow: `inset 0 0 0 1px ${outline}` }}
         >
-            <span className="absolute inset-x-[5%] top-[6%] grid h-[62%] grid-cols-3 grid-rows-2 gap-[5%]">
-                {[0, 1, 2, 3, 4, 5].map(index => (
+            {/* 一格一格的小图：歌词样式那一行一行四张（见 QuickEffectPicker 的 columns），这里只画两排示意。 */}
+            <span className="absolute inset-x-[5%] top-[6%] grid h-[62%] grid-cols-4 grid-rows-2 gap-[5%]">
+                {[0, 1, 2, 3, 4, 5, 6, 7].map(index => (
                     <span key={index} data-ponder-panel-mode-option className="flex flex-col gap-1">
                         <span
                             className="min-h-0 flex-1 rounded-md"

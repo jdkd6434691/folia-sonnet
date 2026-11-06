@@ -2257,7 +2257,7 @@ export default {
     "machiGlow": "Glow and streaks",
     "machiGlowHint": "The halo around lights and signs at night, and the horizontal lens streaks.",
     "machiGyro": "Gyroscope tilt",
-    "machiGyroHint": "Tip the phone left or right and the camera leans with it, like handheld footage; hold it still and the shot stays put.",
+    "machiGyroHint": "Tip the phone left or right and the camera leans with it, like handheld footage; set it down flat and the shot glides back to the framing instead of drifting with the table.",
     "machiGyroUnsupported": "This device reports no motion data, so it cannot be turned on.",
     "machiLevelHigh": "High",
     "machiLevelLow": "Low",

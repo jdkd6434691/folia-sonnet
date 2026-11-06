@@ -80,7 +80,7 @@ App / ThemePark / VisPlayground / OBS source
 
 - 发现和挂载：`registry.tsx` 按 `foo/entry.tsx` 找到它，`tuningRegistry.ts` 按 `foo/tuning.ts` 找到 tuning。
 - 背景、视频层和整体透明度：`VisualizerBackdrop.tsx` 画，换样式时留着；渲染器不用画它们。
-- 选择器、命令面板的样式命令、小图标、预览图：都从 registry 读。预览图由 `preview/LyricStylePicture.tsx` 用真的样式现画，不用准备图片。
+- 选择器、命令面板的样式命令、小图标、预览图：都从 registry 读。预览图由 `preview/LyricStylePicture.tsx` 用真的样式现画，不用准备图片。播放面板的那一行是例外：一屏要摆二十来个样式，实时小图得全页一张张排着画（`preview/pictureTurns.ts`），十几秒才轮完，所以那边每格只画字形（`drawLyricStyleChoiceTile`）；要看画面点底部「更多设置」进歌词样式窗口。
 - 设置仓库：`useVisualizerSettingsStore` 和 `visualizerSettingsPersistence.ts` 按 `tuning.ts` 的声明生成字段和改、恢复默认两个动作。歌词样式窗口的草稿、保存和「默认」也是通用的（`window/useTuningDrafts.ts`）。
 - 导出、导入、同步、OBS：tuning 随 `visualizerTunings` 这一个字段走，不要加新字段（`test/unit/visualizer/tuningBundleTransport.test.ts` 按目录找 `tuning.ts`，新样式不用改它）。
 - `test/unit/visualizer/builtinModeLists.test.ts`：做了第 2 步就会通过。

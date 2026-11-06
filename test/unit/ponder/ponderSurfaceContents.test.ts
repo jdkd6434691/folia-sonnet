@@ -258,8 +258,8 @@ describe('PonderSurfaceContents', () => {
         const markup = renderSurface('side-panel');
         // 歌词样式那一行中间是一颗按钮，它得是一块独立元素才指得住。
         expect(markup).toContain('data-ponder-panel-mode-name');
-        // 点开是三列两排的一格图。
-        expect(markup.match(/data-ponder-panel-mode-option/g)).toHaveLength(6);
+        // 点开是四列两排的一格图（和真实选择器一样一行四张）。
+        expect(markup.match(/data-ponder-panel-mode-option/g)).toHaveLength(8);
         // 图底下那一条是「更多设置」，不是第七张图。
         expect(markup).toContain('data-ponder-panel-mode-list-footer');
         expect(markup).toContain('data-ponder-surface-state="controls-mode-list"');

@@ -2257,7 +2257,7 @@ export default {
     "machiGlow": "Pendar dan kilau lensa",
     "machiGlowHint": "Pendar di sekitar lampu dan papan nama pada malam hari, serta kilau lensa mendatar.",
     "machiGyro": "Kemiringan giroskop",
-    "machiGyroHint": "Miringkan ponsel ke kiri atau kanan dan kamera ikut bergeser sedikit, seperti rekaman tangan; diamkan dan bidikan tetap.",
+    "machiGyroHint": "Miringkan ponsel ke kiri atau kanan dan kamera ikut bergeser sedikit, seperti rekaman tangan; letakkan mendatar di meja dan bidikan kembali pelan ke bingkai semula, tidak melayang mengikuti goyangan meja.",
     "machiGyroUnsupported": "Perangkat ini tidak memberi data gerak, jadi tidak bisa dinyalakan.",
     "machiLevelHigh": "Tinggi",
     "machiLevelLow": "Rendah",

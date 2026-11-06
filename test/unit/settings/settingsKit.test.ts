@@ -124,6 +124,32 @@ describe('where a popover goes', () => {
         // No room over a part at the top of the screen.
         expect(placePopover(anchorAt(500, 10), label, screen, { side: 'over', align: 'center' })).toMatchObject({ side: 'under', top: 48 });
     });
+
+    it('may take the whole window standing up where it is too tall for the strip beside its anchor', () => {
+        // 没有 expand 时，比锚点下方还高的图只能挤在那一条里滚动。
+        const tall = { width: 200, height: 700 };
+        expect(placePopover(anchorAt(140, 100), tall, WINDOW, { side: 'under', align: 'start' }))
+            .toMatchObject({ top: 88, maxHeight: 504 });
+        // 有了 expand，它挪到窗口里放得下为止：底下留一道 gutter，高度用整窗的。
+        expect(placePopover(anchorAt(140, 100), tall, WINDOW, { side: 'under', align: 'start', expand: true }))
+            .toMatchObject({ side: 'under', left: 40, top: 8, maxHeight: 584 });
+        // 只比锚点下面高一点点时，挪上去的那一点刚好够它落在窗口的下沿。
+        const justOver = { width: 200, height: 520 };
+        expect(placePopover(anchorAt(140, 100), justOver, WINDOW, { side: 'under', align: 'start', expand: true }))
+            .toMatchObject({ top: 72, maxHeight: 584 });
+    });
+
+    it('leaves a layer that fits beside its anchor where it was', () => {
+        const fits = { side: 'under', left: 40, top: 88, maxHeight: 504 };
+        expect(placePopover(anchorAt(140, 100), LAYER, WINDOW, { side: 'under', align: 'start', expand: true })).toEqual(fits);
+    });
+
+    it('still scrolls inside a window too short to hold the layer at all', () => {
+        // 整窗也放不下：挪不出更高的地方，只能占满整窗再从中间滚。
+        const squat = { ...WINDOW, height: 300 };
+        expect(placePopover(anchorAt(140, 180), { width: 200, height: 400 }, squat, { side: 'under', align: 'start', expand: true }))
+            .toMatchObject({ side: 'under', top: 8, maxHeight: 284 });
+    });
 });
 
 describe('where a dragged slider lands', () => {

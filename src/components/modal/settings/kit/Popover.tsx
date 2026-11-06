@@ -34,6 +34,12 @@ type PopoverProps = {
     align?: PopoverAlign;
     /** As wide as the window, less a gutter at both sides. */
     fill?: boolean;
+    /**
+     * A layer taller than the room beside its anchor may take the whole window's height instead of
+     * scrolling in that strip (popoverPlace.ts). For the panel's grids of pictures, which are far
+     * taller than the space under their row.
+     */
+    expand?: boolean;
     /** What takes focus on opening; without it, the first part that Tab would reach. */
     focusRef?: React.RefObject<HTMLElement | null>;
     id?: string;
@@ -45,7 +51,7 @@ type PopoverProps = {
 };
 
 export const Popover: React.FC<PopoverProps> = ({
-    anchorRef, open, onClose, side = 'under', align = 'start', fill = false, focusRef, className = '', children, ...naming
+    anchorRef, open, onClose, side = 'under', align = 'start', fill = false, expand = false, focusRef, className = '', children, ...naming
 }) => {
     const layerRef = useRef<HTMLDivElement>(null);
     const onCloseRef = useRef(onClose);
@@ -84,7 +90,7 @@ export const Popover: React.FC<PopoverProps> = ({
                 scrollLeft: host.scrollLeft,
                 scrollTop: host.scrollTop,
             },
-            { side, align, fill },
+            { side, align, fill, expand },
         ));
         // A part that cannot take focus (a disabled entry) is passed over.
         const asked = focusRef?.current?.matches(':disabled') ? null : focusRef?.current;
@@ -117,7 +123,7 @@ export const Popover: React.FC<PopoverProps> = ({
             // Focus that is still in the layer goes back to the anchor.
             if (layer.contains(document.activeElement)) anchor.focus({ preventScroll: true });
         };
-    }, [open, host, anchorRef, focusRef, side, align, fill]);
+    }, [open, host, anchorRef, focusRef, side, align, fill, expand]);
 
     if (!host || !present) {
         return null;

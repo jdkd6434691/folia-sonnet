@@ -2258,7 +2258,7 @@ export default {
     "machiGlow": "辉光与光条",
     "machiGlowHint": "夜里灯和招牌晕开的光，以及横向的镜头光条。",
     "machiGyro": "陀螺仪适配",
-    "machiGyroHint": "拿起手机左右晃晃，镜头跟着轻轻偏一点，像举着摄影机在看；放下不动就是固定机位。",
+    "machiGyroHint": "拿起手机左右晃晃，镜头跟着轻轻偏一点，像举着摄影机在看；平放到桌面上就缓缓回到机位，不跟着桌面上的晃动乱飘。",
     "machiGyroUnsupported": "这台设备不提供陀螺仪读数，开不了。",
     "machiLevelHigh": "高",
     "machiLevelLow": "低",

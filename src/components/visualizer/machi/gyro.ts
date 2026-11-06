@@ -8,6 +8,13 @@ export const MACHI_GYRO_RANGE = {
     elevation: 6 * Math.PI / 180,
 };
 
+/**
+ * 手机平放（搁在桌面上，屏幕朝上或朝下）的判定，单位是屏幕法线离竖直方向的夹角（度）。
+ * 手持时要转进来才算出「放下」，已经放下时要转出更远才算「拿起」：两个阈值留出一道迟滞，
+ * 手机停在临界角上时不会来回翻。
+ */
+export const MACHI_GYRO_FLAT = { enterDeg: 22, leaveDeg: 32 } as const;
+
 /** 读数换算成偏移：转动角度按范围夹住，再乘一个系数放大到镜头上。 */
 const DEGREE = Math.PI / 180;
 
@@ -73,10 +80,27 @@ export const machiScreenOffsets = (deltaBeta: number, deltaGamma: number, angle:
     }
 };
 
+/**
+ * 屏幕法线离竖直方向的夹角（度）：0° 是屏幕朝上平放、180° 是朝下平放、90° 是举着看。
+ * `beta` / `gamma` 是设备坐标系的读数，`cos(beta)·cos(gamma)` 就是屏幕法线在地球坐标里的竖直分量，
+ * 所以这个角与屏幕横竖无关，横屏、竖屏同一个数。
+ */
+export const machiTiltDegrees = (beta: number, gamma: number): number => {
+    const up = Math.cos(beta * DEGREE) * Math.cos(gamma * DEGREE);
+    return Math.acos(Math.min(1, Math.max(-1, up))) / DEGREE;
+};
+
+/** 平放状态推进一步：手持时倾角落到 enter 以内才算放下，已经放下时要超过 leave 才算拿起。 */
+export const nextMachiFlat = (flat: boolean, tiltDeg: number): boolean => (
+    flat ? tiltDeg <= MACHI_GYRO_FLAT.leaveDeg : tiltDeg < MACHI_GYRO_FLAT.enterDeg
+);
+
 export const subscribeMachiGyro = (onOffsets: (offsets: MachiGyroOffsets) => void) => {
     if (!machiGyroSupported()) return () => {};
     let origin: { beta: number; gamma: number } | null = null;
     let last: { beta: number; gamma: number } | null = null;
+    /** 手机此刻是不是平放着（判定见 machiTiltDegrees / nextMachiFlat）。 */
+    let flat = false;
     const clamp = (value: number, limit: number) => Math.min(limit, Math.max(-limit, value));
     /**
      * 手机翻过竖直方向时 beta / gamma 会换系、读数一跳就是几十上百度。这种跳变不能当成「倾斜到极限」，
@@ -107,6 +131,21 @@ export const subscribeMachiGyro = (onOffsets: (offsets: MachiGyroOffsets) => voi
         last = reading;
         if (!origin) {
             origin = reading;
+            return;
+        }
+        // 放下、拿起都重取基准：放下时偏移交回零，镜头平滑回到机位（就是「平放后自动回正」）；
+        // 再拿起时又从新姿态的零开始，手机从躺着到举着那九十来度的变化不会被当成一次倾斜，
+        // 否则镜头会一直压着俯视、松手也不回。
+        const lyingFlat = nextMachiFlat(flat, machiTiltDegrees(reading.beta, reading.gamma));
+        if (lyingFlat !== flat) {
+            flat = lyingFlat;
+            rebase(reading);
+            return;
+        }
+        if (flat) {
+            // 平放在桌面上时 beta / gamma 本来就不稳：手机贴着水平面，一点点晃动就能让读数翻几十度。
+            // 跟下去只会让镜头左右抽搐，所以搁着不动就保持机位。
+            onOffsets(ZERO);
             return;
         }
         if (jumped) {

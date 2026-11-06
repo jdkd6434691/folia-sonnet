@@ -26,6 +26,13 @@ export type PopoverPlaceOptions = {
     align: PopoverAlign;
     /** As wide as the container, less the gutter at both sides. */
     fill?: boolean;
+    /**
+     * A layer taller than the room on its side may use the whole window's height instead of
+     * scrolling in the strip left beside its anchor: it moves up (or down) until it fits, still a
+     * gutter inside the window. A grid of pictures that a row opens is far taller than the room
+     * under that row; kept to that strip it shows one or two of its rows at a time.
+     */
+    expand?: boolean;
 };
 
 /** The position as distances from the container's edges: what the layer's `style` takes. */
@@ -51,7 +58,7 @@ export const placePopover = (
     anchor: Box,
     layer: { width: number; height: number },
     container: PopoverContainer,
-    { side, align, fill = false }: PopoverPlaceOptions,
+    { side, align, fill = false, expand = false }: PopoverPlaceOptions,
 ): PopoverPlace => {
     const { scrollLeft = 0, scrollTop = 0 } = container;
     const room = {
@@ -70,6 +77,14 @@ export const placePopover = (
         : align === 'end'
             ? { right: inside(container.left + container.width - (anchor.left + anchor.width)) - scrollLeft }
             : { left: inside(anchor.left - container.left + (align === 'center' ? (anchor.width - layer.width) / 2 : 0)) + scrollLeft };
-
-    return { side: placed, ...horizontal, ...vertical, maxHeight: Math.max(0, room[placed]) };
+    const maxHeight = Math.max(0, room[placed]);
+    // Whole window's height, between the gutters. Only worth taking where it is more than the room
+    // on the side the layer landed on; the layer then keeps its top edge as far down as fits.
+    const whole = Math.max(0, container.height - POPOVER_GUTTER * 2);
+    if (!expand || layer.height <= maxHeight || whole <= maxHeight) {
+        return { side: placed, ...horizontal, ...vertical, maxHeight };
+    }
+    const below = anchor.top + anchor.height + POPOVER_GAP - container.top + scrollTop;
+    const top = Math.max(POPOVER_GUTTER, Math.min(below, scrollTop + whole - Math.min(layer.height, whole) + POPOVER_GUTTER));
+    return { side: placed, ...horizontal, top, maxHeight: whole };
 };

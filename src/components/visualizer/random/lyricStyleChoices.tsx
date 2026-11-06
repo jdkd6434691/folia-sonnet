@@ -26,6 +26,21 @@ export const drawRandomPoolChoice = (mode: VisualizerMode) => (
     </span>
 );
 
+/**
+ * A style in the player panel's picker: its glyph, not a live picture.
+ *
+ * The panel shows the whole list at once — some twenty styles — and pictures are made one after
+ * another for the whole page (pictureTurns: one style at a time, one WebGL context each, and each
+ * waits 0.35 s or more to stand still). Twenty of them take over ten seconds, so the columns at the
+ * far end sat empty after the picker opened. The panel is for choosing; to judge a style, the way
+ * on to the full window at the bottom of the picker has the large preview.
+ */
+export const drawLyricStyleChoiceTile = (mode: VisualizerMode) => (
+    <span className="grid h-full w-full place-items-center text-[color:var(--st-t2)]">
+        {mode === RANDOM_VISUALIZER_CHOICE ? <Shuffle size={22} /> : <VisualizerModeGlyph mode={mode} size={22} />}
+    </span>
+);
+
 export const selectLyricStyleChoice = (mode: VisualizerMode, select: (mode: VisualizerMode) => void, notify = true) => {
     if (mode === RANDOM_VISUALIZER_CHOICE) {
         useVisualizerSettingsStore.getState().handleToggleRandomVisualizerModePerSong(true, { notify });
